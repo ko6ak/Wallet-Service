@@ -31,7 +31,7 @@ Wallet-Service. Введите номер пункта меню
 
 ### Порядок запуска из консоли
 
-1. Склонировать репозиторий: `git clone https://github.com/hendisantika/springboot-image.git`. 
+1. Склонировать репозиторий: `git clone https://github.com/ko6ak/Wallet-Service.git`. 
 2. Перейти в папку с программой: `cd Wallet-Service`
 3. Собрать приложение: `mvn clean install`
 4. Запустить приложение: `mvn exec:java -Dexec.mainClass="org.wallet_service.in.App"`
