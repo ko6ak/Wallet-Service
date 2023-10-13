@@ -94,7 +94,7 @@ public class PlayerControllerTest {
     @Test
     void getTransactionLog(){
         playerController.login(PlayerTestData.PLAYER_TO.getLogin(), PlayerTestData.PLAYER_TO.getPassword());
-        playerController.get(PlayerTestData.PLAYER_1.getId()).getMoneyAccount().setLog(PlayerTestData.TRANSACTION_ACTIONS);
+//        playerController.get(PlayerTestData.PLAYER_1.getId()).getMoneyAccount().setLog(PlayerTestData.TRANSACTION_ACTIONS);
         assertThat(playerController.getTransactionLog()).hasSize(2).hasSameElementsAs(PlayerTestData.TRANSACTION_ACTIONS);
         playerController.logout();
         assertThatThrownBy(playerController::getTransactionLog)

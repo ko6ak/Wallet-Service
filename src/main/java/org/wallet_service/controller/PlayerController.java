@@ -39,7 +39,7 @@ public class PlayerController {
         if (!playerService.isFound(playerTO.getLogin())) {
             MoneyAccount moneyAccount = moneyAccountService.save(new MoneyAccount(new BigDecimal("0.00"), new ArrayList<>()));
             Player player = playerService.save(new Player(playerTO.getName(), playerTO.getLogin(), playerTO.getPassword(), moneyAccount));
-            moneyAccount.setPlayerId(player.getId());
+//            moneyAccount.setPlayerId(player.getId());
             playerActionService.add(player.getId(), new Action(LocalDateTime.now(), "Успешная регистрация"));
             System.out.printf("Ваш id: %s%n", player.getId());
             return REGISTRATION_SUCCESS;
@@ -110,7 +110,8 @@ public class PlayerController {
     public List<Action> getTransactionLog(){
         if (currentPlayer == null) throw new AuthenticationException("Сначала залогинтесь");
         playerActionService.add(currentPlayer.getId(), new Action(LocalDateTime.now(), "Вывод лога транзакций"));
-        return currentPlayer.getMoneyAccount().getLog();
+//        return currentPlayer.getMoneyAccount().getLog();
+        return null;
     }
 
     /**

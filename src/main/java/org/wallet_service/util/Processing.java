@@ -49,7 +49,7 @@ public final class Processing {
         MoneyAccount moneyAccount = moneyAccountService.get(transaction.getMoneyAccountId());
         moneyAccount.setBalance(moneyAccount.getBalance().add(transaction.getAmount()));
         System.out.println("Транзакция с id '" + transaction.getId() + "' успешно обработана");
-        logging(transaction, moneyAccount.getLog(), moneyAccount.getPlayerId());
+//        logging(transaction, moneyAccount.getLog(), moneyAccount.getPlayerId());
     }
 
     /**
@@ -61,12 +61,12 @@ public final class Processing {
         BigDecimal balance = moneyAccount.getBalance();
         if (balance.compareTo(transaction.getAmount()) < 0) {
             String message = "Баланс меньше списываемой суммы";
-            logging(transaction, moneyAccount.getLog(), moneyAccount.getPlayerId(), message);
+//            logging(transaction, moneyAccount.getLog(), moneyAccount.getPlayerId(), message);
             System.out.println("Транзакция с id '" + transaction.getId() + "' завершена с ошибкой: " + message);
         }
         else {
             moneyAccount.setBalance(moneyAccount.getBalance().subtract(transaction.getAmount()));
-            logging(transaction, moneyAccount.getLog(), moneyAccount.getPlayerId());
+//            logging(transaction, moneyAccount.getLog(), moneyAccount.getPlayerId());
         }
     }
 

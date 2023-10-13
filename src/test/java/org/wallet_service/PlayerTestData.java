@@ -60,7 +60,7 @@ public class PlayerTestData {
         ACCOUNT_FOR_PLAYER_1.setId(1001);
         PLAYER_1 = new Player("Иван", "ivan@ya.ru", "1234", ACCOUNT_FOR_PLAYER_1);
         PLAYER_1.setId(1);
-        ACCOUNT_FOR_PLAYER_1.setPlayerId(1);
+//        ACCOUNT_FOR_PLAYER_1.setPlayerId(1);
 
         PLAYER_TO = new PlayerTO("Иван", "ivan@ya.ru", "1234");
         PLAYER_TO_WITH_BAD_LOGIN = new PlayerTO("Иван", "ivashka@ya.ru", "1234");

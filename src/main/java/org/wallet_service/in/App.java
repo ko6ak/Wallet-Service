@@ -3,6 +3,7 @@ package org.wallet_service.in;
 import org.wallet_service.entity.Player;
 import org.wallet_service.exception.AuthenticationException;
 import org.wallet_service.exception.TransactionException;
+import org.wallet_service.repository.DBConnection;
 import org.wallet_service.util.Processing;
 import org.wallet_service.util.Beans;
 import org.wallet_service.dto.PlayerTO;
@@ -45,11 +46,10 @@ public class App {
         System.out.print("-> ");
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
-            String input;
             Player currentPlayer = null;
-            while (!(input = br.readLine()).equals("9")) {
+            while (true) {
                 try {
-                    switch (input) {
+                    switch (br.readLine()) {
                         case ("1") -> {
                             PlayerTO playerTO = new PlayerTO();
                             playerTO.setName(checkInput(br, "Имя: "));
@@ -73,6 +73,10 @@ public class App {
                         case ("6") -> playerController.logout();
                         case ("7") -> Processing.process();
                         case ("8") -> printLog(playerController.getFullLog(Long.parseLong(checkNumber(br, "Id Игрока: "))));
+                        case ("9") -> {
+                            DBConnection.close();
+                            return;
+                        }
                     }
                     System.out.print("-> ");
                 } catch (MessageException | AuthenticationException | TransactionException e) {
@@ -82,6 +86,9 @@ public class App {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        finally {
+            DBConnection.close();
         }
     }
 

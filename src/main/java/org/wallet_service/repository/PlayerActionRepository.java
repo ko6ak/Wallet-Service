@@ -2,10 +2,13 @@ package org.wallet_service.repository;
 
 import org.wallet_service.entity.Action;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.wallet_service.repository.DBConnection.CONNECTION;
 
 /**
  * Класс отвечающий за сохранение событий активности Игрока в хранилище.
@@ -20,10 +23,11 @@ public class PlayerActionRepository {
      */
     public void add(long id, Action action){
         List<Action> list = actions.get(id);
-        if (list == null) list = new ArrayList<>();
+//        if (list == null) list = new ArrayList<>();
         list.add(action);
         actions.put(id, list);
     }
+
 
     /**
      * Получение списка событий для Игрока с указанным идентификатором.

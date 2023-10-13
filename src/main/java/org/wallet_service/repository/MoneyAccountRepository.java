@@ -2,9 +2,16 @@ package org.wallet_service.repository;
 
 import org.wallet_service.entity.MoneyAccount;
 
+import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import static org.wallet_service.repository.DBConnection.CONNECTION;
 
 /**
  * Класс отвечающий за сохранение Денежного счета Игрока в хранилище.
@@ -18,10 +25,32 @@ public class MoneyAccountRepository {
      * @param moneyAccount денежный счет.
      * @return Денежный счет.
      */
+//    public MoneyAccount save(MoneyAccount moneyAccount){
+//        long id = getId();
+//        moneyAccount.setId(id);
+//        moneyAccounts.put(id, moneyAccount);
+//        return moneyAccount;
+//    }
+
     public MoneyAccount save(MoneyAccount moneyAccount){
-        long id = getId();
+        long id = 0;
+        String query = "INSERT INTO money_account(balance) VALUES (?)";
+        try(PreparedStatement statement = CONNECTION.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
+            statement.setBigDecimal(1, moneyAccount.getBalance());
+            statement.executeUpdate();
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    id = generatedKeys.getInt(1);
+                }
+                else {
+                    CONNECTION.rollback();
+                    throw new SQLException("Не получилось сохранить счет Игрока.");
+                }
+            }
+            CONNECTION.commit();
+        }
+        catch (SQLException e) { e.printStackTrace();}
         moneyAccount.setId(id);
-        moneyAccounts.put(id, moneyAccount);
         return moneyAccount;
     }
 

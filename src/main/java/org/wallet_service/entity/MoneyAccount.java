@@ -16,8 +16,8 @@ import java.util.List;
 public class MoneyAccount {
     private long id;
     private BigDecimal balance;
-    private long playerId;
-    private List<Action> log;
+//    private long playerId;
+//    private List<Action> log;
 
     /**
      * Создает объект Денежного счета.
@@ -26,6 +26,6 @@ public class MoneyAccount {
      */
     public MoneyAccount(BigDecimal balance, List<Action> log) {
         this.balance = balance;
-        this.log = log;
+//        this.log = log;
     }
 }
