@@ -40,7 +40,7 @@ public class TransactionController {
         }
         else throw new TransactionException("Не уникальный id транзакции");
         BigDecimal amount = transaction.getAmount();
-        playerActionService.add(player.getId(), new Action(LocalDateTime.now(),
+        playerActionService.add(new Action(player.getId(), LocalDateTime.now(),
                 "Создана транзакция с типом операции " + transaction.getOperation() +
                 ", суммой " + (amount.toString().contains(".") ? amount : amount + ".00") +
                 " и комментарием '" + transaction.getDescription() + "'"));

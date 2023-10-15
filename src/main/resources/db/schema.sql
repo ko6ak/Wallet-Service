@@ -1,3 +1,6 @@
+CREATE SCHEMA IF NOT EXISTS wallet_schema;
+SET search_path TO wallet_schema;
+
 DROP TABLE IF EXISTS player_actions;
 DROP TABLE IF EXISTS player;
 DROP TABLE IF EXISTS transaction;

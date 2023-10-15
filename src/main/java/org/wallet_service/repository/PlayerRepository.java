@@ -1,26 +1,50 @@
 package org.wallet_service.repository;
 
+import org.wallet_service.entity.Action;
+import org.wallet_service.entity.MoneyAccount;
 import org.wallet_service.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.wallet_service.util.DBConnection.CONNECTION;
 
 /**
  * Класс отвечающий за сохранение Игрока в хранилище.
  */
 public class PlayerRepository {
-    private static long id = 0;
-    private final Map<Long, Player> players = new HashMap<>();
 
     /**
      * Получение Игрока по его логину и паролю.
      * @param login логин Игрока.
      * @param password пароль Игрока.
-     * @return Игрока обернутого в Optional.
+     * @return Игрока или null, если Игрок не найден.
      */
-    public Optional<Player> get(String login, String password){
-        return players.values().stream().filter(p -> p.getLogin().equals(login) && p.getPassword().equals(password)).findFirst();
+    public Player get(String login, String password){
+        Player player = null;
+        String moneyAccountActionsQuery = "SELECT * FROM wallet.money_account_actions WHERE money_account_actions.id = ?";
+        String playerQuery = "SELECT * FROM wallet.player " +
+                "JOIN wallet.money_account ON money_account.id = player.money_account_id WHERE login = ? AND password = ?";
+        try(PreparedStatement moneyAccountActionsStatement = CONNECTION.prepareStatement(moneyAccountActionsQuery);
+            PreparedStatement playerStatement = CONNECTION.prepareStatement(playerQuery)){
+            playerStatement.setString(1, login);
+            playerStatement.setString(2, password);
+
+            player = buildPlayer(moneyAccountActionsStatement, playerStatement);
+
+            CONNECTION.commit();
+        }
+        catch (SQLException e) {
+            try{
+                CONNECTION.rollback();
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+        return player;
     }
 
     /**
@@ -29,15 +53,68 @@ public class PlayerRepository {
      * @return Игрока или null если Игрок не найден.
      */
     public Player get(long id){
-        return players.get(id);
+        Player player = null;
+        String moneyAccountActionsQuery = "SELECT * FROM wallet.money_account_actions WHERE money_account_actions.id = ?";
+        String playerQuery = "SELECT * FROM wallet.player " +
+                "JOIN wallet.money_account ON money_account.id = player.money_account_id WHERE player.id = ?";
+        try(PreparedStatement moneyAccountActionsStatement = CONNECTION.prepareStatement(moneyAccountActionsQuery);
+            PreparedStatement playerStatement = CONNECTION.prepareStatement(playerQuery)){
+            playerStatement.setLong(1, id);
+
+            player = buildPlayer(moneyAccountActionsStatement, playerStatement);
+
+            CONNECTION.commit();
+        }
+        catch (SQLException e) {
+            try{
+                CONNECTION.rollback();
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+        return player;
     }
 
-    /**
-     * Метод генерирует идентификатор для Игрока.
-     * @return id Игрока
-     */
-    private static long getId(){
-        return ++id;
+    private static Player buildPlayer(PreparedStatement moneyAccountActionsStatement, PreparedStatement playerStatement) throws SQLException {
+        Player player;
+        MoneyAccount moneyAccount;
+        long moneyAccountId;
+        long playerId;
+        try (ResultSet result = playerStatement.executeQuery()) {
+            if (result.next()) {
+                playerId = result.getLong("id");
+                moneyAccountId = result.getLong("money_account_id");
+                moneyAccount = new MoneyAccount(moneyAccountId,
+                        result.getBigDecimal("balance"), playerId);
+                player = new Player(playerId,
+                        result.getString("name"),
+                        result.getString("login"),
+                        result.getString("password"),
+                        moneyAccount);
+            }
+            else {
+                CONNECTION.rollback();
+                throw new SQLException("Неправильный логин, пароль или id");
+            }
+        }
+        List<Action> actions = new ArrayList<>();
+        moneyAccountActionsStatement.setLong(1, moneyAccountId);
+        try (ResultSet result = moneyAccountActionsStatement.executeQuery()) {
+            while (result.next()) {
+                actions.add(new Action(result.getInt("id"),
+                        playerId,
+                        Timestamp.valueOf(result.getString("date_time")).toLocalDateTime(),
+                        result.getString("message")));
+            }
+        }
+        catch (SQLException e) {
+            CONNECTION.rollback();
+            throw new SQLException("Не удалось получить список транзакций");
+        }
+        moneyAccount.setLog(actions);
+        return player;
     }
 
     /**
@@ -46,9 +123,44 @@ public class PlayerRepository {
      * @return Игрока.
      */
     public Player save(Player player){
-        long id = getId();
-        player.setId(id);
-        players.put(id, player);
+        MoneyAccount moneyAccount = player.getMoneyAccount();
+        String moneyAccountQuery = "INSERT INTO wallet.money_account(balance) VALUES (?)";
+        String playerQuery = "INSERT INTO wallet.player(name, login, password, money_account_id) VALUES (?, ?, ?, ?)";
+
+        try(PreparedStatement moneyAccountStatement = CONNECTION.prepareStatement(moneyAccountQuery, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement playerStatement = CONNECTION.prepareStatement(playerQuery, Statement.RETURN_GENERATED_KEYS)){
+
+            moneyAccountStatement.setBigDecimal(1, player.getMoneyAccount().getBalance());
+            playerStatement.setString(1, player.getName());
+            playerStatement.setString(2, player.getLogin());
+            playerStatement.setString(3, player.getPassword());
+            playerStatement.setLong(4, player.getMoneyAccount().getId());
+
+            moneyAccountStatement.executeUpdate();
+            playerStatement.executeUpdate();
+
+            try (ResultSet moneyAccountGeneratedKey = moneyAccountStatement.getGeneratedKeys();
+                 ResultSet playerGeneratedKey = playerStatement.getGeneratedKeys()) {
+                if (moneyAccountGeneratedKey.next() && playerGeneratedKey.next()) {
+                    moneyAccount.setId(moneyAccountGeneratedKey.getInt("id"));
+                    player.setId(playerGeneratedKey.getInt("id"));
+                }
+                else {
+                    CONNECTION.rollback();
+                    throw new SQLException("Не получилось сохранить Игрока");
+                }
+            }
+            CONNECTION.commit();
+        }
+        catch (SQLException e) {
+            try{
+                CONNECTION.rollback();
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        }
         return player;
     }
 
@@ -58,16 +170,30 @@ public class PlayerRepository {
      * @return true/false в зависимости от наличия Игрока в хранилище.
      */
     public boolean isFound(String login){
-        Optional<Player> player = players.values().stream().filter(p -> p.getLogin().equals(login)).findFirst();
-        return player.isPresent();
-    }
-
-    /**
-     * Удаляет все содержимое из хранилища и возвращает генерируемое значение к начальному значению.
-     * Используется только для тестовых классов.
-     */
-    public void clear(){
-        players.clear();
-        id = 0;
+        boolean isFound = false;
+        String query = "SELECT EXISTS (SELECT * FROM wallet.player WHERE login = ?)";
+        try(PreparedStatement statement = CONNECTION.prepareStatement(query)){
+            statement.setString(1, login);
+            try (ResultSet result = statement.executeQuery()) {
+                if (result.next()) {
+                    isFound = result.getBoolean("exists");
+                }
+                else {
+                    CONNECTION.rollback();
+                    throw new SQLException("Нет Игрока с таким логином");
+                }
+            }
+            CONNECTION.commit();
+        }
+        catch (SQLException e) {
+            try{
+                CONNECTION.rollback();
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+        return isFound;
     }
 }

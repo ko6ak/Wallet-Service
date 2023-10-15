@@ -33,5 +33,9 @@ Wallet-Service. Введите номер пункта меню
 
 1. Склонировать репозиторий: `git clone https://github.com/ko6ak/Wallet-Service.git`. 
 2. Перейти в папку с программой: `cd Wallet-Service`
-3. Собрать приложение: `mvn clean install`
-4. Запустить приложение: `mvn exec:java -Dexec.mainClass="org.wallet_service.in.App"`
+3. Запустить docker-образы (файл docker.yml находится в корне проекта): `docker compose -f docker.yml up`
+4. Собрать приложение: `mvn clean install`
+5. Запустить обновление БД: `mvn liquibase:update`
+6. Запустить приложение: `mvn exec:java -Dexec.mainClass="org.wallet_service.in.App"`
+
+В проекте сохранен пользователь с логином `ivan@gmail.com` и паролем `12345`

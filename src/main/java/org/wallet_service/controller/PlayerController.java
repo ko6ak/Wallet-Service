@@ -13,9 +13,7 @@ import org.wallet_service.util.Beans;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -37,10 +35,10 @@ public class PlayerController {
      */
     public String registration(PlayerTO playerTO) {
         if (!playerService.isFound(playerTO.getLogin())) {
-            MoneyAccount moneyAccount = moneyAccountService.save(new MoneyAccount(new BigDecimal("0.00"), new ArrayList<>()));
+            MoneyAccount moneyAccount = moneyAccountService.save(new MoneyAccount(new BigDecimal("0.00")));
             Player player = playerService.save(new Player(playerTO.getName(), playerTO.getLogin(), playerTO.getPassword(), moneyAccount));
-//            moneyAccount.setPlayerId(player.getId());
-            playerActionService.add(player.getId(), new Action(LocalDateTime.now(), "Успешная регистрация"));
+            moneyAccount.setPlayerId(player.getId());
+            playerActionService.add(new Action(player.getId(), LocalDateTime.now(), "Успешная регистрация"));
             System.out.printf("Ваш id: %s%n", player.getId());
             return REGISTRATION_SUCCESS;
         }
@@ -57,10 +55,10 @@ public class PlayerController {
     public Player login(String login, String password){
         if (currentPlayer == null) {
             if (!playerService.isFound(login)) throw new AuthenticationException("Игрок с таким логином не найден");
-            Optional<Player> player = playerService.get(login, password);
-            if (player.isEmpty()) throw new AuthenticationException("Неправильный пароль");
-            currentPlayer = player.get();
-            playerActionService.add(currentPlayer.getId(), new Action(LocalDateTime.now(), "Успешный вход"));
+            Player player = playerService.get(login, password);
+            if (player == null) throw new AuthenticationException("Неправильный пароль");
+            currentPlayer = player;
+            playerActionService.add(new Action(currentPlayer.getId(), LocalDateTime.now(), "Успешный вход"));
             System.out.println("Драсте!");
             return currentPlayer;
         }
@@ -73,7 +71,7 @@ public class PlayerController {
      */
     public void logout(){
         if (currentPlayer != null) {
-            playerActionService.add(currentPlayer.getId(), new Action(LocalDateTime.now(), "Успешный выход"));
+            playerActionService.add(new Action(currentPlayer.getId(), LocalDateTime.now(), "Успешный выход"));
             currentPlayer = null;
             System.out.println("Пока!");
         }
@@ -96,7 +94,7 @@ public class PlayerController {
      */
     public String getBalance(){
         if (currentPlayer != null) {
-            playerActionService.add(currentPlayer.getId(), new Action(LocalDateTime.now(), "Вывод информации о балансе"));
+            playerActionService.add(new Action(currentPlayer.getId(), LocalDateTime.now(), "Вывод информации о балансе"));
             return "Баланс вашего счета: " + currentPlayer.getMoneyAccount().getBalance();
         }
         else throw new AuthenticationException("Вы не залогинены");
@@ -109,9 +107,8 @@ public class PlayerController {
      */
     public List<Action> getTransactionLog(){
         if (currentPlayer == null) throw new AuthenticationException("Сначала залогинтесь");
-        playerActionService.add(currentPlayer.getId(), new Action(LocalDateTime.now(), "Вывод лога транзакций"));
-//        return currentPlayer.getMoneyAccount().getLog();
-        return null;
+        playerActionService.add(new Action(currentPlayer.getId(), LocalDateTime.now(), "Вывод лога транзакций"));
+        return currentPlayer.getMoneyAccount().getLog();
     }
 
     /**
@@ -121,7 +118,11 @@ public class PlayerController {
      * @throws MessageException если Игрок с таким id не найден.
      */
     public List<Action> getFullLog(long playerId){
-        if (get(playerId) == null) throw new MessageException("Игрок с таким id не найден");
-        return playerActionService.get(playerId);
+        Player player = get(playerId);
+        if (player == null) throw new MessageException("Игрок с таким id не найден");
+        List<Action> actions = player.getMoneyAccount().getLog();
+        actions.addAll(playerActionService.get(playerId));
+        actions.sort(Comparator.comparing(Action::getDateTime));
+        return actions;
     }
 }

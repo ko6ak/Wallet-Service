@@ -45,12 +45,4 @@ public class TransactionService {
     public List<Transaction> getNotProcessed(){
         return transactionRepository.getNotProcessed();
     }
-
-    /**
-     * Удаляет все содержимое из хранилища.
-     * Используется только для тестовых классов.
-     */
-    public void clear(){
-        transactionRepository.clear();
-    }
 }

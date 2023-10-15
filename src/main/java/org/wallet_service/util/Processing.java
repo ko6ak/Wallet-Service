@@ -3,12 +3,14 @@ package org.wallet_service.util;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.wallet_service.exception.TransactionException;
+import org.wallet_service.service.MoneyAccountActionService;
 import org.wallet_service.service.MoneyAccountService;
 import org.wallet_service.service.PlayerActionService;
 import org.wallet_service.entity.Action;
 import org.wallet_service.controller.TransactionController;
 import org.wallet_service.entity.MoneyAccount;
 import org.wallet_service.entity.Transaction;
+import org.wallet_service.service.TransactionService;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -19,8 +21,9 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Processing {
     private static final TransactionController transactionController = Beans.getTransactionController();
+    private static final TransactionService transactionService = Beans.getTransactionService();
     private static final MoneyAccountService moneyAccountService = Beans.getMoneyAccountService();
-    private static final PlayerActionService playerActionService = Beans.getPlayerActionService();
+    private static final MoneyAccountActionService moneyAccountActionService = Beans.getMoneyAccountActionService();
 
     /**
      * Метод получает не обработанные транзакции и обрабатывает их в соответствии с типом операции.
@@ -35,6 +38,9 @@ public final class Processing {
                     case DEBIT -> debit(t);
                 }
                 t.setProcessed(true);
+                transactionService.save(t);
+                //надо сохранять в базу транзакцию с true
+
             });
             System.out.println("Все транзакции обработаны");
         }
@@ -49,7 +55,7 @@ public final class Processing {
         MoneyAccount moneyAccount = moneyAccountService.get(transaction.getMoneyAccountId());
         moneyAccount.setBalance(moneyAccount.getBalance().add(transaction.getAmount()));
         System.out.println("Транзакция с id '" + transaction.getId() + "' успешно обработана");
-//        logging(transaction, moneyAccount.getLog(), moneyAccount.getPlayerId());
+        logging(transaction, moneyAccount.getLog(), moneyAccount.getPlayerId());
     }
 
     /**
@@ -61,12 +67,13 @@ public final class Processing {
         BigDecimal balance = moneyAccount.getBalance();
         if (balance.compareTo(transaction.getAmount()) < 0) {
             String message = "Баланс меньше списываемой суммы";
-//            logging(transaction, moneyAccount.getLog(), moneyAccount.getPlayerId(), message);
+            logging(transaction, moneyAccount.getLog(), moneyAccount.getPlayerId(), message);
             System.out.println("Транзакция с id '" + transaction.getId() + "' завершена с ошибкой: " + message);
         }
         else {
             moneyAccount.setBalance(moneyAccount.getBalance().subtract(transaction.getAmount()));
-//            logging(transaction, moneyAccount.getLog(), moneyAccount.getPlayerId());
+            System.out.println("Транзакция с id '" + transaction.getId() + "' успешно обработана");
+            logging(transaction, moneyAccount.getLog(), moneyAccount.getPlayerId());
         }
     }
 
@@ -78,11 +85,11 @@ public final class Processing {
      */
     private static void logging(Transaction transaction, List<Action> log, long playerId){
         BigDecimal amount = transaction.getAmount();
-        Action action = new Action(transaction.getDateTime(),
+        Action action = new Action(playerId, transaction.getDateTime(),
                 "Транзакция с типом операции " + transaction.getOperation() +
                         ", суммой " + (amount.toString().contains(".") ? amount : amount + ".00") +
                         " и комментарием '" + transaction.getDescription() + "' успешно выполнена");
-        playerActionService.add(playerId, action);
+        moneyAccountActionService.add(action);
         log.add(action);
     }
 
@@ -95,11 +102,11 @@ public final class Processing {
      */
     private static void logging(Transaction transaction, List<Action> log, long playerId, String message){
         BigDecimal amount = transaction.getAmount();
-        Action action = new Action(transaction.getDateTime(),
+        Action action = new Action(playerId, transaction.getDateTime(),
                 "Транзакция с типом операции " + transaction.getOperation() +
                         ", суммой " + (amount.toString().contains(".") ? amount : amount + ".00") +
                         " и комментарием '" + transaction.getDescription() + "' не выполнена. Причина: " + message);
-        playerActionService.add(playerId, action);
+        moneyAccountActionService.add(action);
         log.add(action);
     }
 }

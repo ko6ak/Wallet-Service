@@ -17,7 +17,7 @@ public class PlayerService {
      * @param password пароль Игрока.
      * @return Игрока обернутого в Optional.
      */
-    public Optional<Player> get(String login, String password){
+    public Player get(String login, String password){
         return playerRepository.get(login, password);
     }
 
@@ -46,13 +46,5 @@ public class PlayerService {
      */
     public boolean isFound(String login){
         return playerRepository.isFound(login);
-    }
-
-    /**
-     * Удаляет все содержимое из хранилища и возвращает генерируемое значение к начальному значению.
-     * Используется только для тестовых классов.
-     */
-    public void clear(){
-        playerRepository.clear();
     }
 }

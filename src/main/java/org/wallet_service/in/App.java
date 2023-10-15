@@ -3,7 +3,8 @@ package org.wallet_service.in;
 import org.wallet_service.entity.Player;
 import org.wallet_service.exception.AuthenticationException;
 import org.wallet_service.exception.TransactionException;
-import org.wallet_service.repository.DBConnection;
+import org.wallet_service.util.DBConnection;
+import org.wallet_service.util.ConfigParser;
 import org.wallet_service.util.Processing;
 import org.wallet_service.util.Beans;
 import org.wallet_service.dto.PlayerTO;
@@ -25,6 +26,10 @@ import java.util.UUID;
  * Класс содержит меню управления приложением и приватные вспомогательные методы.
  */
 public class App {
+    static {
+        ConfigParser.parse();
+    }
+
     private static final PlayerController playerController = Beans.getPlayerController();
     private static final TransactionController transactionController = Beans.getTransactionController();
 

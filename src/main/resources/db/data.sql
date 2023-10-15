@@ -1,3 +1,5 @@
+SET search_path TO wallet_schema;
+
 TRUNCATE player_actions CASCADE ;
 TRUNCATE player CASCADE ;
 TRUNCATE transaction;
