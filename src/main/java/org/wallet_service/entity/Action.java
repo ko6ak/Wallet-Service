@@ -5,6 +5,9 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Родительский класс для логирования действий Игрока или событий транзакций.
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,6 +17,11 @@ public abstract class Action {
     LocalDateTime dateTime;
     String message;
 
+    /**
+     * Создает объект события.
+     * @param dateTime время события.
+     * @param message сообщение
+     */
     public Action(LocalDateTime dateTime, String message) {
         this.dateTime = dateTime;
         this.message = message;

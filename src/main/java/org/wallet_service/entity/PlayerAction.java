@@ -1,9 +1,7 @@
 package org.wallet_service.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -15,11 +13,24 @@ import java.time.LocalDateTime;
 public class PlayerAction extends Action {
     private long playerId;
 
+    /**
+     * Создает объект действия Игрока.
+     * @param playerId идентификатор Игрока.
+     * @param dateTime время события.
+     * @param message сообщение.
+     */
     public PlayerAction(long playerId, LocalDateTime dateTime, String message) {
         super(dateTime, message);
         this.playerId = playerId;
     }
 
+    /**
+     * Создает объект действия Игрока.
+     * @param id идентификатор события.
+     * @param playerId идентификатор Игрока.
+     * @param dateTime время события.
+     * @param message сообщение.
+     */
     public PlayerAction(long id, long playerId, LocalDateTime dateTime, String message) {
         super(id, dateTime, message);
         this.playerId = playerId;

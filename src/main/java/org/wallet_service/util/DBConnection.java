@@ -1,27 +1,15 @@
 package org.wallet_service.util;
 
-import liquibase.Liquibase;
-import liquibase.Scope;
-import liquibase.command.CommandScope;
-import liquibase.command.core.UpdateCommandStep;
-import liquibase.database.Database;
-import liquibase.database.DatabaseFactory;
-import liquibase.database.jvm.JdbcConnection;
-import liquibase.exception.CommandExecutionException;
-import liquibase.exception.DatabaseException;
-import liquibase.exception.LiquibaseException;
-import liquibase.resource.ClassLoaderResourceAccessor;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 
+/**
+ * Класс создает подключение к БД.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DBConnection {
     private final static String DB_DRIVER_CLASS = ConfigParser.driver;
@@ -29,9 +17,16 @@ public final class DBConnection {
     private final static String DB_USERNAME = ConfigParser.username;
     private final static String DB_PASSWORD = ConfigParser.password;
 
+    /**
+     * Созданное подключение.
+     */
     public static Connection CONNECTION = createConnection();
 
-    public static Connection createConnection() {
+    /**
+     * Метод, в котором создается подключение.
+     * @return созданное подключение к БД.
+     */
+    private static Connection createConnection() {
         Connection connection = null;
         try{
             Class.forName(DB_DRIVER_CLASS);
@@ -45,6 +40,9 @@ public final class DBConnection {
         return connection;
     }
 
+    /**
+     * Метод закрывающий подключение к БД.
+     */
     public static void close() {
         try {
             if (CONNECTION != null) CONNECTION.close();

@@ -2,7 +2,6 @@ package org.wallet_service.service;
 
 import org.wallet_service.entity.Action;
 import org.wallet_service.entity.MoneyAccountAction;
-import org.wallet_service.entity.PlayerAction;
 import org.wallet_service.repository.MoneyAccountActionRepository;
 
 import java.util.List;
@@ -15,7 +14,7 @@ public class MoneyAccountActionService {
 
     /**
      * Добавление информации о совершенной транзакции для Денежного счета.
-     * @param playerAction событие.
+     * @param moneyAccountAction событие.
      */
     public void add(MoneyAccountAction moneyAccountAction){
         moneyAccountActionRepository.add(moneyAccountAction);

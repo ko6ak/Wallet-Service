@@ -1,44 +1,37 @@
-//package org.wallet_service.service;
-//
-//import org.junit.jupiter.api.AfterAll;
-//import org.junit.jupiter.api.BeforeAll;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.wallet_service.PlayerTestData;
-//import org.wallet_service.entity.MoneyAccount;
-//import org.wallet_service.util.Beans;
-//import org.wallet_service.util.ConfigParser;
-//import org.wallet_service.util.DBConnection;
-//
-//import static org.assertj.core.api.Assertions.assertThat;
-//
-//public class MoneyAccountServiceTest {
-//    private static final MoneyAccountService moneyAccountService = Beans.getMoneyAccountService();
-//
-//    @BeforeAll
-//    static void init() {
-//        ConfigParser.parse();
-//        DBConnection.updateTables();
-//    }
-////
-////    @AfterAll
-////    static void clearAll() {
-////        moneyAccountService.clear();
-////    }
-//
-//    @Test
-//    void save(){
-//        MoneyAccount moneyAccount = moneyAccountService.save(PlayerTestData.ACCOUNT_WITHOUT_ID);
-//        System.out.println(moneyAccount);
-////        assertThat(moneyAccount).usingRecursiveComparison().isEqualTo(PlayerTestData.ACCOUNT_WITH_ID);
-//    }
-//
-//    @Test
-//    void get(){
-////        moneyAccountService.save(PlayerTestData.ACCOUNT_WITHOUT_ID);
-//        MoneyAccount moneyAccount = moneyAccountService.get(PlayerTestData.ACCOUNT_WITH_ID.getId());
-//        System.out.println(moneyAccount);
-////        assertThat(moneyAccount).isNotNull();
-////        assertThat(moneyAccount).usingRecursiveComparison().isEqualTo(PlayerTestData.ACCOUNT_WITH_ID);
-//    }
-//}
+package org.wallet_service.service;
+
+import org.junit.jupiter.api.Test;
+import org.wallet_service.AbstractServiceTest;
+import org.wallet_service.PlayerTestData;
+import org.wallet_service.entity.MoneyAccount;
+import org.wallet_service.util.Beans;
+
+import java.sql.SQLException;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.wallet_service.util.DBConnection.CONNECTION;
+
+public class MoneyAccountServiceTest extends AbstractServiceTest {
+    private static final MoneyAccountService moneyAccountService = Beans.getMoneyAccountService();
+
+    @Test
+    void save() throws SQLException {
+        MoneyAccount moneyAccount = moneyAccountService.save(PlayerTestData.ACCOUNT_1002_WITHOUT_ID);
+        assertThat(moneyAccount).usingRecursiveComparison().isEqualTo(PlayerTestData.ACCOUNT_1002_WITH_ID);
+        CONNECTION.createStatement().executeUpdate("DELETE FROM wallet.money_account WHERE id = 1002");
+    }
+
+    @Test
+    void get(){
+        MoneyAccount moneyAccount = moneyAccountService.get(1001);
+        assertThat(moneyAccount).isNotNull();
+        assertThat(moneyAccount).usingRecursiveComparison().isEqualTo(PlayerTestData.ACCOUNT_1001_WITH_ID);
+    }
+
+    @Test
+    void updateBalance(){
+        moneyAccountService.updateBalance(PlayerTestData.CHANGED_BALANCE_ACCOUNT_1001_WITH_ID);
+        assertThat(moneyAccountService.get(1001).getBalance()).isEqualTo("500.00");
+        moneyAccountService.updateBalance(PlayerTestData.ACCOUNT_1001_WITH_ID);
+    }
+}

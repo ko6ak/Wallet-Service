@@ -18,6 +18,10 @@ public class MoneyAccountService {
         return moneyAccountRepository.save(moneyAccount);
     }
 
+    /**
+     * Метод для обновления баланса счета.
+     * @param moneyAccount счет.
+     */
     public void updateBalance(MoneyAccount moneyAccount){
         moneyAccountRepository.updateBalance(moneyAccount);
     }

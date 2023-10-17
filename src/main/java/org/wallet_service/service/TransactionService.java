@@ -38,6 +38,10 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
+    /**
+     * Метод отмечает транзакцию как обработанную.
+     * @param transaction транзакция.
+     */
     public void updateProcessed(Transaction transaction){
         transactionRepository.updateProcessed(transaction);
     }

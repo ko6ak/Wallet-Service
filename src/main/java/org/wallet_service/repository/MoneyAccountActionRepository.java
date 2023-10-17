@@ -2,7 +2,6 @@ package org.wallet_service.repository;
 
 import org.wallet_service.entity.Action;
 import org.wallet_service.entity.MoneyAccountAction;
-import org.wallet_service.entity.PlayerAction;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,10 +23,13 @@ public class MoneyAccountActionRepository {
      */
     public void add(MoneyAccountAction moneyAccountAction){
         String query = "INSERT INTO wallet.money_account_actions(money_account_id, date_time, message) VALUES (?, ?, ?)";
+
         try(PreparedStatement statement = CONNECTION.prepareStatement(query)){
+
             statement.setLong(1, moneyAccountAction.getMoneyAccountId());
             statement.setTimestamp(2, Timestamp.valueOf(moneyAccountAction.getDateTime()));
             statement.setString(3, moneyAccountAction.getMessage());
+
             if (statement.executeUpdate() <= 0) {
                 CONNECTION.rollback();
                 throw new SQLException("Не получилось сохранить событие в лог транзакций");
@@ -53,7 +55,9 @@ public class MoneyAccountActionRepository {
     public List<Action> get(long moneyAccountId){
         List<Action> actions = new ArrayList<>();
         String query = "SELECT * FROM wallet.money_account_actions WHERE money_account_id = ?";
+
         try(PreparedStatement statement = CONNECTION.prepareStatement(query)){
+
             statement.setLong(1, moneyAccountId);
             try (ResultSet result = statement.executeQuery()) {
                 while (result.next()) {

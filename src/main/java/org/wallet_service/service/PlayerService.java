@@ -3,8 +3,6 @@ package org.wallet_service.service;
 import org.wallet_service.entity.Player;
 import org.wallet_service.repository.PlayerRepository;
 
-import java.util.Optional;
-
 /**
  * Сервисный класс для Игрока.
  */

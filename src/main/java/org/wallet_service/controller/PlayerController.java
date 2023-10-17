@@ -76,15 +76,6 @@ public class PlayerController {
         else throw new AuthenticationException("Вы не залогинены");
     }
 
-//    /**
-//     * Получение Игрока по его id.
-//     * @param id идентификатор Игрока.
-//     * @return Возвращает игрока или null если Игрок не найден.
-//     */
-//    public Player get(long id){
-//        return playerService.get(id);
-//    }
-
     /**
      * Метод возвращает баланс залогиненного игрока.
      * @return баланс залогиненного игрока.

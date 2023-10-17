@@ -15,7 +15,6 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-//@AllArgsConstructor
 public class MoneyAccount {
     private long id;
     private BigDecimal balance;
@@ -24,13 +23,17 @@ public class MoneyAccount {
     /**
      * Создает объект Денежного счета.
      * @param balance баланс
-     * @param log лог выполненных транзакций
      */
     public MoneyAccount(BigDecimal balance) {
         this.balance = balance;
         this.log = new ArrayList<>();
     }
 
+    /**
+     * Создает объект Денежного счета.
+     * @param id номер счета
+     * @param balance баланс
+     */
     public MoneyAccount(long id, BigDecimal balance) {
         this.id = id;
         this.balance = balance;

@@ -7,6 +7,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * Класс получает параметры, указанные в файле liquibase.properties.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ConfigParser {
     public static String changeLogFile;
@@ -15,6 +18,9 @@ public final class ConfigParser {
     public static String username;
     public static String password;
 
+    /**
+     * Метод получает значения параметров changeLogFile, driver, url, username и password из файла src/main/resources/liquibase.properties.
+     */
     public static void parse(){
         try(BufferedReader br = new BufferedReader(new FileReader("src/main/resources/liquibase.properties"))){
             while (br.ready()){

@@ -21,8 +21,11 @@ public class TransactionRepository {
     public boolean isFound(UUID id){
         boolean isFound = false;
         String query = "SELECT EXISTS (SELECT * FROM wallet.transaction WHERE id = ?)";
+
         try(PreparedStatement statement = CONNECTION.prepareStatement(query)){
+
             statement.setString(1, id.toString());
+
             try (ResultSet result = statement.executeQuery()) {
                 if (result.next()) {
                     isFound = result.getBoolean("exists");
@@ -54,8 +57,11 @@ public class TransactionRepository {
     public Transaction get(UUID id){
         Transaction transaction = null;
         String query = "SELECT * FROM wallet.transaction WHERE id = ?";
+
         try(PreparedStatement statement = CONNECTION.prepareStatement(query)){
+
             statement.setString(1, id.toString());
+
             try (ResultSet result = statement.executeQuery()) {
                 if (result.next()) {
                     transaction = new Transaction(id,
@@ -93,6 +99,7 @@ public class TransactionRepository {
         String query = "INSERT INTO wallet.transaction(id, date_time, description, operation, amount, money_account_id, is_processed) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try(PreparedStatement statement = CONNECTION.prepareStatement(query)) {
+
             statement.setString(1, transaction.getId().toString());
             statement.setTimestamp(2, Timestamp.valueOf(transaction.getDateTime()));
             statement.setString(3, transaction.getDescription());
@@ -120,10 +127,15 @@ public class TransactionRepository {
         return transaction;
     }
 
+    /**
+     * Метод отмечает транзакцию как обработанную.
+     * @param transaction транзакция.
+     */
     public void updateProcessed(Transaction transaction){
         String query = "UPDATE wallet.transaction SET is_processed = TRUE WHERE id = ?";
 
         try(PreparedStatement statement = CONNECTION.prepareStatement(query)) {
+
             statement.setString(1, transaction.getId().toString());
 
             if (statement.executeUpdate() <= 0) {
@@ -151,6 +163,7 @@ public class TransactionRepository {
     public List<Transaction> getNotProcessed(){
         List<Transaction> transactions = new ArrayList<>();
         String query = "SELECT * FROM wallet.transaction WHERE is_processed = false";
+
         try(Statement statement = CONNECTION.createStatement()){
             try (ResultSet result = statement.executeQuery(query)) {
                 while (result.next()) {

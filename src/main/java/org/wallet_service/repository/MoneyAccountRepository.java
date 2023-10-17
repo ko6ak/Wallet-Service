@@ -21,9 +21,12 @@ public class MoneyAccountRepository {
      */
     public MoneyAccount save(MoneyAccount moneyAccount){
         String query = "INSERT INTO wallet.money_account(balance) VALUES (?)";
+
         try(PreparedStatement statement = CONNECTION.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
+
             statement.setBigDecimal(1, moneyAccount.getBalance());
             statement.executeUpdate();
+
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     moneyAccount.setId(generatedKeys.getInt(1));
@@ -47,9 +50,15 @@ public class MoneyAccountRepository {
         return moneyAccount;
     }
 
+    /**
+     * Метод для обновления баланса счета.
+     * @param moneyAccount счет.
+     */
     public void updateBalance(MoneyAccount moneyAccount){
         String query = "UPDATE wallet.money_account SET balance = ? WHERE id = ?";
+
         try(PreparedStatement statement = CONNECTION.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
+
             statement.setBigDecimal(1, moneyAccount.getBalance());
             statement.setLong(2, moneyAccount.getId());
             statement.executeUpdate();
@@ -79,8 +88,11 @@ public class MoneyAccountRepository {
     public MoneyAccount get(long id){
         MoneyAccount moneyAccount = null;
         String query = "SELECT * FROM wallet.money_account WHERE id = ?";
+
         try(PreparedStatement statement = CONNECTION.prepareStatement(query)){
+
             statement.setLong(1, id);
+
             try (ResultSet result = statement.executeQuery()) {
                 if (result.next()) {
                     moneyAccount = new MoneyAccount(result.getBigDecimal("balance"));

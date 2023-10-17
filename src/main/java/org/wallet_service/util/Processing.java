@@ -60,7 +60,7 @@ public final class Processing {
         BigDecimal balance = moneyAccount.getBalance();
         if (balance.compareTo(transaction.getAmount()) < 0) {
             String message = "Баланс меньше списываемой суммы";
-            logging(transaction, moneyAccount.getLog(), moneyAccount.getId(), message);
+            logging(transaction, moneyAccount.getId(), message);
             System.out.println("Транзакция с id '" + transaction.getId() + "' завершена с ошибкой: " + message);
         }
         else {
@@ -69,42 +69,43 @@ public final class Processing {
         }
     }
 
+    /**
+     * Метод выполняет обновление баланса счета Игрока и сохранения в лог транзакций успешного события.
+     * @param transaction транзакция.
+     * @param moneyAccount счет Игрока.
+     */
     private static void updateAndLogging(Transaction transaction, MoneyAccount moneyAccount){
         moneyAccountService.updateBalance(moneyAccount);
         System.out.println("Транзакция с id '" + transaction.getId() + "' успешно обработана");
-        logging(transaction, moneyAccount.getLog(), moneyAccount.getId());
+        logging(transaction, moneyAccount.getId());
     }
 
     /**
-     * Логирует успешную операцию списания или пополнения, сохраняет транзакцию в списке выполненных транзакций счета.
+     * Логирует успешную операцию списания или пополнения.
      * @param transaction транзакция для обработки.
-     * @param log лог изменений счета.
      * @param moneyAccountId идентификатор Игрока.
      */
-    private static void logging(Transaction transaction, List<Action> log, long moneyAccountId){
+    private static void logging(Transaction transaction, long moneyAccountId){
         BigDecimal amount = transaction.getAmount();
         MoneyAccountAction moneyAccountAction = new MoneyAccountAction(moneyAccountId, LocalDateTime.now(),
                 "Транзакция с типом операции " + transaction.getOperation() +
                         ", суммой " + (amount.toString().contains(".") ? amount : amount + ".00") +
                         " и комментарием '" + transaction.getDescription() + "' успешно выполнена");
         moneyAccountActionService.add(moneyAccountAction);
-        log.add(moneyAccountAction);
     }
 
     /**
-     * Логирует операцию списания или пополнения, которая не удалась, сохраняет транзакцию в списке выполненных транзакций счета.
+     * Логирует операцию списания или пополнения, которая не удалась.
      * @param transaction транзакция для обработки.
-     * @param log лог изменений счета.
      * @param moneyAccountId идентификатор Игрока.
      * @param message причина отмены обработки транзакции.
      */
-    private static void logging(Transaction transaction, List<Action> log, long moneyAccountId, String message){
+    private static void logging(Transaction transaction, long moneyAccountId, String message){
         BigDecimal amount = transaction.getAmount();
         MoneyAccountAction moneyAccountAction = new MoneyAccountAction(moneyAccountId, LocalDateTime.now(),
                 "Транзакция с типом операции " + transaction.getOperation() +
                         ", суммой " + (amount.toString().contains(".") ? amount : amount + ".00") +
                         " и комментарием '" + transaction.getDescription() + "' не выполнена. Причина: " + message);
         moneyAccountActionService.add(moneyAccountAction);
-        log.add(moneyAccountAction);
     }
 }
