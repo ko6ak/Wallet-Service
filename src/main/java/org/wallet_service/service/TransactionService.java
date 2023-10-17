@@ -38,6 +38,10 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
+    public void updateProcessed(Transaction transaction){
+        transactionRepository.updateProcessed(transaction);
+    }
+
     /**
      * Метод для получения зарегистрированных, но не обработанных транзакций.
      * @return Список необработанных транзакций.

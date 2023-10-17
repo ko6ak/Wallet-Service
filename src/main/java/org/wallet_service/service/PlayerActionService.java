@@ -1,6 +1,7 @@
 package org.wallet_service.service;
 
 import org.wallet_service.entity.Action;
+import org.wallet_service.entity.PlayerAction;
 import org.wallet_service.repository.PlayerActionRepository;
 
 import java.util.List;
@@ -13,10 +14,10 @@ public class PlayerActionService {
 
     /**
      * Добавление события в список активности для каждого Игрока.
-     * @param action событие.
+     * @param playerAction событие.
      */
-    public void add(Action action){
-        playerActionRepository.add(action);
+    public void add(PlayerAction playerAction){
+        playerActionRepository.add(playerAction);
     }
 
     /**

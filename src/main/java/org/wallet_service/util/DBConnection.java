@@ -29,9 +29,9 @@ public final class DBConnection {
     private final static String DB_USERNAME = ConfigParser.username;
     private final static String DB_PASSWORD = ConfigParser.password;
 
-    public final static Connection CONNECTION = createConnection();
+    public static Connection CONNECTION = createConnection();
 
-    private static Connection createConnection() {
+    public static Connection createConnection() {
         Connection connection = null;
         try{
             Class.forName(DB_DRIVER_CLASS);

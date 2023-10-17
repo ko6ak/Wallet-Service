@@ -47,6 +47,30 @@ public class MoneyAccountRepository {
         return moneyAccount;
     }
 
+    public void updateBalance(MoneyAccount moneyAccount){
+        String query = "UPDATE wallet.money_account SET balance = ? WHERE id = ?";
+        try(PreparedStatement statement = CONNECTION.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
+            statement.setBigDecimal(1, moneyAccount.getBalance());
+            statement.setLong(2, moneyAccount.getId());
+            statement.executeUpdate();
+
+            if (statement.executeUpdate() <= 0) {
+                CONNECTION.rollback();
+                throw new SQLException("Не получилось обновить баланс");
+            }
+            CONNECTION.commit();
+        }
+        catch (SQLException e) {
+            try{
+                CONNECTION.rollback();
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Метод получает счет по его id.
      * @param id идентификатор счета.

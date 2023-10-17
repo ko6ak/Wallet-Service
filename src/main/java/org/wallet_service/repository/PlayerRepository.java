@@ -1,8 +1,6 @@
 package org.wallet_service.repository;
 
-import org.wallet_service.entity.Action;
-import org.wallet_service.entity.MoneyAccount;
-import org.wallet_service.entity.Player;
+import org.wallet_service.entity.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -23,7 +21,7 @@ public class PlayerRepository {
      */
     public Player get(String login, String password){
         Player player = null;
-        String moneyAccountActionsQuery = "SELECT * FROM wallet.money_account_actions WHERE money_account_actions.id = ?";
+        String moneyAccountActionsQuery = "SELECT * FROM wallet.money_account_actions WHERE money_account_id = ?";
         String playerQuery = "SELECT * FROM wallet.player " +
                 "JOIN wallet.money_account ON money_account.id = player.money_account_id WHERE login = ? AND password = ?";
         try(PreparedStatement moneyAccountActionsStatement = CONNECTION.prepareStatement(moneyAccountActionsQuery);
@@ -54,7 +52,7 @@ public class PlayerRepository {
      */
     public Player get(long id){
         Player player = null;
-        String moneyAccountActionsQuery = "SELECT * FROM wallet.money_account_actions WHERE money_account_actions.id = ?";
+        String moneyAccountActionsQuery = "SELECT * FROM wallet.money_account_actions WHERE money_account_id = ?";
         String playerQuery = "SELECT * FROM wallet.player " +
                 "JOIN wallet.money_account ON money_account.id = player.money_account_id WHERE player.id = ?";
         try(PreparedStatement moneyAccountActionsStatement = CONNECTION.prepareStatement(moneyAccountActionsQuery);
@@ -87,7 +85,7 @@ public class PlayerRepository {
                 playerId = result.getLong("id");
                 moneyAccountId = result.getLong("money_account_id");
                 moneyAccount = new MoneyAccount(moneyAccountId,
-                        result.getBigDecimal("balance"), playerId);
+                        result.getBigDecimal("balance"));
                 player = new Player(playerId,
                         result.getString("name"),
                         result.getString("login"),
@@ -96,14 +94,15 @@ public class PlayerRepository {
             }
             else {
                 CONNECTION.rollback();
-                throw new SQLException("Неправильный логин, пароль или id");
+                return null;
+//                throw new SQLException("Неправильный логин, пароль или id");
             }
         }
-        List<Action> actions = new ArrayList<>();
+        List<Action> moneyAccountActions = new ArrayList<>();
         moneyAccountActionsStatement.setLong(1, moneyAccountId);
         try (ResultSet result = moneyAccountActionsStatement.executeQuery()) {
             while (result.next()) {
-                actions.add(new Action(result.getInt("id"),
+                moneyAccountActions.add(new MoneyAccountAction(result.getInt("id"),
                         playerId,
                         Timestamp.valueOf(result.getString("date_time")).toLocalDateTime(),
                         result.getString("message")));
@@ -113,7 +112,7 @@ public class PlayerRepository {
             CONNECTION.rollback();
             throw new SQLException("Не удалось получить список транзакций");
         }
-        moneyAccount.setLog(actions);
+        moneyAccount.setLog(moneyAccountActions);
         return player;
     }
 

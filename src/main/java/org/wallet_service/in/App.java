@@ -1,5 +1,6 @@
 package org.wallet_service.in;
 
+import org.wallet_service.entity.Action;
 import org.wallet_service.entity.Player;
 import org.wallet_service.exception.AuthenticationException;
 import org.wallet_service.exception.TransactionException;
@@ -9,7 +10,7 @@ import org.wallet_service.util.Processing;
 import org.wallet_service.util.Beans;
 import org.wallet_service.dto.PlayerTO;
 import org.wallet_service.dto.TransactionTO;
-import org.wallet_service.entity.Action;
+import org.wallet_service.entity.PlayerAction;
 import org.wallet_service.entity.Operation;
 import org.wallet_service.exception.MessageException;
 import org.wallet_service.controller.PlayerController;
@@ -75,7 +76,10 @@ public class App {
                             transactionTO.setId(UUID.randomUUID());
                             System.out.println(transactionController.register(transactionTO, currentPlayer));
                         }
-                        case ("6") -> playerController.logout();
+                        case ("6") -> {
+                            currentPlayer = null;
+                            playerController.logout();
+                        }
                         case ("7") -> Processing.process();
                         case ("8") -> printLog(playerController.getFullLog(Long.parseLong(checkNumber(br, "Id Игрока: "))));
                         case ("9") -> {

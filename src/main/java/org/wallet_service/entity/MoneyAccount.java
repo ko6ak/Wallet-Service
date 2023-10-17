@@ -1,6 +1,5 @@
 package org.wallet_service.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -8,6 +7,7 @@ import lombok.ToString;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Класс содержит данные о Денежном счете Игрока.
@@ -19,7 +19,6 @@ import java.util.List;
 public class MoneyAccount {
     private long id;
     private BigDecimal balance;
-    private long playerId;
     private List<Action> log;
 
     /**
@@ -32,10 +31,22 @@ public class MoneyAccount {
         this.log = new ArrayList<>();
     }
 
-    public MoneyAccount(long id, BigDecimal balance, long playerId) {
+    public MoneyAccount(long id, BigDecimal balance) {
         this.id = id;
         this.balance = balance;
-        this.playerId = playerId;
         this.log = new ArrayList<>();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MoneyAccount that = (MoneyAccount) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

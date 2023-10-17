@@ -1,6 +1,8 @@
 package org.wallet_service.repository;
 
 import org.wallet_service.entity.Action;
+import org.wallet_service.entity.PlayerAction;
+import org.wallet_service.util.DBConnection;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,23 +17,24 @@ public class PlayerActionRepository {
 
     /**
      * Добавление события в список активности для каждого Игрока.
-     * @param action событие.
+     * @param playerAction событие.
      */
-    public void add(Action action){
+    public void add(PlayerAction playerAction){
         String query = "INSERT INTO wallet.player_actions(player_id, date_time, message) VALUES (?, ?, ?)";
-        try(PreparedStatement statement = CONNECTION.prepareStatement(query)){
-            statement.setLong(1, action.getPlayer_id());
-            statement.setTimestamp(2, Timestamp.valueOf(action.getDateTime()));
-            statement.setString(3, action.getMessage());
+        Connection connection = DBConnection.createConnection();
+        try(PreparedStatement statement = connection.prepareStatement(query)){
+            statement.setLong(1, playerAction.getPlayerId());
+            statement.setTimestamp(2, Timestamp.valueOf(playerAction.getDateTime()));
+            statement.setString(3, playerAction.getMessage());
             if (statement.executeUpdate() <= 0) {
-                CONNECTION.rollback();
+                connection.rollback();
                 throw new SQLException("Не получилось сохранить событие в лог Игрока");
             }
-            CONNECTION.commit();
+            connection.commit();
         }
         catch (SQLException e) {
             try{
-                CONNECTION.rollback();
+                connection.rollback();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -46,27 +49,28 @@ public class PlayerActionRepository {
      * @return Список событий Игрока.
      */
     public List<Action> get(long playerId){
+        Connection connection = DBConnection.createConnection();
         List<Action> actions = new ArrayList<>();
         String query = "SELECT * FROM wallet.player_actions WHERE player_id = ?";
-        try(PreparedStatement statement = CONNECTION.prepareStatement(query)){
+        try(PreparedStatement statement = connection.prepareStatement(query)){
             statement.setLong(1, playerId);
             try (ResultSet result = statement.executeQuery()) {
                 while (result.next()) {
-                    actions.add(new Action(result.getInt("id"),
+                    actions.add(new PlayerAction(result.getInt("id"),
                             playerId,
                             Timestamp.valueOf(result.getString("date_time")).toLocalDateTime(),
                             result.getString("message")));
                 }
             }
             catch (SQLException e) {
-                CONNECTION.rollback();
+                connection.rollback();
                 throw new SQLException("Не удалось получить список действий Игрока");
             }
-            CONNECTION.commit();
+            connection.commit();
         }
         catch (SQLException e) {
             try{
-                CONNECTION.rollback();
+                connection.rollback();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();

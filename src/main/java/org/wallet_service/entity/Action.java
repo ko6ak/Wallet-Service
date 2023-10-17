@@ -1,28 +1,34 @@
 package org.wallet_service.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-/**
- * Класс содержит данные об одном действии Игрока.
- */
 @Getter
 @Setter
-@ToString
+@NoArgsConstructor
 @AllArgsConstructor
-public class Action {
-    private long id;
-    private long player_id;
-    private LocalDateTime dateTime;
-    private String message;
+public abstract class Action {
+    long id;
+    LocalDateTime dateTime;
+    String message;
 
-    public Action(long player_id, LocalDateTime dateTime, String message) {
-        this.player_id = player_id;
+    public Action(LocalDateTime dateTime, String message) {
         this.dateTime = dateTime;
         this.message = message;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Action action = (Action) o;
+        return id == action.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

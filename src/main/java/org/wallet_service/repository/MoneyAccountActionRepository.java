@@ -1,6 +1,8 @@
 package org.wallet_service.repository;
 
 import org.wallet_service.entity.Action;
+import org.wallet_service.entity.MoneyAccountAction;
+import org.wallet_service.entity.PlayerAction;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,14 +20,14 @@ public class MoneyAccountActionRepository {
 
     /**
      * Добавление информации о совершенной транзакции для Денежного счета.
-     * @param action событие.
+     * @param moneyAccountAction событие.
      */
-    public void add(Action action){
-        String query = "INSERT INTO wallet.money_account_actions(player_id, date_time, message) VALUES (?, ?, ?)";
+    public void add(MoneyAccountAction moneyAccountAction){
+        String query = "INSERT INTO wallet.money_account_actions(money_account_id, date_time, message) VALUES (?, ?, ?)";
         try(PreparedStatement statement = CONNECTION.prepareStatement(query)){
-            statement.setLong(1, action.getPlayer_id());
-            statement.setTimestamp(2, Timestamp.valueOf(action.getDateTime()));
-            statement.setString(3, action.getMessage());
+            statement.setLong(1, moneyAccountAction.getMoneyAccountId());
+            statement.setTimestamp(2, Timestamp.valueOf(moneyAccountAction.getDateTime()));
+            statement.setString(3, moneyAccountAction.getMessage());
             if (statement.executeUpdate() <= 0) {
                 CONNECTION.rollback();
                 throw new SQLException("Не получилось сохранить событие в лог транзакций");
@@ -45,18 +47,18 @@ public class MoneyAccountActionRepository {
 
     /**
      * Получение совершенных транзакций для Денежного счета с указанным идентификатором.
-     * @param money_account_id идентификатор Денежного счета.
+     * @param moneyAccountId идентификатор Денежного счета.
      * @return Список транзакций.
      */
-    public List<Action> get(long money_account_id){
+    public List<Action> get(long moneyAccountId){
         List<Action> actions = new ArrayList<>();
-        String query = "SELECT * FROM wallet.money_account_actions WHERE player_id = ?";
+        String query = "SELECT * FROM wallet.money_account_actions WHERE money_account_id = ?";
         try(PreparedStatement statement = CONNECTION.prepareStatement(query)){
-            statement.setLong(1, money_account_id);
+            statement.setLong(1, moneyAccountId);
             try (ResultSet result = statement.executeQuery()) {
                 while (result.next()) {
-                    actions.add(new Action(result.getInt("id"),
-                            money_account_id,
+                    actions.add(new MoneyAccountAction(result.getInt("id"),
+                            moneyAccountId,
                             Timestamp.valueOf(result.getString("date_time")).toLocalDateTime(),
                             result.getString("message")));
                 }

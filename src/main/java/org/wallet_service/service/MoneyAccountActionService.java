@@ -1,9 +1,9 @@
 package org.wallet_service.service;
 
 import org.wallet_service.entity.Action;
-import org.wallet_service.entity.MoneyAccount;
+import org.wallet_service.entity.MoneyAccountAction;
+import org.wallet_service.entity.PlayerAction;
 import org.wallet_service.repository.MoneyAccountActionRepository;
-import org.wallet_service.repository.MoneyAccountRepository;
 
 import java.util.List;
 
@@ -15,18 +15,18 @@ public class MoneyAccountActionService {
 
     /**
      * Добавление информации о совершенной транзакции для Денежного счета.
-     * @param action событие.
+     * @param playerAction событие.
      */
-    public void add(Action action){
-        moneyAccountActionRepository.add(action);
+    public void add(MoneyAccountAction moneyAccountAction){
+        moneyAccountActionRepository.add(moneyAccountAction);
     }
 
     /**
      * Получение совершенных транзакций для Денежного счета с указанным идентификатором.
-     * @param money_account_id идентификатор Денежного счета.
+     * @param moneyAccountId идентификатор Денежного счета.
      * @return Список транзакций.
      */
-    public List<Action> get(long money_account_id){
-        return moneyAccountActionRepository.get(money_account_id);
+    public List<Action> get(long moneyAccountId){
+        return moneyAccountActionRepository.get(moneyAccountId);
     }
 }

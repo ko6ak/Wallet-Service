@@ -1,23 +1,21 @@
 package org.wallet_service.service;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import org.wallet_service.PlayerTestData;
 import org.wallet_service.util.Beans;
 import org.wallet_service.util.ConfigParser;
-import org.wallet_service.util.DBConnection;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collections;
+import java.sql.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.wallet_service.util.DBConnection.CONNECTION;
 
-public class PlayerActionServiceTest extends AbstractClass{
-    private static final PlayerActionService playerActionService = Beans.getPlayerActionService();
+@Testcontainers
+public class MoneyAccountPlayerActionServiceTest extends AbstractClass{
+    private static final MoneyAccountActionService moneyAccountActionService = Beans.getMoneyAccountActionService();
 
 //    @Container
 //    private static final PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:latest")
@@ -33,15 +31,16 @@ public class PlayerActionServiceTest extends AbstractClass{
 //        ConfigParser.driver = postgresContainer.getDriverClassName();
 //    }
 
+
     @Test
     void get() throws SQLException {
-        CONNECTION.createStatement().executeUpdate("DELETE FROM wallet.player_actions WHERE id = 6");
-        assertThat(playerActionService.get(1)).hasSize(5).usingRecursiveComparison().isEqualTo(PlayerTestData.ACTIONS_1);
+        CONNECTION.createStatement().executeUpdate("DELETE FROM wallet.money_account_actions WHERE id = 3");
+        assertThat(moneyAccountActionService.get(1001)).usingRecursiveComparison().isEqualTo(PlayerTestData.MONEY_ACCOUNT_ACTIONS);
     }
 
     @Test
     void add(){
-        playerActionService.add(PlayerTestData.PLAYER_ACTION_WITHOUT_ID);
-        assertThat(playerActionService.get(1)).hasSize(6).contains(PlayerTestData.PLAYER_ACTION_WITH_ID);
+        moneyAccountActionService.add(PlayerTestData.MONEY_ACCOUNT_ACTION_WITH_ID_3);
+        assertThat(moneyAccountActionService.get(1001)).containsAll(PlayerTestData.MONEY_ACCOUNT_ACTIONS_FULL).hasSize(3);
     }
 }

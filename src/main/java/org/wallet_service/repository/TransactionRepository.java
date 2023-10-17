@@ -120,6 +120,30 @@ public class TransactionRepository {
         return transaction;
     }
 
+    public void updateProcessed(Transaction transaction){
+        String query = "UPDATE wallet.transaction SET is_processed = TRUE WHERE id = ?";
+
+        try(PreparedStatement statement = CONNECTION.prepareStatement(query)) {
+            statement.setString(1, transaction.getId().toString());
+
+            if (statement.executeUpdate() <= 0) {
+                CONNECTION.rollback();
+                throw new SQLException("Не получилось изменить транзакцию");
+            }
+
+            CONNECTION.commit();
+        }
+        catch (SQLException e) {
+            try{
+                CONNECTION.rollback();
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Метод для получения зарегистрированных, но не обработанных транзакций.
      * @return Список необработанных транзакций.
@@ -156,7 +180,6 @@ public class TransactionRepository {
             }
             e.printStackTrace();
         }
-        System.out.println(transactions);
         return transactions;
     }
 }

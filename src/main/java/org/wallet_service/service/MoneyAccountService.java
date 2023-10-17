@@ -18,6 +18,10 @@ public class MoneyAccountService {
         return moneyAccountRepository.save(moneyAccount);
     }
 
+    public void updateBalance(MoneyAccount moneyAccount){
+        moneyAccountRepository.updateBalance(moneyAccount);
+    }
+
     /**
      * Метод получает счет по его id.
      * @param id идентификатор счета.
