@@ -1,10 +1,9 @@
 package org.wallet_service.controller;
 
 import org.wallet_service.dto.TransactionTO;
-import org.wallet_service.entity.Action;
+import org.wallet_service.entity.PlayerAction;
 import org.wallet_service.entity.Player;
 import org.wallet_service.entity.Transaction;
-import org.wallet_service.exception.AuthenticationException;
 import org.wallet_service.exception.TransactionException;
 import org.wallet_service.service.PlayerActionService;
 import org.wallet_service.service.TransactionService;
@@ -40,7 +39,7 @@ public class TransactionController {
         }
         else throw new TransactionException("Не уникальный id транзакции");
         BigDecimal amount = transaction.getAmount();
-        playerActionService.add(player.getId(), new Action(LocalDateTime.now(),
+        playerActionService.add(new PlayerAction(player.getId(), LocalDateTime.now(),
                 "Создана транзакция с типом операции " + transaction.getOperation() +
                 ", суммой " + (amount.toString().contains(".") ? amount : amount + ".00") +
                 " и комментарием '" + transaction.getDescription() + "'"));

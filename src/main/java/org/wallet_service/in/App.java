@@ -1,13 +1,16 @@
 package org.wallet_service.in;
 
+import org.wallet_service.entity.Action;
 import org.wallet_service.entity.Player;
 import org.wallet_service.exception.AuthenticationException;
 import org.wallet_service.exception.TransactionException;
+import org.wallet_service.util.DBConnection;
+import org.wallet_service.util.ConfigParser;
 import org.wallet_service.util.Processing;
 import org.wallet_service.util.Beans;
 import org.wallet_service.dto.PlayerTO;
 import org.wallet_service.dto.TransactionTO;
-import org.wallet_service.entity.Action;
+import org.wallet_service.entity.PlayerAction;
 import org.wallet_service.entity.Operation;
 import org.wallet_service.exception.MessageException;
 import org.wallet_service.controller.PlayerController;
@@ -24,6 +27,10 @@ import java.util.UUID;
  * Класс содержит меню управления приложением и приватные вспомогательные методы.
  */
 public class App {
+    static {
+        ConfigParser.parse();
+    }
+
     private static final PlayerController playerController = Beans.getPlayerController();
     private static final TransactionController transactionController = Beans.getTransactionController();
 
@@ -45,11 +52,10 @@ public class App {
         System.out.print("-> ");
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
-            String input;
             Player currentPlayer = null;
-            while (!(input = br.readLine()).equals("9")) {
+            while (true) {
                 try {
-                    switch (input) {
+                    switch (br.readLine()) {
                         case ("1") -> {
                             PlayerTO playerTO = new PlayerTO();
                             playerTO.setName(checkInput(br, "Имя: "));
@@ -70,9 +76,16 @@ public class App {
                             transactionTO.setId(UUID.randomUUID());
                             System.out.println(transactionController.register(transactionTO, currentPlayer));
                         }
-                        case ("6") -> playerController.logout();
+                        case ("6") -> {
+                            currentPlayer = null;
+                            playerController.logout();
+                        }
                         case ("7") -> Processing.process();
                         case ("8") -> printLog(playerController.getFullLog(Long.parseLong(checkNumber(br, "Id Игрока: "))));
+                        case ("9") -> {
+                            DBConnection.close();
+                            return;
+                        }
                     }
                     System.out.print("-> ");
                 } catch (MessageException | AuthenticationException | TransactionException e) {
@@ -82,6 +95,9 @@ public class App {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        finally {
+            DBConnection.close();
         }
     }
 

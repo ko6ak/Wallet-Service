@@ -1,0 +1,18 @@
+version: "1.0"
+name: wallet-service
+services:
+  postgres:
+    container_name: psgrs
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: "wallet_db"
+      POSTGRES_USER: "wallet_user"
+      POSTGRES_PASSWORD: "wallet_password"
+    ports:
+      - "5432:5432"
+  liquibase:
+    container_name: liquibase
+    image: liquibase/liquibase:latest
+    command: liquibase execute-sql --sql="CREATE SCHEMA IF NOT EXISTS migration" --url="jdbc:postgresql://postgres:5432/wallet_db" --username=wallet_user --password=wallet_password
+    depends_on:
+      - postgres

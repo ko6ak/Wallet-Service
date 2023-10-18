@@ -1,0 +1,86 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.10.xsd">
+
+    <changeSet id="002-insert-data" author="ko6ak">
+
+        <insert tableName="money_account">
+            <column name="id" valueSequenceNext="money_account_seq"/>
+            <column name="balance" valueNumeric="300.01"/>
+        </insert>
+
+        <insert tableName="player">
+            <column name="id" valueSequenceNext="player_seq"/>
+            <column name="name" value="Иван"/>
+            <column name="login" value="ivan@gmail.com"/>
+            <column name="password" value="12345"/>
+            <column name="money_account_id" valueNumeric="1001"/>
+        </insert>
+
+        <insert tableName="player_actions">
+            <column name="id" valueSequenceNext="player_actions_seq"/>
+            <column name="player_id" valueNumeric="1"/>
+            <column name="date_time" value="2023-10-13 09:10:10"/>
+            <column name="message" value="Успешная регистрация"/>
+        </insert>
+        <insert tableName="player_actions">
+            <column name="id" valueSequenceNext="player_actions_seq"/>
+            <column name="player_id" valueNumeric="1"/>
+            <column name="date_time" value="2023-10-13 09:11:10"/>
+            <column name="message" value="Успешный вход"/>
+        </insert>
+        <insert tableName="player_actions">
+            <column name="id" valueSequenceNext="player_actions_seq"/>
+            <column name="player_id" valueNumeric="1"/>
+            <column name="date_time" value="2023-10-13 09:12:10"/>
+            <column name="message" value="Создана транзакция с типом операции CREDIT, суммой 1000.00 и комментарием 'transaction #1'"/>
+        </insert>
+        <insert tableName="player_actions">
+            <column name="id" valueSequenceNext="player_actions_seq"/>
+            <column name="player_id" valueNumeric="1"/>
+            <column name="date_time" value="2023-10-13 09:13:10"/>
+            <column name="message" value="Создана транзакция с типом операции DEBIT, суммой 699.99 и комментарием 'transaction #2'"/>
+        </insert>
+        <insert tableName="player_actions">
+            <column name="id" valueSequenceNext="player_actions_seq"/>
+            <column name="player_id" valueNumeric="1"/>
+            <column name="date_time" value="2023-10-13 09:15:10"/>
+            <column name="message" value="Успешный выход"/>
+        </insert>
+
+        <insert tableName="money_account_actions">
+            <column name="id" valueSequenceNext="money_account_actions_seq"/>
+            <column name="money_account_id" valueNumeric="1001"/>
+            <column name="date_time" value="2023-10-13 09:14:10"/>
+            <column name="message" value="Транзакция с типом операции CREDIT, суммой 1000.00 и комментарием 'transaction #1' успешно выполнена'"/>
+        </insert>
+        <insert tableName="money_account_actions">
+            <column name="id" valueSequenceNext="money_account_actions_seq"/>
+            <column name="money_account_id" valueNumeric="1001"/>
+            <column name="date_time" value="2023-10-13 09:14:20"/>
+            <column name="message" value="Транзакция с типом операции DEBIT, суммой 699.99 и комментарием 'transaction #2' успешно выполнена"/>
+        </insert>
+
+        <insert tableName="transaction">
+            <column name="id" value="694bc4c1-2987-4bd3-a71b-5809ef6686c1"/>
+            <column name="date_time" value="2023-10-13 09:14:10"/>
+            <column name="description" value="transaction #1"/>
+            <column name="operation" value="CREDIT"/>
+            <column name="amount" valueNumeric="1000.00"/>
+            <column name="money_account_id" valueNumeric="1001"/>
+            <column name="is_processed" value="TRUE"/>
+        </insert>
+        <insert tableName="transaction">
+            <column name="id" value="6d4c78d7-b8b0-4e3a-a488-46508fe91e20"/>
+            <column name="date_time" value="2023-10-13 09:14:20"/>
+            <column name="description" value="transaction #2"/>
+            <column name="operation" value="DEBIT"/>
+            <column name="amount" valueNumeric="699.99"/>
+            <column name="money_account_id" valueNumeric="1001"/>
+            <column name="is_processed" value="TRUE"/>
+        </insert>
+
+    </changeSet>
+</databaseChangeLog>

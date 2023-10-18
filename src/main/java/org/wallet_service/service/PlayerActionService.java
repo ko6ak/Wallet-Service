@@ -1,6 +1,7 @@
 package org.wallet_service.service;
 
 import org.wallet_service.entity.Action;
+import org.wallet_service.entity.PlayerAction;
 import org.wallet_service.repository.PlayerActionRepository;
 
 import java.util.List;
@@ -13,11 +14,10 @@ public class PlayerActionService {
 
     /**
      * Добавление события в список активности для каждого Игрока.
-     * @param id идентификатор Игрока.
-     * @param action событие.
+     * @param playerAction событие.
      */
-    public void add(long id, Action action){
-        playerActionRepository.add(id, action);
+    public void add(PlayerAction playerAction){
+        playerActionRepository.add(playerAction);
     }
 
     /**
@@ -27,13 +27,5 @@ public class PlayerActionService {
      */
     public List<Action> get(long id){
         return playerActionRepository.get(id);
-    }
-
-    /**
-     * Удаляет все содержимое из хранилища.
-     * Используется только для тестовых классов.
-     */
-    public void clear(){
-        playerActionRepository.clear();
     }
 }

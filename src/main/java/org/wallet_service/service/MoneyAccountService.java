@@ -19,19 +19,19 @@ public class MoneyAccountService {
     }
 
     /**
+     * Метод для обновления баланса счета.
+     * @param moneyAccount счет.
+     */
+    public void updateBalance(MoneyAccount moneyAccount){
+        moneyAccountRepository.updateBalance(moneyAccount);
+    }
+
+    /**
      * Метод получает счет по его id.
      * @param id идентификатор счета.
      * @return Денежный счет.
      */
     public MoneyAccount get(long id){
         return moneyAccountRepository.get(id);
-    }
-
-    /**
-     * Удаляет все содержимое из хранилища и возвращает генерируемое значение к начальному значению.
-     * Используется только для тестовых классов.
-     */
-    public void clear(){
-        moneyAccountRepository.clear();
     }
 }

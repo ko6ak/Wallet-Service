@@ -9,69 +9,92 @@ import java.time.Month;
 import java.util.*;
 
 public class PlayerTestData {
-    public static final MoneyAccount ACCOUNT_WITHOUT_ID;
-    public static final MoneyAccount ACCOUNT_WITH_ID;
-    public static final MoneyAccount ACCOUNT_1;
-    public static final MoneyAccount ACCOUNT_2;
-    public static final MoneyAccount ACCOUNT_FOR_PLAYER_1;
+    public static final MoneyAccount ACCOUNT_1002_WITHOUT_ID;
+    public static final MoneyAccount ACCOUNT_1001_WITH_ID;
+    public static final MoneyAccount ACCOUNT_1001_WITH_LOG;
+    public static final MoneyAccount ACCOUNT_1002_WITH_ID;
+    public static final MoneyAccount CHANGED_BALANCE_ACCOUNT_1001_WITH_ID;
+//    public static final MoneyAccount ACCOUNT_1;
+//    public static final MoneyAccount ACCOUNT_2;
+    public static final MoneyAccount ACCOUNT_FOR_PLAYER_2;
 
     public static Player PLAYER_1;
-    public static Player PLAYER_WITHOUT_ID;
-    public static Player PLAYER_WITH_ID;
+    public static Player PLAYER_2;
+    public static Player PLAYER_2_WITHOUT_ID;
+    public static Player PLAYER_2_WITH_ID;
+    public static Player PLAYER_1_WITH_ID;
 
     public static PlayerTO PLAYER_TO;
     public static PlayerTO PLAYER_TO_WITH_BAD_LOGIN;
     public static PlayerTO PLAYER_TO_WITH_BAD_PASSWORD;
 
-    public static final Action ACTION_1 = new Action(LocalDateTime.of(2023, Month.OCTOBER, 9, 17, 10, 30), "Успешная регистрация");
-    public static final Action ACTION_2 = new Action(LocalDateTime.of(2023, Month.OCTOBER, 9, 17, 11, 40), "Успешный вход");
-    public static final Action ACTION_3 = new Action(LocalDateTime.of(2023, Month.OCTOBER, 9, 17, 12, 50), "Успешный выход");
-    public static final Action ACTION_4 = new Action(LocalDateTime.of(2023, Month.OCTOBER, 9, 17, 16, 35), "Успешная регистрация");
-
-    public static final Action CREATED_TRANSACTION_ACTION_1 = new Action(LocalDateTime.of(2023, Month.OCTOBER, 9, 17, 11, 50),
+    public static final PlayerAction PLAYER_ACTION_1 = new PlayerAction(1, 1, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 10, 10), "Успешная регистрация");
+    public static final PlayerAction PLAYER_ACTION_2 = new PlayerAction(2, 1, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 11, 10), "Успешный вход");
+    public static final PlayerAction CREATED_TRANSACTION_PLAYER_ACTION_1 = new PlayerAction(3, 1, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 12, 10),
             "Создана транзакция с типом операции CREDIT, суммой 1000.00 и комментарием 'transaction #1'");
-    public static final Action CREATED_TRANSACTION_ACTION_2 = new Action(LocalDateTime.of(2023, Month.OCTOBER, 9, 17, 12, 5),
+    public static final PlayerAction CREATED_TRANSACTION_PLAYER_ACTION_2 = new PlayerAction(4, 1, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 13, 10),
             "Создана транзакция с типом операции DEBIT, суммой 699.99 и комментарием 'transaction #2'");
+    public static final PlayerAction PLAYER_ACTION_3 = new PlayerAction(5, 1, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 15, 10), "Успешный выход");
+    public static final PlayerAction PLAYER_ACTION_WITH_ID = new PlayerAction(6, 1, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 23, 35), "Успешный вход");
 
-    public static final Action PROCESSED_TRANSACTION_ACTION_1 = new Action(LocalDateTime.of(2023, Month.OCTOBER, 9, 17, 12, 15),
+    public static final PlayerAction PLAYER_ACTION_WITHOUT_ID = new PlayerAction(1, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 23, 35), "Успешный вход");
+
+    public static final MoneyAccountAction MONEY_ACCOUNT_ACTION_WITH_ID_1 = new MoneyAccountAction(1, 1001, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 14, 10),
             "Транзакция с типом операции CREDIT, суммой 1000.00 и комментарием 'transaction #1' успешно выполнена");
-    public static final Action PROCESSED_TRANSACTION_ACTION_2 = new Action(LocalDateTime.of(2023, Month.OCTOBER, 9, 17, 12, 18),
+    public static final MoneyAccountAction MONEY_ACCOUNT_ACTION_WITH_ID_2 = new MoneyAccountAction(2, 1001, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 14, 20),
             "Транзакция с типом операции DEBIT, суммой 699.99 и комментарием 'transaction #2' успешно выполнена");
+    public static final MoneyAccountAction MONEY_ACCOUNT_ACTION_WITH_ID_3 = new MoneyAccountAction(3, 1001, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 14, 30),
+            "Транзакция с типом операции DEBIT, суммой 400.00 и комментарием 'transaction #3' не выполнена. Причина: Баланс меньше списываемой суммы");
 
-    public static final List<Action> ACTIONS_1 = new ArrayList<>();
-    public static final List<Action> ACTIONS_2 = new ArrayList<>();
-    public static final List<Action> TRANSACTION_ACTIONS = new ArrayList<>();
-    public static final List<Action> FULL_ACTIONS = new ArrayList<>();
+//    public static final MoneyAccountAction MONEY_ACCOUNT_ACTION_WITHOUT_ID_1 = new MoneyAccountAction(1001, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 14, 10),
+//            "Транзакция с типом операции CREDIT, суммой 1000.00 и комментарием 'transaction #1' успешно выполнена");
+//    public static final MoneyAccountAction MONEY_ACCOUNT_ACTION_WITHOUT_ID_2 = new MoneyAccountAction(1001, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 14, 20),
+//            "Транзакция с типом операции DEBIT, суммой 699.99 и комментарием 'transaction #2' успешно выполнена");
+
+    public static final List<PlayerAction> ACTIONS_1 = new ArrayList<>();
+//    public static final List<PlayerAction> ACTIONS_2 = new ArrayList<>();
+    public static final List<Action> MONEY_ACCOUNT_ACTIONS = new ArrayList<>();
+    public static final List<Action> MONEY_ACCOUNT_ACTIONS_FULL = new ArrayList<>();
+    public static final List<Action> FULL_PLAYER_ACTIONS = new ArrayList<>();
 
     static {
-        ACCOUNT_WITHOUT_ID = new MoneyAccount(new BigDecimal("0.00"), new ArrayList<>());
+        ACCOUNT_1002_WITHOUT_ID = new MoneyAccount(new BigDecimal("1200.00"));
+        ACCOUNT_1002_WITH_ID = new MoneyAccount(1002, new BigDecimal("1200.00"));
 
-        ACCOUNT_WITH_ID = new MoneyAccount(new BigDecimal("0.00"), new ArrayList<>());
-        ACCOUNT_WITH_ID.setId(1001);
+        ACCOUNT_1001_WITH_ID = new MoneyAccount(1001, new BigDecimal("300.01"));
 
-        ACCOUNT_1 = new MoneyAccount(new BigDecimal("0.00"), new ArrayList<>());
-        PLAYER_WITHOUT_ID = new Player("Петр", "petr@ya.ru", "4321", ACCOUNT_1);
+        CHANGED_BALANCE_ACCOUNT_1001_WITH_ID = new MoneyAccount(1001, new BigDecimal("500.00"));
 
-        ACCOUNT_2 = new MoneyAccount(new BigDecimal("0.00"), new ArrayList<>());
-        PLAYER_WITH_ID = new Player("Петр", "petr@ya.ru", "4321", ACCOUNT_2);
-        PLAYER_WITH_ID.setId(1);
+        ACCOUNT_1001_WITH_LOG = new MoneyAccount(1001, new BigDecimal("300.01"));
+        ACCOUNT_1001_WITH_LOG.setLog(MONEY_ACCOUNT_ACTIONS);
 
-        ACCOUNT_FOR_PLAYER_1 = new MoneyAccount(new BigDecimal("0.00"), new ArrayList<>());
-        ACCOUNT_FOR_PLAYER_1.setId(1001);
-        PLAYER_1 = new Player("Иван", "ivan@ya.ru", "1234", ACCOUNT_FOR_PLAYER_1);
-        PLAYER_1.setId(1);
-        ACCOUNT_FOR_PLAYER_1.setPlayerId(1);
+        PLAYER_2_WITHOUT_ID = new Player("Петр", "petr@ya.ru", "4321", ACCOUNT_1002_WITH_ID);
+        PLAYER_2_WITH_ID = new Player(2, "Петр", "petr@ya.ru", "4321", ACCOUNT_1002_WITH_ID);
 
-        PLAYER_TO = new PlayerTO("Иван", "ivan@ya.ru", "1234");
-        PLAYER_TO_WITH_BAD_LOGIN = new PlayerTO("Иван", "ivashka@ya.ru", "1234");
-        PLAYER_TO_WITH_BAD_PASSWORD = new PlayerTO("Иван", "ivan@ya.ru", "1234567");
+        PLAYER_1_WITH_ID = new Player(1, "Иван", "ivan@gmail.com", "12345", ACCOUNT_1001_WITH_LOG);
 
-        Collections.addAll(ACTIONS_1, ACTION_1, ACTION_2, ACTION_3);
-        Collections.addAll(ACTIONS_2, ACTION_4);
-        Collections.addAll(TRANSACTION_ACTIONS, PROCESSED_TRANSACTION_ACTION_1, PROCESSED_TRANSACTION_ACTION_2);
-        FULL_ACTIONS.addAll(TRANSACTION_ACTIONS);
-        FULL_ACTIONS.addAll(ACTIONS_1);
-        Collections.addAll(FULL_ACTIONS, CREATED_TRANSACTION_ACTION_1, CREATED_TRANSACTION_ACTION_2);
-        FULL_ACTIONS.sort(Comparator.comparing(Action::getDateTime));
+        ACCOUNT_FOR_PLAYER_2 = new MoneyAccount(1002, new BigDecimal("0.00"));
+        PLAYER_2 = new Player(2,"Петр", "petr@ya.ru", "4321", ACCOUNT_FOR_PLAYER_2);
+
+        PLAYER_TO = new PlayerTO("Петр", "petr@ya.ru", "4321");
+        PLAYER_TO_WITH_BAD_LOGIN = new PlayerTO("Иван", "ivashka@gmail.com", "12345");
+        PLAYER_TO_WITH_BAD_PASSWORD = new PlayerTO("Иван", "ivan@gmail.com", "1234567");
+
+
+
+
+        Collections.addAll(ACTIONS_1, PLAYER_ACTION_1, PLAYER_ACTION_2, PLAYER_ACTION_3, CREATED_TRANSACTION_PLAYER_ACTION_1, CREATED_TRANSACTION_PLAYER_ACTION_2);
+        ACTIONS_1.sort(Comparator.comparing(Action::getDateTime));
+//        ACTIONS_2.addAll(ACTIONS_1);
+//        ACTIONS_2.addAll(PLAYER_ACTION_WITHOUT_ID);
+
+        Collections.addAll(MONEY_ACCOUNT_ACTIONS, MONEY_ACCOUNT_ACTION_WITH_ID_1, MONEY_ACCOUNT_ACTION_WITH_ID_2);
+        MONEY_ACCOUNT_ACTIONS_FULL.addAll(MONEY_ACCOUNT_ACTIONS);
+        MONEY_ACCOUNT_ACTIONS_FULL.add(MONEY_ACCOUNT_ACTION_WITH_ID_3);
+
+        FULL_PLAYER_ACTIONS.addAll(MONEY_ACCOUNT_ACTIONS);
+        FULL_PLAYER_ACTIONS.addAll(ACTIONS_1);
+//        Collections.addAll(FULL_PLAYER_ACTIONS, MONEY_ACCOUNT_ACTION_WITH_ID_1, MONEY_ACCOUNT_ACTION_WITH_ID_2);
+        FULL_PLAYER_ACTIONS.sort(Comparator.comparing(Action::getDateTime));
     }
 }

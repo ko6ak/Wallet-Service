@@ -1,8 +1,11 @@
 package org.wallet_service.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.Objects;
 
 /**
  * Класс содержит данные об Игроке.
@@ -10,6 +13,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
 public class Player {
     private long id;
     private String name;
@@ -29,5 +33,18 @@ public class Player {
         this.login = login;
         this.password = password;
         this.moneyAccount = moneyAccount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return id == player.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
