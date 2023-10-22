@@ -1,36 +1,35 @@
 package org.wallet_service.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
 import java.util.Objects;
 
 /**
  * Класс содержит данные об Игроке.
  */
-@Getter
-@Setter
-@ToString
-@AllArgsConstructor
 public class Player {
     private long id;
     private String name;
-    private String login;
+    private String email;
     private String password;
     private MoneyAccount moneyAccount;
 
     /**
      * Создает объект Игрока
      * @param name имя
-     * @param login логин
+     * @param email логин
      * @param password пароль
      * @param moneyAccount денежный счет
      */
-    public Player(String name, String login, String password, MoneyAccount moneyAccount) {
+    public Player(String name, String email, String password, MoneyAccount moneyAccount) {
         this.name = name;
-        this.login = login;
+        this.email = email;
+        this.password = password;
+        this.moneyAccount = moneyAccount;
+    }
+
+    public Player(long id, String name, String email, String password, MoneyAccount moneyAccount) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
         this.password = password;
         this.moneyAccount = moneyAccount;
     }
@@ -46,5 +45,56 @@ public class Player {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public MoneyAccount getMoneyAccount() {
+        return moneyAccount;
+    }
+
+    public void setMoneyAccount(MoneyAccount moneyAccount) {
+        this.moneyAccount = moneyAccount;
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", moneyAccount=" + moneyAccount +
+                '}';
     }
 }

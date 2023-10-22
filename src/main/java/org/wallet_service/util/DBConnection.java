@@ -1,8 +1,5 @@
 package org.wallet_service.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -10,12 +7,14 @@ import java.sql.SQLException;
 /**
  * Класс создает подключение к БД.
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DBConnection {
     private final static String DB_DRIVER_CLASS = ConfigParser.driver;
     private final static String DB_URL = ConfigParser.url;
     private final static String DB_USERNAME = ConfigParser.username;
     private final static String DB_PASSWORD = ConfigParser.password;
+
+    private DBConnection() {
+    }
 
     /**
      * Созданное подключение.

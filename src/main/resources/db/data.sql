@@ -14,7 +14,7 @@ CREATE TABLE money_account (
 CREATE TABLE player (
     id                  BIGINT      PRIMARY KEY DEFAULT nextval('player_seq'),
     name                VARCHAR     NOT NULL,
-    login               VARCHAR     NOT NULL,
+    email               VARCHAR     NOT NULL,
     password            VARCHAR     NOT NULL,
     money_account_id    BIGINT      NOT NULL,
     FOREIGN KEY (money_account_id) REFERENCES money_account (id)
@@ -50,7 +50,7 @@ CREATE TABLE transaction (
 
 INSERT INTO money_account(balance) VALUES (300.01);
 
-INSERT INTO player(name, login, password, money_account_id) VALUES ('Иван', 'ivan@gmail.com', '12345', 1001);
+INSERT INTO player(name, email, password, money_account_id) VALUES ('Иван', 'ivan@gmail.com', '12345', 1001);
 
 INSERT INTO player_actions(player_id, date_time, message)
 VALUES (1, '2023-10-13 09:10:10', 'Успешная регистрация'),

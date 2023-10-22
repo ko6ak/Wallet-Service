@@ -27,7 +27,7 @@ public class MoneyAccountActionRepository {
         try(PreparedStatement statement = CONNECTION.prepareStatement(query)){
 
             statement.setLong(1, moneyAccountAction.getMoneyAccountId());
-            statement.setTimestamp(2, Timestamp.valueOf(moneyAccountAction.getDateTime()));
+            statement.setTimestamp(2, moneyAccountAction.getDateTime());
             statement.setString(3, moneyAccountAction.getMessage());
 
             if (statement.executeUpdate() <= 0) {
@@ -63,7 +63,7 @@ public class MoneyAccountActionRepository {
                 while (result.next()) {
                     actions.add(new MoneyAccountAction(result.getInt("id"),
                             moneyAccountId,
-                            Timestamp.valueOf(result.getString("date_time")).toLocalDateTime(),
+                            Timestamp.valueOf(result.getString("date_time")),
                             result.getString("message")));
                 }
             }

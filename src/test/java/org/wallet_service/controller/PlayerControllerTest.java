@@ -29,16 +29,16 @@ public class PlayerControllerTest extends AbstractServiceTest {
 
     @Test
     void login() throws SQLException {
-        assertThat(playerController.login(PlayerTestData.PLAYER_1_WITH_ID.getLogin(), PlayerTestData.PLAYER_1_WITH_ID.getPassword())).usingRecursiveComparison()
+        assertThat(playerController.login(PlayerTestData.PLAYER_1_WITH_ID.getEmail(), PlayerTestData.PLAYER_1_WITH_ID.getPassword())).usingRecursiveComparison()
                 .isEqualTo(PlayerTestData.PLAYER_1_WITH_ID);
-        assertThatThrownBy(() -> playerController.login(PlayerTestData.PLAYER_1_WITH_ID.getLogin(), PlayerTestData.PLAYER_1_WITH_ID.getPassword()))
+        assertThatThrownBy(() -> playerController.login(PlayerTestData.PLAYER_1_WITH_ID.getEmail(), PlayerTestData.PLAYER_1_WITH_ID.getPassword()))
                 .isInstanceOf(AuthenticationException.class)
                 .hasMessage("Сначала нужно выйти");
         playerController.logout();
-        assertThatThrownBy(() -> playerController.login(PlayerTestData.PLAYER_TO_WITH_BAD_LOGIN.getLogin(), PlayerTestData.PLAYER_TO_WITH_BAD_LOGIN.getPassword()))
+        assertThatThrownBy(() -> playerController.login(PlayerTestData.PLAYER_TO_WITH_BAD_LOGIN.getEmail(), PlayerTestData.PLAYER_TO_WITH_BAD_LOGIN.getPassword()))
                 .isInstanceOf(AuthenticationException.class)
                 .hasMessage("Игрок с таким логином не найден");
-        assertThatThrownBy(() -> playerController.login(PlayerTestData.PLAYER_TO_WITH_BAD_PASSWORD.getLogin(), PlayerTestData.PLAYER_TO_WITH_BAD_PASSWORD.getPassword()))
+        assertThatThrownBy(() -> playerController.login(PlayerTestData.PLAYER_TO_WITH_BAD_PASSWORD.getEmail(), PlayerTestData.PLAYER_TO_WITH_BAD_PASSWORD.getPassword()))
                 .isInstanceOf(AuthenticationException.class)
                 .hasMessage("Неправильный пароль");
         CONNECTION.createStatement().executeUpdate("DELETE FROM wallet.player_actions WHERE id > 5");
@@ -46,7 +46,7 @@ public class PlayerControllerTest extends AbstractServiceTest {
 
     @Test
     void logout() throws SQLException {
-        playerController.login(PlayerTestData.PLAYER_1_WITH_ID.getLogin(), PlayerTestData.PLAYER_1_WITH_ID.getPassword());
+        playerController.login(PlayerTestData.PLAYER_1_WITH_ID.getEmail(), PlayerTestData.PLAYER_1_WITH_ID.getPassword());
         playerController.logout();
         assertThatThrownBy(playerController::logout)
                 .isInstanceOf(AuthenticationException.class)
@@ -56,7 +56,7 @@ public class PlayerControllerTest extends AbstractServiceTest {
 
     @Test
     void getBalance() throws SQLException {
-        playerController.login(PlayerTestData.PLAYER_1_WITH_ID.getLogin(), PlayerTestData.PLAYER_1_WITH_ID.getPassword());
+        playerController.login(PlayerTestData.PLAYER_1_WITH_ID.getEmail(), PlayerTestData.PLAYER_1_WITH_ID.getPassword());
         assertThat(playerController.getBalance()).isEqualTo("Баланс вашего счета: 300.01");
         playerController.logout();
         assertThatThrownBy(playerController::getBalance)
@@ -67,7 +67,7 @@ public class PlayerControllerTest extends AbstractServiceTest {
 
     @Test
     void getTransactionLog() throws SQLException {
-        playerController.login(PlayerTestData.PLAYER_1_WITH_ID.getLogin(), PlayerTestData.PLAYER_1_WITH_ID.getPassword());
+        playerController.login(PlayerTestData.PLAYER_1_WITH_ID.getEmail(), PlayerTestData.PLAYER_1_WITH_ID.getPassword());
         assertThat(playerController.getTransactionLog()).hasSize(2).hasSameElementsAs(PlayerTestData.MONEY_ACCOUNT_ACTIONS);
         playerController.logout();
         assertThatThrownBy(playerController::getTransactionLog)

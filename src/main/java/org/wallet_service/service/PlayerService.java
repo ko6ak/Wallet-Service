@@ -11,12 +11,12 @@ public class PlayerService {
 
     /**
      * Получение Игрока по его логину и паролю.
-     * @param login логин Игрока.
+     * @param email логин Игрока.
      * @param password пароль Игрока.
      * @return Игрока обернутого в Optional.
      */
-    public Player get(String login, String password){
-        return playerRepository.get(login, password);
+    public Player get(String email, String password){
+        return playerRepository.get(email, password);
     }
 
     /**
@@ -39,10 +39,10 @@ public class PlayerService {
 
     /**
      * Проверяет существование Игрока в хранилище по его логину.
-     * @param login логин Игрока.
+     * @param email логин Игрока.
      * @return true/false в зависимости от наличия Игрока в хранилище.
      */
-    public boolean isFound(String login){
-        return playerRepository.isFound(login);
+    public boolean isFound(String email){
+        return playerRepository.isFound(email);
     }
 }

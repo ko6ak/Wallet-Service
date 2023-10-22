@@ -14,7 +14,7 @@
         <insert tableName="player">
             <column name="id" valueSequenceNext="player_seq"/>
             <column name="name" value="Иван"/>
-            <column name="login" value="ivan@gmail.com"/>
+            <column name="email" value="ivan@gmail.com"/>
             <column name="password" value="12345"/>
             <column name="money_account_id" valueNumeric="1001"/>
         </insert>

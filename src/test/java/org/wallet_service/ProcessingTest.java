@@ -17,7 +17,7 @@ public class ProcessingTest extends AbstractServiceTest {
 
     @Test
     void process() throws SQLException {
-        playerController.login(PlayerTestData.PLAYER_1_WITH_ID.getLogin(), PlayerTestData.PLAYER_1_WITH_ID.getPassword());
+        playerController.login(PlayerTestData.PLAYER_1_WITH_ID.getEmail(), PlayerTestData.PLAYER_1_WITH_ID.getPassword());
         CONNECTION.createStatement().executeUpdate("TRUNCATE TABLE wallet.transaction; UPDATE wallet.money_account SET balance = 0 WHERE id = 1001");
         transactionController.register(TransactionTestData.TRANSACTION_TO_1, PlayerTestData.PLAYER_1_WITH_ID);
         Processing.process();

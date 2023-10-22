@@ -1,7 +1,6 @@
 package org.wallet_service.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.wallet_service.controller.TransactionController;
 import org.wallet_service.service.*;
 import org.wallet_service.controller.PlayerController;
@@ -9,7 +8,6 @@ import org.wallet_service.controller.PlayerController;
 /**
  * Класс позволяет получить различные, уже созданные, объекты.
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Beans {
     private static final PlayerService playerService = new PlayerService();
     private static final MoneyAccountService moneyAccountService = new MoneyAccountService();
@@ -18,6 +16,10 @@ public final class Beans {
     private static final TransactionService transactionService = new TransactionService();
     private static final TransactionController transactionController = new TransactionController();
     private static final PlayerController playerController = new PlayerController();
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    private Beans() {
+    }
 
     public static PlayerService getPlayerService() {
         return playerService;
@@ -46,4 +48,6 @@ public final class Beans {
     public static MoneyAccountActionService getMoneyAccountActionService() {
         return moneyAccountActionService;
     }
+
+    public static ObjectMapper getObjectMapper() { return mapper; }
 }

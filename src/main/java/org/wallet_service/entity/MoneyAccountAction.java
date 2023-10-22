@@ -1,16 +1,11 @@
 package org.wallet_service.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 /**
  * Класс содержит информацию о действии для одной транзакции.
  */
-@Getter
-@Setter
 public class MoneyAccountAction extends Action {
     private long moneyAccountId;
 
@@ -20,7 +15,7 @@ public class MoneyAccountAction extends Action {
      * @param dateTime время события.
      * @param message сообщение.
      */
-    public MoneyAccountAction(long moneyAccountId, LocalDateTime dateTime, String message) {
+    public MoneyAccountAction(long moneyAccountId, Timestamp dateTime, String message) {
         super(dateTime, message);
         this.moneyAccountId = moneyAccountId;
     }
@@ -32,7 +27,7 @@ public class MoneyAccountAction extends Action {
      * @param dateTime время события.
      * @param message сообщение.
      */
-    public MoneyAccountAction(long id, long moneyAccountId, LocalDateTime dateTime, String message) {
+    public MoneyAccountAction(long id, long moneyAccountId, Timestamp dateTime, String message) {
         super(id, dateTime, message);
         this.moneyAccountId = moneyAccountId;
     }
@@ -45,5 +40,13 @@ public class MoneyAccountAction extends Action {
                 ", message='" + message + '\'' +
                 ", moneyAccountId=" + moneyAccountId +
                 '}';
+    }
+
+    public long getMoneyAccountId() {
+        return moneyAccountId;
+    }
+
+    public void setMoneyAccountId(long moneyAccountId) {
+        this.moneyAccountId = moneyAccountId;
     }
 }

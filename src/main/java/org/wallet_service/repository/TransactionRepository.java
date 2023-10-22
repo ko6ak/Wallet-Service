@@ -193,6 +193,7 @@ public class TransactionRepository {
             }
             e.printStackTrace();
         }
+        transactions.sort(Comparator.comparing(Transaction::getDateTime));
         return transactions;
     }
 }

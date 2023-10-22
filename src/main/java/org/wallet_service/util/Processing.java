@@ -1,32 +1,34 @@
 package org.wallet_service.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.wallet_service.entity.*;
+import org.wallet_service.exception.TransactionException;
 import org.wallet_service.service.MoneyAccountActionService;
 import org.wallet_service.service.MoneyAccountService;
 import org.wallet_service.controller.TransactionController;
 import org.wallet_service.service.TransactionService;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
 /**
  * Класс, отвечающий за обработку зарегистрированных транзакций.
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Processing {
     private static final TransactionController transactionController = Beans.getTransactionController();
     private static final TransactionService transactionService = Beans.getTransactionService();
     private static final MoneyAccountService moneyAccountService = Beans.getMoneyAccountService();
     private static final MoneyAccountActionService moneyAccountActionService = Beans.getMoneyAccountActionService();
 
+    private Processing() {
+    }
+
     /**
      * Метод получает не обработанные транзакции и обрабатывает их в соответствии с типом операции.
      * Выводит сообщение о завершении обработки или если транзакций для обработки нет. Не прерывает работу если транзакцию выполнить не удалось.
      */
-    public static void process(){
+    public static String process(){
         List<Transaction> transactions = transactionController.getNotProcessed();
         if (!transactions.isEmpty()) {
             transactions.forEach(t -> {
@@ -36,9 +38,9 @@ public final class Processing {
                 }
                 transactionService.updateProcessed(t);
             });
-            System.out.println("Все транзакции обработаны");
+            return "Все транзакции обработаны";
         }
-        else System.out.println("Нет транзакций для обработки");
+        else return "Нет транзакций для обработки";
     }
 
     /**
@@ -48,7 +50,7 @@ public final class Processing {
     private static void credit(Transaction transaction) {
         MoneyAccount moneyAccount = moneyAccountService.get(transaction.getMoneyAccountId());
         moneyAccount.setBalance(moneyAccount.getBalance().add(transaction.getAmount()));
-        updateAndLogging(transaction, moneyAccount);
+        moneyAccountService.updateBalance(moneyAccount);
     }
 
     /**
@@ -59,53 +61,11 @@ public final class Processing {
         MoneyAccount moneyAccount = moneyAccountService.get(transaction.getMoneyAccountId());
         BigDecimal balance = moneyAccount.getBalance();
         if (balance.compareTo(transaction.getAmount()) < 0) {
-            String message = "Баланс меньше списываемой суммы";
-            logging(transaction, moneyAccount.getId(), message);
-            System.out.println("Транзакция с id '" + transaction.getId() + "' завершена с ошибкой: " + message);
+            throw new TransactionException("Баланс меньше списываемой суммы");
         }
         else {
             moneyAccount.setBalance(moneyAccount.getBalance().subtract(transaction.getAmount()));
-            updateAndLogging(transaction, moneyAccount);
+            moneyAccountService.updateBalance(moneyAccount);
         }
-    }
-
-    /**
-     * Метод выполняет обновление баланса счета Игрока и сохранения в лог транзакций успешного события.
-     * @param transaction транзакция.
-     * @param moneyAccount счет Игрока.
-     */
-    private static void updateAndLogging(Transaction transaction, MoneyAccount moneyAccount){
-        moneyAccountService.updateBalance(moneyAccount);
-        System.out.println("Транзакция с id '" + transaction.getId() + "' успешно обработана");
-        logging(transaction, moneyAccount.getId());
-    }
-
-    /**
-     * Логирует успешную операцию списания или пополнения.
-     * @param transaction транзакция для обработки.
-     * @param moneyAccountId идентификатор Игрока.
-     */
-    private static void logging(Transaction transaction, long moneyAccountId){
-        BigDecimal amount = transaction.getAmount();
-        MoneyAccountAction moneyAccountAction = new MoneyAccountAction(moneyAccountId, LocalDateTime.now(),
-                "Транзакция с типом операции " + transaction.getOperation() +
-                        ", суммой " + (amount.toString().contains(".") ? amount : amount + ".00") +
-                        " и комментарием '" + transaction.getDescription() + "' успешно выполнена");
-        moneyAccountActionService.add(moneyAccountAction);
-    }
-
-    /**
-     * Логирует операцию списания или пополнения, которая не удалась.
-     * @param transaction транзакция для обработки.
-     * @param moneyAccountId идентификатор Игрока.
-     * @param message причина отмены обработки транзакции.
-     */
-    private static void logging(Transaction transaction, long moneyAccountId, String message){
-        BigDecimal amount = transaction.getAmount();
-        MoneyAccountAction moneyAccountAction = new MoneyAccountAction(moneyAccountId, LocalDateTime.now(),
-                "Транзакция с типом операции " + transaction.getOperation() +
-                        ", суммой " + (amount.toString().contains(".") ? amount : amount + ".00") +
-                        " и комментарием '" + transaction.getDescription() + "' не выполнена. Причина: " + message);
-        moneyAccountActionService.add(moneyAccountAction);
     }
 }
