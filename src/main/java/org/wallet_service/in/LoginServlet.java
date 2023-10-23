@@ -21,6 +21,9 @@ import java.io.IOException;
 
 import static org.wallet_service.util.Util.getJSONFromRequest;
 
+/**
+ * Сервлет обслуживающий запрос на вход в приложение по логину и паролю.
+ */
 public class LoginServlet extends HttpServlet {
     private static final PlayerController playerController = Beans.getPlayerController();
     private static final ObjectMapper mapper = Beans.getObjectMapper();

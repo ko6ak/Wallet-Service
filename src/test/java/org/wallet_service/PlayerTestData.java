@@ -15,11 +15,8 @@ public class PlayerTestData {
     public static final MoneyAccount ACCOUNT_1001_WITH_LOG;
     public static final MoneyAccount ACCOUNT_1002_WITH_ID;
     public static final MoneyAccount CHANGED_BALANCE_ACCOUNT_1001_WITH_ID;
-//    public static final MoneyAccount ACCOUNT_1;
-//    public static final MoneyAccount ACCOUNT_2;
     public static final MoneyAccount ACCOUNT_FOR_PLAYER_2;
 
-    public static Player PLAYER_1;
     public static Player PLAYER_2;
     public static Player PLAYER_2_WITHOUT_ID;
     public static Player PLAYER_2_WITH_ID;
@@ -47,13 +44,7 @@ public class PlayerTestData {
     public static final MoneyAccountAction MONEY_ACCOUNT_ACTION_WITH_ID_3 = new MoneyAccountAction(3, 1001, Timestamp.valueOf(LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 14, 30)),
             "Транзакция с типом операции DEBIT, суммой 400.00 и комментарием 'transaction #3' не выполнена. Причина: Баланс меньше списываемой суммы");
 
-//    public static final MoneyAccountAction MONEY_ACCOUNT_ACTION_WITHOUT_ID_1 = new MoneyAccountAction(1001, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 14, 10),
-//            "Транзакция с типом операции CREDIT, суммой 1000.00 и комментарием 'transaction #1' успешно выполнена");
-//    public static final MoneyAccountAction MONEY_ACCOUNT_ACTION_WITHOUT_ID_2 = new MoneyAccountAction(1001, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 14, 20),
-//            "Транзакция с типом операции DEBIT, суммой 699.99 и комментарием 'transaction #2' успешно выполнена");
-
     public static final List<PlayerAction> ACTIONS_1 = new ArrayList<>();
-//    public static final List<PlayerAction> ACTIONS_2 = new ArrayList<>();
     public static final List<Action> MONEY_ACCOUNT_ACTIONS = new ArrayList<>();
     public static final List<Action> MONEY_ACCOUNT_ACTIONS_FULL = new ArrayList<>();
     public static final List<Action> FULL_PLAYER_ACTIONS = new ArrayList<>();
@@ -80,13 +71,8 @@ public class PlayerTestData {
         PLAYER_TO_WITH_BAD_LOGIN = new PlayerTO("Иван", "ivashka@gmail.com", "12345");
         PLAYER_TO_WITH_BAD_PASSWORD = new PlayerTO("Иван", "ivan@gmail.com", "1234567");
 
-
-
-
         Collections.addAll(ACTIONS_1, PLAYER_ACTION_1, PLAYER_ACTION_2, PLAYER_ACTION_3, CREATED_TRANSACTION_PLAYER_ACTION_1, CREATED_TRANSACTION_PLAYER_ACTION_2);
         ACTIONS_1.sort(Comparator.comparing(Action::getDateTime));
-//        ACTIONS_2.addAll(ACTIONS_1);
-//        ACTIONS_2.addAll(PLAYER_ACTION_WITHOUT_ID);
 
         Collections.addAll(MONEY_ACCOUNT_ACTIONS, MONEY_ACCOUNT_ACTION_WITH_ID_1, MONEY_ACCOUNT_ACTION_WITH_ID_2);
         MONEY_ACCOUNT_ACTIONS_FULL.addAll(MONEY_ACCOUNT_ACTIONS);
@@ -94,7 +80,6 @@ public class PlayerTestData {
 
         FULL_PLAYER_ACTIONS.addAll(MONEY_ACCOUNT_ACTIONS);
         FULL_PLAYER_ACTIONS.addAll(ACTIONS_1);
-//        Collections.addAll(FULL_PLAYER_ACTIONS, MONEY_ACCOUNT_ACTION_WITH_ID_1, MONEY_ACCOUNT_ACTION_WITH_ID_2);
         FULL_PLAYER_ACTIONS.sort(Comparator.comparing(Action::getDateTime));
     }
 }

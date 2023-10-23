@@ -29,11 +29,11 @@ public class PlayerController {
 
 
     /**
-     * Регистрация Player.
-     * Метод регистрирует Игрока в системе и создает для него Денежный счет (MoneyAccount). Метод выводит в консоль id Игрока и id его Денежного счета.
+     * Регистрация Игрока.
+     * Метод регистрирует Игрока в системе и создает для него Денежный счет (MoneyAccount).
      * @param playerTO содержит первичные данные об Игроке, полученные от пользовательского интерфейса.
-     * @return Сообщение об успешной регистрации.
-     * @throws AuthenticationException если Игрок с таким логином уже есть в системе.
+     * @return игрока.
+     * @throws AuthenticationException если Игрок с таким email уже есть в системе.
      */
     public Player registration(PlayerTO playerTO) {
         if (!playerService.isFound(playerTO.getEmail())) {
@@ -44,11 +44,11 @@ public class PlayerController {
     }
 
     /**
-     * Метод позволяет Игроку залогинится в системе.
+     * Метод позволяет Игроку залогинится в системе. Создает токен аутентификации.
      * @param email логин Игрока.
      * @param password пароль Игрока.
      * @return объект Игрока.
-     * @throws AuthenticationException если Игрок с таким логином уже залогинен, если такого логина нет в системе или введен неправильный пароль.
+     * @throws AuthenticationException если Игрок с таким email уже вошел, если такого email нет в системе или введен неправильный пароль.
      */
     public Player login(String email, String password){
         if (getCurrentPlayer() == null) {
@@ -65,6 +65,7 @@ public class PlayerController {
 
     /**
      * Метод выхода из системы.
+     * @param token токен вошедшего Игрока.
      * @throws AuthenticationException если Игрок не залогинен.
      */
     public String logout(String token){
@@ -78,14 +79,18 @@ public class PlayerController {
 
     /**
      * Метод возвращает баланс залогиненного игрока.
+     * @param token токен вошедшего Игрока.
      * @return баланс залогиненного игрока.
-     * @throws AuthenticationException если Игрок не залогинен.
+     * @throws AuthenticationException если Игрок не залогинен, токен из параметра метода не совпадает с сохраненным в системе или токен просрочен.
      */
     public String getBalance(String token){
         Player currentPlayer = getCurrentPlayer();
         if (currentPlayer != null && token.equals(getToken())) {
-            if (JWT.isValid(token)) return playerService.get(currentPlayer.getId()).getMoneyAccount().getBalance().toString();
-            else {
+            try{
+                JWT.validate(token);
+                return playerService.get(currentPlayer.getId()).getMoneyAccount().getBalance().toString();
+            }
+            catch (AuthenticationException e){
                 setCurrentPlayer(null);
                 setToken(null);
                 throw new AuthenticationException("Токен просрочен, залогинтесь заново");
@@ -96,14 +101,18 @@ public class PlayerController {
 
     /**
      * Метод позволяет получить лог транзакций залогиненного Игрока.
+     * @param token токен вошедшего Игрока.
      * @return Лог транзакций.
-     * @throws AuthenticationException если Игрок не залогинен.
+     * @throws AuthenticationException если Игрок не залогинен, токен из параметра метода не совпадает с сохраненным в системе или токен просрочен.
      */
     public List<Action> getTransactionLog(String token){
         Player currentPlayer = getCurrentPlayer();
         if (currentPlayer != null && token.equals(getToken())) {
-            if (JWT.isValid(token)) return moneyAccountActionService.get(currentPlayer.getMoneyAccount().getId());
-            else {
+            try{
+                JWT.validate(token);
+                return moneyAccountActionService.get(currentPlayer.getMoneyAccount().getId());
+            }
+            catch (AuthenticationException e){
                 setCurrentPlayer(null);
                 setToken(null);
                 throw new AuthenticationException("Токен просрочен, залогинтесь заново");

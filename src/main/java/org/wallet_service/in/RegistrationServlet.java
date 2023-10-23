@@ -26,6 +26,9 @@ import java.util.*;
 
 import static org.wallet_service.util.Util.getJSONFromRequest;
 
+/**
+ * Сервлет обслуживающий запрос регистрации нового Игрока.
+ */
 public class RegistrationServlet extends HttpServlet {
     private static final PlayerController playerController = Beans.getPlayerController();
     private static final ObjectMapper mapper = Beans.getObjectMapper();

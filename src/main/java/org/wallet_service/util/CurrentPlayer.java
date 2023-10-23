@@ -2,6 +2,9 @@ package org.wallet_service.util;
 
 import org.wallet_service.entity.Player;
 
+/**
+ * Класс содержащий информацию о текущем Игроке и токен сессии для него.
+ */
 public final class CurrentPlayer {
     private static Player currentPlayer;
     private static String token;

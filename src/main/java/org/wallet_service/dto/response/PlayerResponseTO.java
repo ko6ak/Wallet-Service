@@ -3,7 +3,7 @@ package org.wallet_service.dto.response;
 import org.wallet_service.entity.MoneyAccount;
 
 /**
- * Класс содержит данные об Игроке.
+ * Класс содержит ответные данные об Игроке.
  */
 public class PlayerResponseTO {
     private long id;

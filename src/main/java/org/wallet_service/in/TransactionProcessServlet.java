@@ -14,6 +14,9 @@ import org.wallet_service.util.Processing;
 
 import java.io.IOException;
 
+/**
+ * Сервлет обслуживающий запрос выполнения транзакций.
+ */
 public class TransactionProcessServlet extends HttpServlet {
     private static final ObjectMapper mapper = Beans.getObjectMapper();
 

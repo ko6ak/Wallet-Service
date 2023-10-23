@@ -24,6 +24,9 @@ import java.util.List;
 
 import static org.wallet_service.util.Util.getJSONFromRequest;
 
+/**
+ * Сервлет обслуживающий запрос лога транзакций для счета Игрока.
+ */
 public class TransactionLogServlet extends HttpServlet {
     private static final PlayerController playerController = Beans.getPlayerController();
     private static final ObjectMapper mapper = Beans.getObjectMapper();

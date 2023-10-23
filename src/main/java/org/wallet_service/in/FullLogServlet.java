@@ -22,6 +22,9 @@ import java.util.List;
 
 import static org.wallet_service.util.Util.getJSONFromRequest;
 
+/**
+ * Сервлет обслуживающий запрос полного лога для Игрока.
+ */
 public class FullLogServlet extends HttpServlet {
     private static final PlayerController playerController = Beans.getPlayerController();
     private static final ObjectMapper mapper = Beans.getObjectMapper();

@@ -30,6 +30,9 @@ import java.util.UUID;
 
 import static org.wallet_service.util.Util.getJSONFromRequest;
 
+/**
+ * Сервлет обслуживающий запрос регистрации транзакции.
+ */
 public class TransactionRegisterServlet extends HttpServlet {
     private static final TransactionController transactionController = Beans.getTransactionController();
     private static final ObjectMapper mapper = Beans.getObjectMapper();

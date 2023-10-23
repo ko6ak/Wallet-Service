@@ -2,6 +2,9 @@ package org.wallet_service.dto.response;
 
 import java.sql.Timestamp;
 
+/**
+ * Класс содержит, возвращаемую из приложения, информацию о действии Игрока или информацию о транзакции для счета Игрока.
+ */
 public class ActionResponseTO {
     private Timestamp dateTime;
     private String message;

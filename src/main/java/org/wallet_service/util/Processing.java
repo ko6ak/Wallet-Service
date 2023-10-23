@@ -34,7 +34,7 @@ public final class Processing {
             transactions.forEach(t -> {
                 switch (t.getOperation()) {
                     case CREDIT -> credit(t);
-                    case DEBIT -> debit(t);
+                    case DEBIT -> { try{ debit(t); } catch (TransactionException e) {}}
                 }
                 transactionService.updateProcessed(t);
             });
