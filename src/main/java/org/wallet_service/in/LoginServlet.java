@@ -15,11 +15,13 @@ import org.wallet_service.exception.AuthenticationException;
 import org.wallet_service.mapper.PlayerResponseMapper;
 import org.wallet_service.util.Beans;
 import org.wallet_service.util.ConfigParser;
+import org.wallet_service.util.CurrentPlayer;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 
-public class AuthenticationServlet extends HttpServlet {
+import static org.wallet_service.util.Util.getJSONFromRequest;
+
+public class LoginServlet extends HttpServlet {
     private static final PlayerController playerController = Beans.getPlayerController();
     private static final ObjectMapper mapper = Beans.getObjectMapper();
 
@@ -33,15 +35,7 @@ public class AuthenticationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
 
-        StringBuilder sb = new StringBuilder();
-        try(BufferedReader reader = req.getReader()) {
-            String input;
-            while ((input = reader.readLine()) != null) {
-                sb.append(input).append('\n');
-            }
-        }
-
-        JsonNode jsonNode = mapper.readTree(sb.toString());
+        JsonNode jsonNode = mapper.readTree(getJSONFromRequest(req));
         String email = jsonNode.get("email").asText();
         String password = jsonNode.get("password").asText();
 
@@ -49,23 +43,9 @@ public class AuthenticationServlet extends HttpServlet {
             Player player = playerController.login(email, password);
             getServletConfig().getServletContext().setAttribute("player", player);
             PlayerResponseTO playerResponseTO = PlayerResponseMapper.INSTANCE.playerToPlayerResponseTO(player);
+            playerResponseTO.setToken(CurrentPlayer.getToken());
             resp.setStatus(HttpServletResponse.SC_OK);
             mapper.writeValue(resp.getWriter(), playerResponseTO);
-        }
-        catch (AuthenticationException e) {
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            mapper.writeValue(resp.getWriter(), new MessageResponseTO(e.getMessage()));
-        }
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json");
-
-        try{
-            getServletConfig().getServletContext().setAttribute("player", null);
-            resp.setStatus(HttpServletResponse.SC_OK);
-            mapper.writeValue(resp.getWriter(), new MessageResponseTO(playerController.logout()));
         }
         catch (AuthenticationException e) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

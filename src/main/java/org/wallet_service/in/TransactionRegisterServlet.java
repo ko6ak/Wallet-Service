@@ -12,8 +12,8 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.wallet_service.controller.TransactionController;
-import org.wallet_service.dto.response.MessageResponseTO;
 import org.wallet_service.dto.TransactionTO;
+import org.wallet_service.dto.response.MessageResponseTO;
 import org.wallet_service.entity.Operation;
 import org.wallet_service.entity.Player;
 import org.wallet_service.exception.AuthenticationException;
@@ -21,13 +21,16 @@ import org.wallet_service.exception.TransactionException;
 import org.wallet_service.util.Beans;
 import org.wallet_service.util.ConfigParser;
 import org.wallet_service.util.CurrentPlayer;
-import org.wallet_service.util.Processing;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
-public class TransactionServlet extends HttpServlet {
+import static org.wallet_service.util.Util.getJSONFromRequest;
+
+public class TransactionRegisterServlet extends HttpServlet {
     private static final TransactionController transactionController = Beans.getTransactionController();
     private static final ObjectMapper mapper = Beans.getObjectMapper();
 
@@ -44,41 +47,21 @@ public class TransactionServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json");
-
-        try{
-            resp.setStatus(HttpServletResponse.SC_OK);
-            mapper.writeValue(resp.getWriter(), new MessageResponseTO(Processing.process()));
-        }
-        catch (TransactionException e) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            mapper.writeValue(resp.getWriter(), new MessageResponseTO(e.getMessage()));
-        }
-    }
-
-    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
 
-        StringBuilder sb = new StringBuilder();
-        try(BufferedReader reader = req.getReader()) {
-            String input;
-            while ((input = reader.readLine()) != null) {
-                sb.append(input).append('\n');
-            }
-        }
-
-        JsonNode jsonNode = mapper.readTree(sb.toString());
+        JsonNode jsonNode = mapper.readTree(getJSONFromRequest(req));
         String id = jsonNode.get("id").asText();
         String operation = jsonNode.get("operation").asText();
         String amount = jsonNode.get("amount").asText();
         String description = jsonNode.get("description").asText();
+        String token = jsonNode.get("token").asText();
 
         TransactionTO transactionTO = new TransactionTO(UUID.fromString(id),
                 Operation.valueOf(operation),
                 amount,
-                description);
+                description,
+                token);
 
         Set<ConstraintViolation<TransactionTO>> violations = validator.validate(transactionTO);
 

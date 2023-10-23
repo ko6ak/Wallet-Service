@@ -9,6 +9,7 @@ public class PlayerResponseTO {
     private long id;
     private String name;
     private String email;
+    private String token;
     private MoneyAccount moneyAccount;
 
     public PlayerResponseTO(long id, String name, String email, MoneyAccount moneyAccount) {
@@ -48,5 +49,13 @@ public class PlayerResponseTO {
 
     public void setMoneyAccount(MoneyAccount moneyAccount) {
         this.moneyAccount = moneyAccount;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

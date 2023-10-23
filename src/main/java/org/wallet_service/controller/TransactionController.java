@@ -11,12 +11,15 @@ import org.wallet_service.service.PlayerActionService;
 import org.wallet_service.service.TransactionService;
 import org.wallet_service.util.Beans;
 import org.wallet_service.util.CurrentPlayer;
+import org.wallet_service.util.JWT;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+
+import static org.wallet_service.util.CurrentPlayer.*;
 
 /**
  * Класс отвечает за обслуживание Транзакций.
@@ -34,11 +37,16 @@ public class TransactionController {
      */
     public String register(TransactionTO transactionTO){
         Player currentPlayer = CurrentPlayer.getCurrentPlayer();
-        if (currentPlayer == null) throw new AuthenticationException("Сначала нужно залогинится");
+        String token = transactionTO.getToken();
+        if (currentPlayer == null || !token.equals(getToken())) throw new AuthenticationException("Сначала нужно залогинится");
+        if (!JWT.isValid(token)) {
+            setCurrentPlayer(null);
+            setToken(null);
+            throw new AuthenticationException("Токен просрочен, залогинтесь заново");
+        }
         UUID id = transactionTO.getId();
-        if (id == null) throw new TransactionException("Нет id транзакции");
         if (!transactionService.isFound(id)) {
-            transactionService.save(new Transaction(transactionTO.getId(), LocalDateTime.now(), transactionTO.getDescription(),
+            transactionService.save(new Transaction(id, LocalDateTime.now(), transactionTO.getDescription(),
                     transactionTO.getOperation(), new BigDecimal(transactionTO.getAmount()), currentPlayer.getMoneyAccount().getId(), false));
         }
         else throw new TransactionException("Не уникальный id транзакции");

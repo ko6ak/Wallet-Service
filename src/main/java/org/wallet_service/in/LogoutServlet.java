@@ -8,16 +8,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.wallet_service.controller.PlayerController;
 import org.wallet_service.dto.response.MessageResponseTO;
-import org.wallet_service.entity.Player;
 import org.wallet_service.exception.AuthenticationException;
 import org.wallet_service.util.Beans;
-import org.wallet_service.util.CurrentPlayer;
 
 import java.io.IOException;
 
 import static org.wallet_service.util.Util.getJSONFromRequest;
 
-public class BalanceServlet extends HttpServlet {
+public class LogoutServlet extends HttpServlet {
     private static final PlayerController playerController = Beans.getPlayerController();
     private static final ObjectMapper mapper = Beans.getObjectMapper();
 
@@ -29,9 +27,10 @@ public class BalanceServlet extends HttpServlet {
         String token = jsonNode.get("token").asText();
 
         try{
-            CurrentPlayer.setCurrentPlayer((Player) getServletConfig().getServletContext().getAttribute("player"));
+            String logout = playerController.logout(token);
+            getServletConfig().getServletContext().setAttribute("player", null);
             resp.setStatus(HttpServletResponse.SC_OK);
-            mapper.writeValue(resp.getWriter(), new MessageResponseTO(playerController.getBalance(token)));
+            mapper.writeValue(resp.getWriter(), new MessageResponseTO(logout));
         }
         catch (AuthenticationException e) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

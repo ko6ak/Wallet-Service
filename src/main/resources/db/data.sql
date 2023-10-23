@@ -19,7 +19,7 @@ CREATE TABLE player (
     money_account_id    BIGINT      NOT NULL,
     FOREIGN KEY (money_account_id) REFERENCES money_account (id)
 );
-CREATE UNIQUE INDEX unique_login_index ON player (login);
+CREATE UNIQUE INDEX unique_email_index ON player (email);
 
 CREATE TABLE money_account_actions (
     id                  BIGINT      PRIMARY KEY DEFAULT nextval('money_account_actions_seq'),

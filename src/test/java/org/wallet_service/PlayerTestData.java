@@ -4,6 +4,7 @@ import org.wallet_service.dto.PlayerTO;
 import org.wallet_service.entity.*;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
@@ -28,22 +29,22 @@ public class PlayerTestData {
     public static PlayerTO PLAYER_TO_WITH_BAD_LOGIN;
     public static PlayerTO PLAYER_TO_WITH_BAD_PASSWORD;
 
-    public static final PlayerAction PLAYER_ACTION_1 = new PlayerAction(1, 1, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 10, 10), "Успешная регистрация");
-    public static final PlayerAction PLAYER_ACTION_2 = new PlayerAction(2, 1, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 11, 10), "Успешный вход");
-    public static final PlayerAction CREATED_TRANSACTION_PLAYER_ACTION_1 = new PlayerAction(3, 1, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 12, 10),
+    public static final PlayerAction PLAYER_ACTION_1 = new PlayerAction(1, 1, Timestamp.valueOf(LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 10, 10)), "Успешная регистрация");
+    public static final PlayerAction PLAYER_ACTION_2 = new PlayerAction(2, 1, Timestamp.valueOf(LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 11, 10)), "Успешный вход");
+    public static final PlayerAction CREATED_TRANSACTION_PLAYER_ACTION_1 = new PlayerAction(3, 1, Timestamp.valueOf(LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 12, 10)),
             "Создана транзакция с типом операции CREDIT, суммой 1000.00 и комментарием 'transaction #1'");
-    public static final PlayerAction CREATED_TRANSACTION_PLAYER_ACTION_2 = new PlayerAction(4, 1, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 13, 10),
+    public static final PlayerAction CREATED_TRANSACTION_PLAYER_ACTION_2 = new PlayerAction(4, 1, Timestamp.valueOf(LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 13, 10)),
             "Создана транзакция с типом операции DEBIT, суммой 699.99 и комментарием 'transaction #2'");
-    public static final PlayerAction PLAYER_ACTION_3 = new PlayerAction(5, 1, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 15, 10), "Успешный выход");
-    public static final PlayerAction PLAYER_ACTION_WITH_ID = new PlayerAction(6, 1, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 23, 35), "Успешный вход");
+    public static final PlayerAction PLAYER_ACTION_3 = new PlayerAction(5, 1, Timestamp.valueOf(LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 15, 10)), "Успешный выход");
+    public static final PlayerAction PLAYER_ACTION_WITH_ID = new PlayerAction(6, 1, Timestamp.valueOf(LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 23, 35)), "Успешный вход");
 
-    public static final PlayerAction PLAYER_ACTION_WITHOUT_ID = new PlayerAction(1, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 23, 35), "Успешный вход");
+    public static final PlayerAction PLAYER_ACTION_WITHOUT_ID = new PlayerAction(1, Timestamp.valueOf(LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 23, 35)), "Успешный вход");
 
-    public static final MoneyAccountAction MONEY_ACCOUNT_ACTION_WITH_ID_1 = new MoneyAccountAction(1, 1001, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 14, 10),
+    public static final MoneyAccountAction MONEY_ACCOUNT_ACTION_WITH_ID_1 = new MoneyAccountAction(1, 1001, Timestamp.valueOf(LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 14, 10)),
             "Транзакция с типом операции CREDIT, суммой 1000.00 и комментарием 'transaction #1' успешно выполнена");
-    public static final MoneyAccountAction MONEY_ACCOUNT_ACTION_WITH_ID_2 = new MoneyAccountAction(2, 1001, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 14, 20),
+    public static final MoneyAccountAction MONEY_ACCOUNT_ACTION_WITH_ID_2 = new MoneyAccountAction(2, 1001, Timestamp.valueOf(LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 14, 20)),
             "Транзакция с типом операции DEBIT, суммой 699.99 и комментарием 'transaction #2' успешно выполнена");
-    public static final MoneyAccountAction MONEY_ACCOUNT_ACTION_WITH_ID_3 = new MoneyAccountAction(3, 1001, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 14, 30),
+    public static final MoneyAccountAction MONEY_ACCOUNT_ACTION_WITH_ID_3 = new MoneyAccountAction(3, 1001, Timestamp.valueOf(LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 14, 30)),
             "Транзакция с типом операции DEBIT, суммой 400.00 и комментарием 'transaction #3' не выполнена. Причина: Баланс меньше списываемой суммы");
 
 //    public static final MoneyAccountAction MONEY_ACCOUNT_ACTION_WITHOUT_ID_1 = new MoneyAccountAction(1001, LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 14, 10),
@@ -66,17 +67,16 @@ public class PlayerTestData {
         CHANGED_BALANCE_ACCOUNT_1001_WITH_ID = new MoneyAccount(1001, new BigDecimal("500.00"));
 
         ACCOUNT_1001_WITH_LOG = new MoneyAccount(1001, new BigDecimal("300.01"));
-        ACCOUNT_1001_WITH_LOG.setLog(MONEY_ACCOUNT_ACTIONS);
 
-        PLAYER_2_WITHOUT_ID = new Player("Петр", "petr@ya.ru", "4321", ACCOUNT_1002_WITH_ID);
-        PLAYER_2_WITH_ID = new Player(2, "Петр", "petr@ya.ru", "4321", ACCOUNT_1002_WITH_ID);
+        PLAYER_2_WITHOUT_ID = new Player("Петр", "petr@ya.ru", "54321", ACCOUNT_1002_WITH_ID);
+        PLAYER_2_WITH_ID = new Player(2, "Петр", "petr@ya.ru", "54321", ACCOUNT_1002_WITH_ID);
 
         PLAYER_1_WITH_ID = new Player(1, "Иван", "ivan@gmail.com", "12345", ACCOUNT_1001_WITH_LOG);
 
         ACCOUNT_FOR_PLAYER_2 = new MoneyAccount(1002, new BigDecimal("0.00"));
-        PLAYER_2 = new Player(2,"Петр", "petr@ya.ru", "4321", ACCOUNT_FOR_PLAYER_2);
+        PLAYER_2 = new Player(2,"Петр", "petr@ya.ru", "54321", ACCOUNT_FOR_PLAYER_2);
 
-        PLAYER_TO = new PlayerTO("Петр", "petr@ya.ru", "4321");
+        PLAYER_TO = new PlayerTO("Петр", "petr@ya.ru", "54321");
         PLAYER_TO_WITH_BAD_LOGIN = new PlayerTO("Иван", "ivashka@gmail.com", "12345");
         PLAYER_TO_WITH_BAD_PASSWORD = new PlayerTO("Иван", "ivan@gmail.com", "1234567");
 

@@ -10,6 +10,7 @@ import org.wallet_service.service.MoneyAccountService;
 import org.wallet_service.service.PlayerActionService;
 import org.wallet_service.service.PlayerService;
 import org.wallet_service.util.Beans;
+import org.wallet_service.util.JWT;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -54,8 +55,9 @@ public class PlayerController {
             if (!playerService.isFound(email)) throw new AuthenticationException("Игрок с таким email не найден");
             Player player = playerService.get(email, password);
             if (player == null) throw new AuthenticationException("Неправильный пароль");
+            String token = JWT.create(player);
+            setToken(token);
             setCurrentPlayer(player);
-//            playerActionService.add(new PlayerAction(getCurrentPlayer().getId(), Timestamp.valueOf(LocalDateTime.now()), "Успешный вход"));
             return getCurrentPlayer();
         }
         else throw new AuthenticationException("Сначала нужно выйти");
@@ -65,10 +67,10 @@ public class PlayerController {
      * Метод выхода из системы.
      * @throws AuthenticationException если Игрок не залогинен.
      */
-    public String logout(){
-        Player currentPlayer = getCurrentPlayer();
-        if (currentPlayer != null) {
+    public String logout(String token){
+        if (getCurrentPlayer() != null && token.equals(getToken())) {
             setCurrentPlayer(null);
+            setToken(null);
             return "Пока!";
         }
         else throw new AuthenticationException("Вы не залогинены");
@@ -79,10 +81,15 @@ public class PlayerController {
      * @return баланс залогиненного игрока.
      * @throws AuthenticationException если Игрок не залогинен.
      */
-    public String getBalance(){
+    public String getBalance(String token){
         Player currentPlayer = getCurrentPlayer();
-        if (currentPlayer != null) {
-            return playerService.get(currentPlayer.getId()).getMoneyAccount().getBalance().toString();
+        if (currentPlayer != null && token.equals(getToken())) {
+            if (JWT.isValid(token)) return playerService.get(currentPlayer.getId()).getMoneyAccount().getBalance().toString();
+            else {
+                setCurrentPlayer(null);
+                setToken(null);
+                throw new AuthenticationException("Токен просрочен, залогинтесь заново");
+            }
         }
         else throw new AuthenticationException("Вы не залогинены");
     }
@@ -92,10 +99,17 @@ public class PlayerController {
      * @return Лог транзакций.
      * @throws AuthenticationException если Игрок не залогинен.
      */
-    public List<Action> getTransactionLog(){
+    public List<Action> getTransactionLog(String token){
         Player currentPlayer = getCurrentPlayer();
-        if (currentPlayer == null) throw new AuthenticationException("Сначала залогинтесь");
-        return moneyAccountActionService.get(currentPlayer.getMoneyAccount().getId());
+        if (currentPlayer != null && token.equals(getToken())) {
+            if (JWT.isValid(token)) return moneyAccountActionService.get(currentPlayer.getMoneyAccount().getId());
+            else {
+                setCurrentPlayer(null);
+                setToken(null);
+                throw new AuthenticationException("Токен просрочен, залогинтесь заново");
+            }
+        }
+        else throw new AuthenticationException("Сначала залогинтесь");
     }
 
     /**

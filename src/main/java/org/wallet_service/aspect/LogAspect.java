@@ -14,7 +14,6 @@ import org.wallet_service.service.MoneyAccountActionService;
 import org.wallet_service.service.PlayerActionService;
 import org.wallet_service.util.CurrentPlayer;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
@@ -35,7 +34,7 @@ public class LogAspect {
         playerActionService.add(new PlayerAction(getCurrentPlayer().getId(), Timestamp.valueOf(LocalDateTime.now()), "Успешный вход"));
     }
 
-    @Around("execution(* org.wallet_service.controller.PlayerController.logout())")
+    @Around("execution(* org.wallet_service.controller.PlayerController.logout(*))")
     public String loggingLogout(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         String result;
         try{
@@ -51,12 +50,12 @@ public class LogAspect {
         return result;
     }
 
-    @AfterReturning("execution(* org.wallet_service.controller.PlayerController.getBalance())")
+    @AfterReturning("execution(* org.wallet_service.controller.PlayerController.getBalance(*))")
     public void loggingBalance() {
         playerActionService.add(new PlayerAction(getCurrentPlayer().getId(), Timestamp.valueOf(LocalDateTime.now()), "Вывод информации о балансе"));
     }
 
-    @AfterReturning("execution(* org.wallet_service.controller.PlayerController.getTransactionLog())")
+    @AfterReturning("execution(* org.wallet_service.controller.PlayerController.getTransactionLog(*))")
     public void loggingTransactionLog() {
         playerActionService.add(new PlayerAction(getCurrentPlayer().getId(), Timestamp.valueOf(LocalDateTime.now()), "Вывод лога транзакций"));
     }

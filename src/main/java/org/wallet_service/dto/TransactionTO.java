@@ -16,7 +16,6 @@ public class TransactionTO {
     @NotNull
     private Operation operation;
 
-    @NotNull
     @Pattern(regexp = "\\d+\\.\\d{2}", message = "должно соответствовать формату 0.00")
     @DecimalMin("0.01")
     private String amount;
@@ -24,11 +23,15 @@ public class TransactionTO {
     @NotBlank
     private String description;
 
-    public TransactionTO(UUID id, Operation operation, String amount, String description) {
+    @NotBlank
+    private String token;
+
+    public TransactionTO(UUID id, Operation operation, String amount, String description, String token) {
         this.id = id;
         this.operation = operation;
         this.amount = amount;
         this.description = description;
+        this.token = token;
     }
 
     public TransactionTO() {
@@ -64,5 +67,13 @@ public class TransactionTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

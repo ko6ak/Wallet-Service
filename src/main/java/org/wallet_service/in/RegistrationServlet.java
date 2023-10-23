@@ -14,13 +14,17 @@ import jakarta.validation.ValidatorFactory;
 import org.wallet_service.controller.PlayerController;
 import org.wallet_service.dto.response.MessageResponseTO;
 import org.wallet_service.dto.PlayerTO;
+import org.wallet_service.dto.response.PlayerResponseTO;
+import org.wallet_service.entity.Player;
 import org.wallet_service.exception.AuthenticationException;
+import org.wallet_service.mapper.PlayerResponseMapper;
 import org.wallet_service.util.Beans;
 import org.wallet_service.util.ConfigParser;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.*;
+
+import static org.wallet_service.util.Util.getJSONFromRequest;
 
 public class RegistrationServlet extends HttpServlet {
     private static final PlayerController playerController = Beans.getPlayerController();
@@ -42,15 +46,7 @@ public class RegistrationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
 
-        StringBuilder sb = new StringBuilder();
-        try(BufferedReader reader = req.getReader()) {
-            String input;
-            while ((input = reader.readLine()) != null) {
-                sb.append(input).append('\n');
-            }
-        }
-
-        JsonNode jsonNode = mapper.readTree(sb.toString());
+        JsonNode jsonNode = mapper.readTree(getJSONFromRequest(req));
         String name = jsonNode.get("name").asText();
         String login = jsonNode.get("email").asText();
         String password = jsonNode.get("password").asText();
@@ -69,8 +65,10 @@ public class RegistrationServlet extends HttpServlet {
         }
 
         try{
-            mapper.writeValue(resp.getWriter(), playerController.registration(playerTO));
+            Player player = playerController.registration(playerTO);
+            PlayerResponseTO playerResponseTO = PlayerResponseMapper.INSTANCE.playerToPlayerResponseTO(player);
             resp.setStatus(HttpServletResponse.SC_CREATED);
+            mapper.writeValue(resp.getWriter(), playerResponseTO);
         }
         catch (AuthenticationException e) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

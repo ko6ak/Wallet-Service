@@ -30,12 +30,6 @@
       <version>5.10.0</version>
       <scope>test</scope>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>org.projectlombok</groupId>-->
-<!--      <artifactId>lombok</artifactId>-->
-<!--      <version>1.18.30</version>-->
-<!--      <scope>provided</scope>-->
-<!--    </dependency>-->
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
@@ -85,18 +79,12 @@
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjrt</artifactId>
       <version>1.9.19</version>
-<!--      <scope>runtime</scope>-->
     </dependency>
     <dependency>
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct</artifactId>
       <version>1.5.5.Final</version>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>org.projectlombok</groupId>-->
-<!--      <artifactId>lombok-mapstruct-binding</artifactId>-->
-<!--      <version>0.2.0</version>-->
-<!--    </dependency>-->
     <dependency>
       <groupId>jakarta.validation</groupId>
       <artifactId>jakarta.validation-api</artifactId>
@@ -107,11 +95,23 @@
       <artifactId>hibernate-validator</artifactId>
       <version>8.0.1.Final</version>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>org.aspectj</groupId>-->
-<!--      <artifactId>aspectjtools</artifactId>-->
-<!--      <version>1.9.19</version>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-api</artifactId>
+      <version>0.11.5</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-impl</artifactId>
+      <version>0.11.5</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-jackson</artifactId>
+      <version>0.11.5</version>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -187,16 +187,6 @@
               <artifactId>mapstruct-processor</artifactId>
               <version>1.5.5.Final</version>
             </path>
-<!--            <path>-->
-<!--              <groupId>org.projectlombok</groupId>-->
-<!--              <artifactId>lombok</artifactId>-->
-<!--              <version>1.18.30</version>-->
-<!--            </path>-->
-<!--            <path>-->
-<!--              <groupId>org.projectlombok</groupId>-->
-<!--              <artifactId>lombok-mapstruct-binding</artifactId>-->
-<!--              <version>0.2.0</version>-->
-<!--            </path>-->
           </annotationProcessorPaths>
         </configuration>
       </plugin>
@@ -223,120 +213,11 @@
           <execution>
             <goals>
               <goal>compile</goal>
+              <goal>test-compile</goal>
             </goals>
           </execution>
         </executions>
       </plugin>
-
-
-<!--      <plugin>-->
-<!--        <groupId>org.codehaus.mojo</groupId>-->
-<!--        <artifactId>aspectj-maven-plugin</artifactId>-->
-<!--        <version>1.14.0</version>-->
-<!--        <configuration>-->
-<!--          <complianceLevel>16</complianceLevel>-->
-<!--          <source>16</source>-->
-<!--          <target>16</target>-->
-<!--          <showWeaveInfo>true</showWeaveInfo>-->
-<!--          <verbose>true</verbose>-->
-<!--          <Xlint>ignore</Xlint>-->
-<!--          <encoding>UTF-8 </encoding>-->
-
-<!--          <aspectLibraries>-->
-<!--            <aspectLibrary>-->
-<!--              <groupId>org.projectlombok</groupId>-->
-<!--              <artifactId>lombok</artifactId>-->
-<!--            </aspectLibrary>-->
-<!--          </aspectLibraries>-->
-
-<!--&lt;!&ndash;          <excludes>&ndash;&gt;-->
-<!--&lt;!&ndash;            <exclude>**/*.java</exclude>&ndash;&gt;-->
-<!--&lt;!&ndash;          </excludes>&ndash;&gt;-->
-<!--&lt;!&ndash;          <forceAjcCompile>true</forceAjcCompile>&ndash;&gt;-->
-<!--&lt;!&ndash;          <sources/>&ndash;&gt;-->
-
-<!--        </configuration>-->
-<!--        <executions>-->
-<!--          <execution>-->
-<!--            <goals>-->
-<!--              <goal>compile</goal>-->
-<!--            </goals>-->
-<!--          </execution>-->
-<!--        </executions>-->
-<!--&lt;!&ndash;        <executions>&ndash;&gt;-->
-<!--&lt;!&ndash;          <execution>&ndash;&gt;-->
-<!--&lt;!&ndash;            <id>default-compile</id>&ndash;&gt;-->
-<!--&lt;!&ndash;            <phase>process-classes</phase>&ndash;&gt;-->
-<!--&lt;!&ndash;            <goals>&ndash;&gt;-->
-<!--&lt;!&ndash;              &lt;!&ndash; use this goal to weave all your main classes &ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;              <goal>compile</goal>&ndash;&gt;-->
-<!--&lt;!&ndash;            </goals>&ndash;&gt;-->
-<!--&lt;!&ndash;            <configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;              <weaveDirectories>&ndash;&gt;-->
-<!--&lt;!&ndash;                <weaveDirectory>${project.build.directory}/classes</weaveDirectory>&ndash;&gt;-->
-<!--&lt;!&ndash;              </weaveDirectories>&ndash;&gt;-->
-<!--&lt;!&ndash;            </configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;          </execution>&ndash;&gt;-->
-<!--&lt;!&ndash;          <execution>&ndash;&gt;-->
-<!--&lt;!&ndash;            <id>default-testCompile</id>&ndash;&gt;-->
-<!--&lt;!&ndash;            <phase>process-test-classes</phase>&ndash;&gt;-->
-<!--&lt;!&ndash;            <goals>&ndash;&gt;-->
-<!--&lt;!&ndash;              &lt;!&ndash; use this goal to weave all your test classes &ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;              <goal>test-compile</goal>&ndash;&gt;-->
-<!--&lt;!&ndash;            </goals>&ndash;&gt;-->
-<!--&lt;!&ndash;            <configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;              <weaveDirectories>&ndash;&gt;-->
-<!--&lt;!&ndash;                <weaveDirectory>${project.build.directory}/test-classes</weaveDirectory>&ndash;&gt;-->
-<!--&lt;!&ndash;              </weaveDirectories>&ndash;&gt;-->
-<!--&lt;!&ndash;            </configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;          </execution>&ndash;&gt;-->
-<!--&lt;!&ndash;        </executions>&ndash;&gt;-->
-<!--      </plugin>-->
-
-<!--      <plugin>-->
-<!--        &lt;!&ndash;-->
-<!--        <groupId>org.codehaus.mojo</groupId>-->
-<!--        Using snapshot build instead: https://github.com/mojohaus/aspectj-maven-plugin/issues/24#issuecomment-419077658-->
-<!--        &ndash;&gt;-->
-<!--        <groupId>com.github.m50d</groupId>-->
-<!--        <artifactId>aspectj-maven-plugin</artifactId>-->
-<!--        <version>1.11.1</version>-->
-<!--        <dependencies>-->
-<!--          <dependency>-->
-<!--            <groupId>org.aspectj</groupId>-->
-<!--            <artifactId>aspectjrt</artifactId>-->
-<!--            <version>1.9.19</version>-->
-<!--          </dependency>-->
-<!--          <dependency>-->
-<!--            <groupId>org.aspectj</groupId>-->
-<!--            <artifactId>aspectjtools</artifactId>-->
-<!--            <version>1.9.19</version>-->
-<!--          </dependency>-->
-<!--        </dependencies>-->
-<!--        <configuration>-->
-<!--          <complianceLevel>${maven.compiler.target}</complianceLevel>-->
-<!--          <source>${maven.compiler.target}</source>-->
-<!--          <target>${maven.compiler.target}</target>-->
-<!--          <showWeaveInfo>true</showWeaveInfo>-->
-<!--          <verbose>true</verbose>-->
-<!--          <Xlint>ignore</Xlint>-->
-<!--          <encoding>${project.build.sourceEncoding}</encoding>-->
-<!--          <forceAjcCompile>true</forceAjcCompile>-->
-<!--          <sources/>&lt;!&ndash; this is important!&ndash;&gt;-->
-<!--          <weaveDirectories>-->
-<!--            <weaveDirectory>${project.build.directory}/classes</weaveDirectory>-->
-<!--          </weaveDirectories>-->
-<!--        </configuration>-->
-<!--        <executions>-->
-<!--          <execution>-->
-<!--            <phase>process-classes</phase>-->
-<!--            <goals>-->
-<!--              <goal>compile</goal>-->
-<!--            </goals>-->
-<!--          </execution>-->
-<!--        </executions>-->
-<!--      </plugin>-->
-
     </plugins>
   </build>
 </project>

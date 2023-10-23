@@ -13,18 +13,18 @@ import org.wallet_service.dto.response.MessageResponseTO;
 import org.wallet_service.entity.Action;
 import org.wallet_service.entity.Player;
 import org.wallet_service.exception.AuthenticationException;
-import org.wallet_service.exception.MessageException;
 import org.wallet_service.mapper.ActionResponseMapper;
 import org.wallet_service.util.Beans;
 import org.wallet_service.util.ConfigParser;
 import org.wallet_service.util.CurrentPlayer;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LogServlet extends HttpServlet {
+import static org.wallet_service.util.Util.getJSONFromRequest;
+
+public class TransactionLogServlet extends HttpServlet {
     private static final PlayerController playerController = Beans.getPlayerController();
     private static final ObjectMapper mapper = Beans.getObjectMapper();
 
@@ -35,13 +35,16 @@ public class LogServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
+
+        JsonNode jsonNode = mapper.readTree(getJSONFromRequest(req));
+        String token = jsonNode.get("token").asText();
 
         try{
             CurrentPlayer.setCurrentPlayer((Player) getServletConfig().getServletContext().getAttribute("player"));
 
-            List<Action> actions = playerController.getTransactionLog();
+            List<Action> actions = playerController.getTransactionLog(token);
             List<ActionResponseTO> actionResponseTOs = new ArrayList<>();
             actions.forEach(a -> actionResponseTOs.add(ActionResponseMapper.INSTANCE.ActionToActionResponseTO(a)));
 
@@ -50,35 +53,6 @@ public class LogServlet extends HttpServlet {
         }
         catch (AuthenticationException e) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            mapper.writeValue(resp.getWriter(), new MessageResponseTO(e.getMessage()));
-        }
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json");
-
-        StringBuilder sb = new StringBuilder();
-        try(BufferedReader reader = req.getReader()) {
-            String input;
-            while ((input = reader.readLine()) != null) {
-                sb.append(input).append('\n');
-            }
-        }
-
-        JsonNode jsonNode = mapper.readTree(sb.toString());
-        long playerId = jsonNode.get("playerId").asLong();
-
-        try{
-            List<Action> actions = playerController.getFullLog(playerId);
-            List<ActionResponseTO> actionResponseTOs = new ArrayList<>();
-            actions.forEach(a -> actionResponseTOs.add(ActionResponseMapper.INSTANCE.ActionToActionResponseTO(a)));
-
-            resp.setStatus(HttpServletResponse.SC_OK);
-            mapper.writeValue(resp.getWriter(), actionResponseTOs);
-        }
-        catch (MessageException e) {
-            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
             mapper.writeValue(resp.getWriter(), new MessageResponseTO(e.getMessage()));
         }
     }
