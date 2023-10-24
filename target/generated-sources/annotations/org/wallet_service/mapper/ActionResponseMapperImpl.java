@@ -6,8 +6,8 @@ import org.wallet_service.entity.Action;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-10-23T19:28:38+0300",
-    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.1 (Oracle Corporation)"
+    date = "2023-10-24T23:23:32+0300",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.3.1 (Oracle Corporation)"
 )
 public class ActionResponseMapperImpl implements ActionResponseMapper {
 

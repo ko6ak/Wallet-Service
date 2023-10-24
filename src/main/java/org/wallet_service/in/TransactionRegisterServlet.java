@@ -7,10 +7,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
 import org.wallet_service.controller.TransactionController;
 import org.wallet_service.dto.TransactionTO;
 import org.wallet_service.dto.response.MessageResponseTO;
@@ -21,12 +17,10 @@ import org.wallet_service.exception.TransactionException;
 import org.wallet_service.util.Beans;
 import org.wallet_service.util.ConfigParser;
 import org.wallet_service.util.CurrentPlayer;
+import org.wallet_service.util.Validator;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.wallet_service.util.Util.getJSONFromRequest;
 
@@ -36,12 +30,6 @@ import static org.wallet_service.util.Util.getJSONFromRequest;
 public class TransactionRegisterServlet extends HttpServlet {
     private static final TransactionController transactionController = Beans.getTransactionController();
     private static final ObjectMapper mapper = Beans.getObjectMapper();
-
-    private static final Validator validator;
-    static {
-        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-        validator = validatorFactory.usingContext().getValidator();
-    }
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -60,22 +48,32 @@ public class TransactionRegisterServlet extends HttpServlet {
         String description = jsonNode.get("description").asText();
         String token = jsonNode.get("token").asText();
 
+        Validator validator = new Validator();
+
+        Map<String, String> notBlank = new HashMap<>();
+        notBlank.put("description", description);
+        notBlank.put("token", token);
+        notBlank.put("id", id);
+        notBlank.put("operation", operation);
+
+        Map<String, String> checkAmount = new HashMap<>();
+        checkAmount.put("amount", amount);
+
+        validator.checkNotBlank(notBlank);
+        validator.checkFormat(checkAmount);
+        validator.checkMinDecimal(checkAmount);
+
+        if (!validator.getResult().isEmpty()){
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            mapper.writeValue(resp.getWriter(), validator.getResult());
+            return;
+        }
+
         TransactionTO transactionTO = new TransactionTO(UUID.fromString(id),
                 Operation.valueOf(operation),
                 amount,
                 description,
                 token);
-
-        Set<ConstraintViolation<TransactionTO>> violations = validator.validate(transactionTO);
-
-        if (!violations.isEmpty()){
-            Map<String, String> errors = new LinkedHashMap<>();
-            for (ConstraintViolation<TransactionTO> cv : violations){
-                errors.put(cv.getPropertyPath().toString(), cv.getMessage());
-            }
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            mapper.writeValue(resp.getWriter(), errors);
-        }
 
         CurrentPlayer.setCurrentPlayer((Player) getServletConfig().getServletContext().getAttribute("player"));
 

@@ -1,6 +1,8 @@
 package org.wallet_service;
 
 import org.wallet_service.dto.PlayerTO;
+import org.wallet_service.dto.response.ActionResponseTO;
+import org.wallet_service.dto.response.PlayerResponseTO;
 import org.wallet_service.entity.*;
 
 import java.math.BigDecimal;
@@ -12,7 +14,7 @@ import java.util.*;
 public class PlayerTestData {
     public static final MoneyAccount ACCOUNT_1002_WITHOUT_ID;
     public static final MoneyAccount ACCOUNT_1001_WITH_ID;
-    public static final MoneyAccount ACCOUNT_1001_WITH_LOG;
+    public static final MoneyAccount ACCOUNT_1001;
     public static final MoneyAccount ACCOUNT_1002_WITH_ID;
     public static final MoneyAccount CHANGED_BALANCE_ACCOUNT_1001_WITH_ID;
     public static final MoneyAccount ACCOUNT_FOR_PLAYER_2;
@@ -25,6 +27,8 @@ public class PlayerTestData {
     public static PlayerTO PLAYER_TO;
     public static PlayerTO PLAYER_TO_WITH_BAD_LOGIN;
     public static PlayerTO PLAYER_TO_WITH_BAD_PASSWORD;
+
+    public static PlayerResponseTO PLAYER_RESPONSE_TO;
 
     public static final PlayerAction PLAYER_ACTION_1 = new PlayerAction(1, 1, Timestamp.valueOf(LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 10, 10)), "Успешная регистрация");
     public static final PlayerAction PLAYER_ACTION_2 = new PlayerAction(2, 1, Timestamp.valueOf(LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 11, 10)), "Успешный вход");
@@ -48,6 +52,8 @@ public class PlayerTestData {
     public static final List<Action> MONEY_ACCOUNT_ACTIONS = new ArrayList<>();
     public static final List<Action> MONEY_ACCOUNT_ACTIONS_FULL = new ArrayList<>();
     public static final List<Action> FULL_PLAYER_ACTIONS = new ArrayList<>();
+    public static final List<ActionResponseTO> FULL_PLAYER_ACTIONS_RESPONSE = new ArrayList<>();
+    public static final List<ActionResponseTO> MONEY_ACCOUNT_ACTIONS_RESPONSE = new ArrayList<>();
 
     static {
         ACCOUNT_1002_WITHOUT_ID = new MoneyAccount(new BigDecimal("1200.00"));
@@ -57,12 +63,12 @@ public class PlayerTestData {
 
         CHANGED_BALANCE_ACCOUNT_1001_WITH_ID = new MoneyAccount(1001, new BigDecimal("500.00"));
 
-        ACCOUNT_1001_WITH_LOG = new MoneyAccount(1001, new BigDecimal("300.01"));
+        ACCOUNT_1001 = new MoneyAccount(1001, new BigDecimal("300.01"));
 
         PLAYER_2_WITHOUT_ID = new Player("Петр", "petr@ya.ru", "54321", ACCOUNT_1002_WITH_ID);
         PLAYER_2_WITH_ID = new Player(2, "Петр", "petr@ya.ru", "54321", ACCOUNT_1002_WITH_ID);
 
-        PLAYER_1_WITH_ID = new Player(1, "Иван", "ivan@gmail.com", "12345", ACCOUNT_1001_WITH_LOG);
+        PLAYER_1_WITH_ID = new Player(1, "Иван", "ivan@gmail.com", "12345", ACCOUNT_1001);
 
         ACCOUNT_FOR_PLAYER_2 = new MoneyAccount(1002, new BigDecimal("0.00"));
         PLAYER_2 = new Player(2,"Петр", "petr@ya.ru", "54321", ACCOUNT_FOR_PLAYER_2);
@@ -81,5 +87,12 @@ public class PlayerTestData {
         FULL_PLAYER_ACTIONS.addAll(MONEY_ACCOUNT_ACTIONS);
         FULL_PLAYER_ACTIONS.addAll(ACTIONS_1);
         FULL_PLAYER_ACTIONS.sort(Comparator.comparing(Action::getDateTime));
+
+        FULL_PLAYER_ACTIONS.forEach(a -> FULL_PLAYER_ACTIONS_RESPONSE.add(new ActionResponseTO(a.getDateTime(), a.getMessage())));
+
+        PLAYER_RESPONSE_TO = new PlayerResponseTO(PLAYER_1_WITH_ID.getId(), PLAYER_1_WITH_ID.getName(), PLAYER_1_WITH_ID.getEmail(), ACCOUNT_1001);
+        PLAYER_RESPONSE_TO.setToken(AbstractServiceTest.TOKEN);
+
+        MONEY_ACCOUNT_ACTIONS.forEach(a -> MONEY_ACCOUNT_ACTIONS_RESPONSE.add(new ActionResponseTO(a.getDateTime(), a.getMessage())));
     }
 }

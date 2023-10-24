@@ -7,10 +7,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
 import org.wallet_service.controller.PlayerController;
 import org.wallet_service.dto.response.MessageResponseTO;
 import org.wallet_service.dto.PlayerTO;
@@ -20,6 +16,7 @@ import org.wallet_service.exception.AuthenticationException;
 import org.wallet_service.mapper.PlayerResponseMapper;
 import org.wallet_service.util.Beans;
 import org.wallet_service.util.ConfigParser;
+import org.wallet_service.util.Validator;
 
 import java.io.IOException;
 import java.util.*;
@@ -33,12 +30,6 @@ public class RegistrationServlet extends HttpServlet {
     private static final PlayerController playerController = Beans.getPlayerController();
     private static final ObjectMapper mapper = Beans.getObjectMapper();
 
-    private static final Validator validator;
-    static {
-        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-        validator = validatorFactory.usingContext().getValidator();
-    }
-
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -46,26 +37,42 @@ public class RegistrationServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
 
         JsonNode jsonNode = mapper.readTree(getJSONFromRequest(req));
         String name = jsonNode.get("name").asText();
-        String login = jsonNode.get("email").asText();
+        String email = jsonNode.get("email").asText();
         String password = jsonNode.get("password").asText();
 
-        PlayerTO playerTO = new PlayerTO(name, login, password);
+        Validator validator = new Validator();
 
-        Set<ConstraintViolation<PlayerTO>> violations = validator.validate(playerTO);
+        Map<String, String> notBlank = new HashMap<>();
+        notBlank.put("name", name);
+        notBlank.put("email", email);
+        notBlank.put("password", password);
 
-        if (!violations.isEmpty()){
-            Map<String, String> errors = new LinkedHashMap<>();
-            for (ConstraintViolation<PlayerTO> cv : violations){
-                errors.put(cv.getPropertyPath().toString(), cv.getMessage());
-            }
+        Map<String, String> sizePassword = new HashMap<>();
+        sizePassword.put("password", password);
+
+        Map<String, String> size = new HashMap<>();
+        size.put("name", name);
+
+        Map<String, String> checkEmail = new HashMap<>();
+        checkEmail.put("email", email);
+
+        validator.checkNotBlank(notBlank);
+        validator.checkSizePassword(sizePassword);
+        validator.checkSize(size);
+        validator.checkEmail(checkEmail);
+
+        if (!validator.getResult().isEmpty()){
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            mapper.writeValue(resp.getWriter(), errors);
+            mapper.writeValue(resp.getWriter(), validator.getResult());
+            return;
         }
+
+        PlayerTO playerTO = new PlayerTO(name, email, password);
 
         try{
             Player player = playerController.registration(playerTO);

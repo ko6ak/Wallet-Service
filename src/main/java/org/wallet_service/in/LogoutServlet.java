@@ -23,7 +23,7 @@ public class LogoutServlet extends HttpServlet {
     private static final ObjectMapper mapper = Beans.getObjectMapper();
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
 
         JsonNode jsonNode = mapper.readTree(getJSONFromRequest(req));

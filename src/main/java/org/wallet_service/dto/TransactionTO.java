@@ -1,6 +1,5 @@
 package org.wallet_service.dto;
 
-import jakarta.validation.constraints.*;
 import org.wallet_service.entity.Operation;
 
 import java.util.UUID;
@@ -9,21 +8,10 @@ import java.util.UUID;
  * Класс содержит первичные данные о Транзакции, полученные от пользовательского интерфейса.
  */
 public class TransactionTO {
-
-    @NotNull
     private UUID id;
-
-    @NotNull
     private Operation operation;
-
-    @Pattern(regexp = "\\d+\\.\\d{2}", message = "должно соответствовать формату 0.00")
-    @DecimalMin("0.01")
     private String amount;
-
-    @NotBlank
     private String description;
-
-    @NotBlank
     private String token;
 
     public TransactionTO(UUID id, Operation operation, String amount, String description, String token) {

@@ -8,22 +8,20 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.wallet_service.AbstractServiceTest;
-import org.wallet_service.PlayerTestData;
 import org.wallet_service.controller.PlayerController;
 import org.wallet_service.exception.AuthenticationException;
-import org.wallet_service.in.BalanceServlet;
+import org.wallet_service.in.LogoutServlet;
 import org.wallet_service.util.Beans;
-import org.wallet_service.util.CurrentPlayer;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
-public class BalanceServletTest {
+public class LogoutServletTest {
 
     @Test
     public void test() throws Exception {
@@ -40,14 +38,13 @@ public class BalanceServletTest {
 
         String token = AbstractServiceTest.TOKEN;
 
-        BalanceServlet balanceServlet = new BalanceServlet(){
+        LogoutServlet logoutServlet = new LogoutServlet(){
             @Override
             public ServletConfig getServletConfig() {
                 return servletConfig;
             }
         };
-        when(servletConfig.getServletContext()).thenReturn(servletContext);
-        when(servletContext.getAttribute("player")).thenReturn(PlayerTestData.PLAYER_1_WITH_ID);
+        when(logoutServlet.getServletConfig().getServletContext()).thenReturn(servletContext);
 
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -57,27 +54,26 @@ public class BalanceServletTest {
         String json = "{\"token\":\"" + token + "\"}";
         when(request.getReader()).thenReturn(new BufferedReader(new StringReader(json)));
 
-        when(playerController.getBalance(token)).thenReturn("300.01");
+        when(playerController.logout(token)).thenReturn("Пока!");
 
-        balanceServlet.doPost(request, response);
-
-        assertThat(CurrentPlayer.getCurrentPlayer()).isEqualTo(PlayerTestData.PLAYER_1_WITH_ID);
+        logoutServlet.doPost(request, response);
 
         verify(response).setStatus(200);
         verify(response).setContentType("application/json");
 
         String result = stringWriter.getBuffer().toString().trim();
 
-        assertThat(result).isEqualTo("{\"message\":\"300.01\"}");
+        assertThat(result).isEqualTo("{\"message\":\"Пока!\"}");
 
         stringWriter = new StringWriter();
         printWriter = new PrintWriter(stringWriter);
+
         when(request.getReader()).thenReturn(new BufferedReader(new StringReader(json)));
         when(response.getWriter()).thenReturn(printWriter);
 
-        when(playerController.getBalance(token)).thenThrow(new AuthenticationException("Вы не залогинены"));
+        when(playerController.logout(token)).thenThrow(new AuthenticationException("Вы не залогинены"));
 
-        balanceServlet.doPost(request, response);
+        logoutServlet.doPost(request, response);
 
         result = stringWriter.getBuffer().toString().trim();
 
@@ -85,5 +81,4 @@ public class BalanceServletTest {
 
         verify(response).setStatus(401);
     }
-
 }

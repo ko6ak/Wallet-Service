@@ -1,24 +1,11 @@
 package org.wallet_service.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-
 /**
  * Класс содержит первичные данные об Игроке, полученные от пользовательского интерфейса.
  */
 public class PlayerTO {
-
-    @NotBlank
-    @Size(min = 2, max = 50)
     private String name;
-
-    @Email
-    @NotBlank
     private String email;
-
-    @NotBlank
-    @Size(min = 5, max = 32)
     private String password;
 
     public PlayerTO(String name, String email, String password) {

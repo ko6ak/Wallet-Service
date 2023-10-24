@@ -36,7 +36,7 @@ public class FullLogServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
 
         JsonNode jsonNode = mapper.readTree(getJSONFromRequest(req));
