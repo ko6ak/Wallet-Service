@@ -3,7 +3,6 @@ package org.wallet_service.aspect;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
-import org.wallet_service.dto.TransactionTO;
 import org.wallet_service.entity.MoneyAccountAction;
 import org.wallet_service.entity.Player;
 import org.wallet_service.entity.PlayerAction;
@@ -24,7 +23,7 @@ public class LogAspect {
     private static final PlayerActionService playerActionService = new PlayerActionService();
     private static final MoneyAccountActionService moneyAccountActionService = new MoneyAccountActionService();
 
-    @AfterReturning(pointcut = "execution(* org.wallet_service.controller.PlayerController.registration(*))", returning = "player")
+    @AfterReturning(pointcut = "execution(* org.wallet_service.controller.PlayerController.registration(..))", returning = "player")
     public void loggingRegistration(Player player) {
         playerActionService.add(new PlayerAction(player.getId(), Timestamp.valueOf(LocalDateTime.now()), "Успешная регистрация"));
     }
@@ -60,12 +59,12 @@ public class LogAspect {
         playerActionService.add(new PlayerAction(getCurrentPlayer().getId(), Timestamp.valueOf(LocalDateTime.now()), "Вывод лога транзакций"));
     }
 
-    @AfterReturning(pointcut = "execution(* org.wallet_service.controller.TransactionController.register(*))")
+    @AfterReturning(pointcut = "execution(* org.wallet_service.controller.TransactionController.register(..))")
     public void loggingTransactionLog(JoinPoint joinPoint) {
-        TransactionTO transactionTO = (TransactionTO) joinPoint.getArgs()[0];
+        Object[] input = joinPoint.getArgs();
         playerActionService.add(new PlayerAction(getCurrentPlayer().getId(), Timestamp.valueOf(LocalDateTime.now()),
-                "Создана транзакция с типом операции " + transactionTO.getOperation() +
-                        ", суммой " + transactionTO.getAmount() + " и комментарием '" + transactionTO.getDescription() + "'"));
+                "Создана транзакция с типом операции " + input[1] +
+                        ", суммой " + input[2] + " и комментарием '" + input[3] + "'"));
     }
 
     @Around("execution(* org.wallet_service.util.Processing.debit(*))")

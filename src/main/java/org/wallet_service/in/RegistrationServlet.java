@@ -8,9 +8,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.wallet_service.controller.PlayerController;
-import org.wallet_service.dto.response.MessageResponseTO;
-import org.wallet_service.dto.PlayerTO;
-import org.wallet_service.dto.response.PlayerResponseTO;
+import org.wallet_service.dto.MessageResponseTO;
+import org.wallet_service.dto.PlayerResponseTO;
 import org.wallet_service.entity.Player;
 import org.wallet_service.exception.AuthenticationException;
 import org.wallet_service.mapper.PlayerResponseMapper;
@@ -72,10 +71,8 @@ public class RegistrationServlet extends HttpServlet {
             return;
         }
 
-        PlayerTO playerTO = new PlayerTO(name, email, password);
-
         try{
-            Player player = playerController.registration(playerTO);
+            Player player = playerController.registration(name, email, password);
             PlayerResponseTO playerResponseTO = PlayerResponseMapper.INSTANCE.playerToPlayerResponseTO(player);
             resp.setStatus(HttpServletResponse.SC_CREATED);
             mapper.writeValue(resp.getWriter(), playerResponseTO);

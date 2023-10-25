@@ -1,15 +1,10 @@
 package org.wallet_service.servlet;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.junit.Test;
-import org.mockito.MockedStatic;
+import org.wallet_service.AbstractServletTest;
 import org.wallet_service.PlayerTestData;
-import org.wallet_service.controller.PlayerController;
 import org.wallet_service.exception.MessageException;
 import org.wallet_service.in.FullLogServlet;
-import org.wallet_service.util.Beans;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
@@ -19,19 +14,10 @@ import java.io.StringWriter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class FullLogServletTest {
+public class FullLogServletTest extends AbstractServletTest {
 
     @Test
     public void test() throws Exception {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        PlayerController playerController = mock(PlayerController.class);
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        MockedStatic<Beans> beans = mockStatic(Beans.class);
-        beans.when(Beans::getPlayerController).thenReturn(playerController);
-        beans.when(Beans::getObjectMapper).thenReturn(objectMapper);
-
         FullLogServlet fullLogServlet = new FullLogServlet();
 
         StringWriter stringWriter = new StringWriter();
@@ -46,8 +32,8 @@ public class FullLogServletTest {
 
         fullLogServlet.doPost(request, response);
 
-        verify(response).setStatus(200);
-        verify(response).setContentType("application/json");
+        verify(response, atLeast(1)).setStatus(200);
+        verify(response, atLeast(1)).setContentType("application/json");
 
         String result = stringWriter.getBuffer().toString().trim();
 
@@ -68,7 +54,7 @@ public class FullLogServletTest {
 
         assertThat(result).isEqualTo("{\"message\":\"Игрок с таким id не найден\"}");
 
-        verify(response).setStatus(404);
+        verify(response, atLeast(1)).setStatus(404);
     }
 
 }

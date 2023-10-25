@@ -1,7 +1,6 @@
 package org.wallet_service.controller;
 
 import org.wallet_service.aspect.Time;
-import org.wallet_service.dto.PlayerTO;
 import org.wallet_service.entity.*;
 import org.wallet_service.exception.AuthenticationException;
 import org.wallet_service.exception.MessageException;
@@ -31,14 +30,16 @@ public class PlayerController {
     /**
      * Регистрация Игрока.
      * Метод регистрирует Игрока в системе и создает для него Денежный счет (MoneyAccount).
-     * @param playerTO содержит первичные данные об Игроке, полученные от пользовательского интерфейса.
+     * @param name имя Игрока.
+     * @param email Почта Игрока.
+     * @param password пароль Игрока.
      * @return игрока.
      * @throws AuthenticationException если Игрок с таким email уже есть в системе.
      */
-    public Player registration(PlayerTO playerTO) {
-        if (!playerService.isFound(playerTO.getEmail())) {
+    public Player registration(String name, String email, String password) {
+        if (!playerService.isFound(email)) {
             MoneyAccount moneyAccount = moneyAccountService.save(new MoneyAccount(new BigDecimal("0.00")));
-            return playerService.save(new Player(playerTO.getName(), playerTO.getEmail(), playerTO.getPassword(), moneyAccount));
+            return playerService.save(new Player(name, email, password, moneyAccount));
         }
         throw new AuthenticationException("Игрок с таким email уже есть в системе");
     }

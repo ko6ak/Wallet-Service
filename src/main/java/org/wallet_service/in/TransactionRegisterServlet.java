@@ -8,8 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.wallet_service.controller.TransactionController;
-import org.wallet_service.dto.TransactionTO;
-import org.wallet_service.dto.response.MessageResponseTO;
+import org.wallet_service.dto.MessageResponseTO;
 import org.wallet_service.entity.Operation;
 import org.wallet_service.entity.Player;
 import org.wallet_service.exception.AuthenticationException;
@@ -38,7 +37,7 @@ public class TransactionRegisterServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
 
         JsonNode jsonNode = mapper.readTree(getJSONFromRequest(req));
@@ -69,17 +68,12 @@ public class TransactionRegisterServlet extends HttpServlet {
             return;
         }
 
-        TransactionTO transactionTO = new TransactionTO(UUID.fromString(id),
-                Operation.valueOf(operation),
-                amount,
-                description,
-                token);
-
         CurrentPlayer.setCurrentPlayer((Player) getServletConfig().getServletContext().getAttribute("player"));
 
         try{
             resp.setStatus(HttpServletResponse.SC_OK);
-            mapper.writeValue(resp.getWriter(), new MessageResponseTO(transactionController.register(transactionTO)));
+            mapper.writeValue(resp.getWriter(), new MessageResponseTO(transactionController.register(
+                    UUID.fromString(id), Operation.valueOf(operation), amount, description, token)));
         }
         catch (AuthenticationException e) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

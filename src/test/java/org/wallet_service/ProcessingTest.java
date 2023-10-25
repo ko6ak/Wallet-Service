@@ -3,10 +3,12 @@ package org.wallet_service;
 import org.junit.jupiter.api.Test;
 import org.wallet_service.controller.PlayerController;
 import org.wallet_service.controller.TransactionController;
+import org.wallet_service.entity.Operation;
 import org.wallet_service.util.Beans;
 import org.wallet_service.util.Processing;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.wallet_service.util.CurrentPlayer.getToken;
@@ -23,23 +25,38 @@ public class ProcessingTest extends AbstractServiceTest {
         setToken(AbstractServiceTest.TOKEN);
         CONNECTION.createStatement().executeUpdate("TRUNCATE TABLE wallet.transaction; UPDATE wallet.money_account SET balance = 0 WHERE id = 1001");
 
-        transactionController.register(TransactionTestData.TRANSACTION_TO_1);
+        TransactionTO transactionTO = TransactionTestData.TRANSACTION_TO_1;
+
+        transactionController.register(transactionTO.getId(), transactionTO.getOperation(), transactionTO.getAmount(),
+                transactionTO.getDescription(), transactionTO.getToken());
         Processing.process();
         assertThat(playerController.getBalance(getToken())).isEqualTo("1000.00");
 
-        transactionController.register(TransactionTestData.TRANSACTION_TO_2);
+        transactionTO = TransactionTestData.TRANSACTION_TO_2;
+
+        transactionController.register(transactionTO.getId(), transactionTO.getOperation(), transactionTO.getAmount(),
+                transactionTO.getDescription(), transactionTO.getToken());
         Processing.process();
         assertThat(playerController.getBalance(getToken())).isEqualTo("300.01");
 
-        transactionController.register(TransactionTestData.TRANSACTION_TO_3);
+        transactionTO = TransactionTestData.TRANSACTION_TO_3;
+
+        transactionController.register(transactionTO.getId(), transactionTO.getOperation(), transactionTO.getAmount(),
+                transactionTO.getDescription(), transactionTO.getToken());
         Processing.process();
         assertThat(playerController.getBalance(getToken())).isEqualTo("0.00");
 
-        transactionController.register(TransactionTestData.TRANSACTION_TO_4);
+        transactionTO = TransactionTestData.TRANSACTION_TO_4;
+
+        transactionController.register(transactionTO.getId(), transactionTO.getOperation(), transactionTO.getAmount(),
+                transactionTO.getDescription(), transactionTO.getToken());
         Processing.process();
         assertThat(playerController.getBalance(getToken())).isEqualTo("0.00");
 
-        transactionController.register(TransactionTestData.TRANSACTION_TO_5);
+        transactionTO = TransactionTestData.TRANSACTION_TO_5;
+
+        transactionController.register(transactionTO.getId(), transactionTO.getOperation(), transactionTO.getAmount(),
+                transactionTO.getDescription(), transactionTO.getToken());
         Processing.process();
         assertThat(playerController.getBalance(getToken())).isEqualTo("444.44");
     }

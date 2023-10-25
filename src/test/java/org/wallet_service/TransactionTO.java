@@ -1,4 +1,4 @@
-package org.wallet_service.dto;
+package org.wallet_service;
 
 import org.wallet_service.entity.Operation;
 

@@ -1,7 +1,7 @@
 package org.wallet_service.controller;
 
 import org.wallet_service.aspect.Time;
-import org.wallet_service.dto.TransactionTO;
+import org.wallet_service.entity.Operation;
 import org.wallet_service.entity.Player;
 import org.wallet_service.entity.Transaction;
 import org.wallet_service.exception.AuthenticationException;
@@ -28,14 +28,17 @@ public class TransactionController {
 
     /**
      * Метод регистрирует транзакции в системе.
-     * @param transactionTO содержит первичные данные о Транзакции, полученные от пользовательского интерфейса.
+     * @param id идентификатор транзакции.
+     * @param operation тип операции.
+     * @param amount сумма.
+     * @param description комментарий.
+     * @param token токен.
      * @return Сообщение об успешной регистрации.
      * @throws TransactionException если не уникальный id транзакции.
      * @throws AuthenticationException если Игрок не залогинен, токен из параметра метода не совпадает с сохраненным в системе или токен просрочен.
      */
-    public String register(TransactionTO transactionTO){
+    public String register(UUID id, Operation operation, String amount, String description, String token){
         Player currentPlayer = CurrentPlayer.getCurrentPlayer();
-        String token = transactionTO.getToken();
         if (currentPlayer == null || !token.equals(getToken())) throw new AuthenticationException("Сначала нужно залогинится");
         try{
             JWT.validate(token);
@@ -45,10 +48,9 @@ public class TransactionController {
             setToken(null);
             throw new AuthenticationException("Токен просрочен, залогинтесь заново");
         }
-        UUID id = transactionTO.getId();
         if (!transactionService.isFound(id)) {
-            transactionService.save(new Transaction(id, LocalDateTime.now(), transactionTO.getDescription(),
-                    transactionTO.getOperation(), new BigDecimal(transactionTO.getAmount()), currentPlayer.getMoneyAccount().getId(), false));
+            transactionService.save(new Transaction(id, LocalDateTime.now(), description,
+                    operation, new BigDecimal(amount), currentPlayer.getMoneyAccount().getId(), false));
         }
         else throw new TransactionException("Не уникальный id транзакции");
         return REGISTER_SUCCESS;

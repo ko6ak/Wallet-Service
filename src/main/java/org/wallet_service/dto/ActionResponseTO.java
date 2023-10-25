@@ -1,4 +1,4 @@
-package org.wallet_service.dto.response;
+package org.wallet_service.dto;
 
 import java.sql.Timestamp;
 

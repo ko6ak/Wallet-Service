@@ -1,4 +1,4 @@
-package org.wallet_service.dto;
+package org.wallet_service;
 
 /**
  * Класс содержит первичные данные об Игроке, полученные от пользовательского интерфейса.
@@ -39,5 +39,14 @@ public class PlayerTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "PlayerTO{" +
+                "name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }

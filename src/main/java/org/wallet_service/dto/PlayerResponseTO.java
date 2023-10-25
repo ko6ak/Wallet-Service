@@ -1,4 +1,4 @@
-package org.wallet_service.dto.response;
+package org.wallet_service.dto;
 
 import org.wallet_service.entity.MoneyAccount;
 
@@ -57,5 +57,16 @@ public class PlayerResponseTO {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    @Override
+    public String toString() {
+        return "PlayerResponseTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", token='" + token + '\'' +
+                ", moneyAccount=" + moneyAccount +
+                '}';
     }
 }

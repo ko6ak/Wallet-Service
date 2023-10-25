@@ -6,7 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.wallet_service.dto.response.MessageResponseTO;
+import org.wallet_service.dto.MessageResponseTO;
 import org.wallet_service.exception.TransactionException;
 import org.wallet_service.util.Beans;
 import org.wallet_service.util.ConfigParser;

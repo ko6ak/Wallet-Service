@@ -1,6 +1,5 @@
 package org.wallet_service;
 
-import org.wallet_service.dto.TransactionTO;
 import org.wallet_service.entity.Operation;
 import org.wallet_service.entity.Transaction;
 

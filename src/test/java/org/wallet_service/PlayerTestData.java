@@ -1,8 +1,7 @@
 package org.wallet_service;
 
-import org.wallet_service.dto.PlayerTO;
-import org.wallet_service.dto.response.ActionResponseTO;
-import org.wallet_service.dto.response.PlayerResponseTO;
+import org.wallet_service.dto.ActionResponseTO;
+import org.wallet_service.dto.PlayerResponseTO;
 import org.wallet_service.entity.*;
 
 import java.math.BigDecimal;
@@ -20,6 +19,7 @@ public class PlayerTestData {
     public static final MoneyAccount ACCOUNT_FOR_PLAYER_2;
 
     public static Player PLAYER_2;
+    public static PlayerTO PLAYER_1_TO;
     public static Player PLAYER_2_WITHOUT_ID;
     public static Player PLAYER_2_WITH_ID;
     public static Player PLAYER_1_WITH_ID;
@@ -29,6 +29,7 @@ public class PlayerTestData {
     public static PlayerTO PLAYER_TO_WITH_BAD_PASSWORD;
 
     public static PlayerResponseTO PLAYER_RESPONSE_TO;
+    public static PlayerResponseTO PLAYER_RESPONSE_TO_WITHOUT_TOKEN;
 
     public static final PlayerAction PLAYER_ACTION_1 = new PlayerAction(1, 1, Timestamp.valueOf(LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 10, 10)), "Успешная регистрация");
     public static final PlayerAction PLAYER_ACTION_2 = new PlayerAction(2, 1, Timestamp.valueOf(LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 11, 10)), "Успешный вход");
@@ -70,6 +71,8 @@ public class PlayerTestData {
 
         PLAYER_1_WITH_ID = new Player(1, "Иван", "ivan@gmail.com", "12345", ACCOUNT_1001);
 
+        PLAYER_1_TO = new PlayerTO("Иван", "ivan@gmail.com", "12345");
+
         ACCOUNT_FOR_PLAYER_2 = new MoneyAccount(1002, new BigDecimal("0.00"));
         PLAYER_2 = new Player(2,"Петр", "petr@ya.ru", "54321", ACCOUNT_FOR_PLAYER_2);
 
@@ -92,6 +95,8 @@ public class PlayerTestData {
 
         PLAYER_RESPONSE_TO = new PlayerResponseTO(PLAYER_1_WITH_ID.getId(), PLAYER_1_WITH_ID.getName(), PLAYER_1_WITH_ID.getEmail(), ACCOUNT_1001);
         PLAYER_RESPONSE_TO.setToken(AbstractServiceTest.TOKEN);
+
+        PLAYER_RESPONSE_TO_WITHOUT_TOKEN = new PlayerResponseTO(PLAYER_1_WITH_ID.getId(), PLAYER_1_WITH_ID.getName(), PLAYER_1_WITH_ID.getEmail(), ACCOUNT_1001);
 
         MONEY_ACCOUNT_ACTIONS.forEach(a -> MONEY_ACCOUNT_ACTIONS_RESPONSE.add(new ActionResponseTO(a.getDateTime(), a.getMessage())));
     }

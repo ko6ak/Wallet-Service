@@ -19,9 +19,13 @@ public class PlayerControllerTest extends AbstractServiceTest {
 
     @Test
     void registration(){
-        assertThat(playerController.registration(PlayerTestData.PLAYER_TO)).usingRecursiveComparison().isEqualTo(PlayerTestData.PLAYER_2);
+        assertThat(playerController.registration(PlayerTestData.PLAYER_TO.getName(),
+                PlayerTestData.PLAYER_TO.getEmail(),
+                PlayerTestData.PLAYER_TO.getPassword())).usingRecursiveComparison().isEqualTo(PlayerTestData.PLAYER_2);
 
-        assertThatThrownBy(() -> playerController.registration(PlayerTestData.PLAYER_TO))
+        assertThatThrownBy(() -> playerController.registration(PlayerTestData.PLAYER_TO.getName(),
+                PlayerTestData.PLAYER_TO.getEmail(),
+                PlayerTestData.PLAYER_TO.getPassword()))
                 .isInstanceOf(AuthenticationException.class)
                 .hasMessage("Игрок с таким email уже есть в системе");
     }

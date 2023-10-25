@@ -3,6 +3,7 @@ package org.wallet_service.controller;
 import org.junit.jupiter.api.Test;
 import org.wallet_service.AbstractServiceTest;
 import org.wallet_service.PlayerTestData;
+import org.wallet_service.TransactionTO;
 import org.wallet_service.TransactionTestData;
 import org.wallet_service.entity.Transaction;
 import org.wallet_service.exception.AuthenticationException;
@@ -26,18 +27,24 @@ public class TransactionControllerTest extends AbstractServiceTest {
 
     @Test
     void register() throws SQLException {
-        assertThatThrownBy(() -> transactionController.register(TransactionTestData.TRANSACTION_TO_3))
+        TransactionTO transactionTO = TransactionTestData.TRANSACTION_TO_3;
+
+        assertThatThrownBy(() -> transactionController.register(transactionTO.getId(), transactionTO.getOperation(), transactionTO.getAmount(),
+                transactionTO.getDescription(), transactionTO.getToken()))
                 .isInstanceOf(AuthenticationException.class)
                 .hasMessage("Сначала нужно залогинится");
 
         playerController.login(PlayerTestData.PLAYER_1_WITH_ID.getEmail(), PlayerTestData.PLAYER_1_WITH_ID.getPassword());
 
-        assertThatThrownBy(() -> transactionController.register(TransactionTestData.TRANSACTION_TO_3))
+        assertThatThrownBy(() -> transactionController.register(transactionTO.getId(), transactionTO.getOperation(), transactionTO.getAmount(),
+                transactionTO.getDescription(), transactionTO.getToken()))
                 .isInstanceOf(AuthenticationException.class)
                 .hasMessage("Сначала нужно залогинится");
 
         CurrentPlayer.setToken(AbstractServiceTest.EXPIRED_TOKEN);
-        assertThatThrownBy(() -> transactionController.register(TransactionTestData.TRANSACTION_TO_WITH_EXPIRED_TOKEN))
+        TransactionTO transactionTO_1 = TransactionTestData.TRANSACTION_TO_WITH_EXPIRED_TOKEN;
+        assertThatThrownBy(() -> transactionController.register(transactionTO_1.getId(), transactionTO_1.getOperation(), transactionTO_1.getAmount(),
+                transactionTO_1.getDescription(), transactionTO_1.getToken()))
                 .isInstanceOf(AuthenticationException.class)
                 .hasMessage("Токен просрочен, залогинтесь заново");
         assertThat(CurrentPlayer.getToken()).isNull();
@@ -46,7 +53,8 @@ public class TransactionControllerTest extends AbstractServiceTest {
         playerController.login(PlayerTestData.PLAYER_1_WITH_ID.getEmail(), PlayerTestData.PLAYER_1_WITH_ID.getPassword());
 
         CurrentPlayer.setToken(AbstractServiceTest.TOKEN);
-        TransactionTestData.NOT_PROCESSED_TRANSACTIONS_TOS.forEach(t -> assertThat(transactionController.register(t))
+        TransactionTestData.NOT_PROCESSED_TRANSACTIONS_TOS.forEach(t -> assertThat(transactionController.register(
+                t.getId(), t.getOperation(), t.getAmount(), t.getDescription(), t.getToken()))
                 .isEqualTo(TransactionController.REGISTER_SUCCESS));
 
         List<Transaction> transactions = new ArrayList<>();
@@ -54,7 +62,8 @@ public class TransactionControllerTest extends AbstractServiceTest {
         assertThat(transactions).hasSize(3).usingRecursiveFieldByFieldElementComparatorIgnoringFields("dateTime")
                 .containsAll(TransactionTestData.NOT_PROCESSED_TRANSACTIONS);
 
-        assertThatThrownBy(() -> transactionController.register(TransactionTestData.TRANSACTION_TO_3))
+        assertThatThrownBy(() -> transactionController.register(transactionTO.getId(), transactionTO.getOperation(), transactionTO.getAmount(),
+                transactionTO.getDescription(), transactionTO.getToken()))
                 .isInstanceOf(TransactionException.class)
                 .hasMessage("Не уникальный id транзакции");
 
@@ -70,7 +79,8 @@ public class TransactionControllerTest extends AbstractServiceTest {
         playerController.login(PlayerTestData.PLAYER_1_WITH_ID.getEmail(), PlayerTestData.PLAYER_1_WITH_ID.getPassword());
         CurrentPlayer.setToken(AbstractServiceTest.TOKEN);
 
-        TransactionTestData.TRANSACTIONS_TOS.forEach(t -> assertThat(transactionController.register(t))
+        TransactionTestData.TRANSACTIONS_TOS.forEach(t -> assertThat(transactionController.register(
+                t.getId(), t.getOperation(), t.getAmount(), t.getDescription(), t.getToken()))
                 .isEqualTo(TransactionController.REGISTER_SUCCESS));
 
         List<Transaction> transactions = new ArrayList<>();

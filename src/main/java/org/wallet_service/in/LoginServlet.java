@@ -8,16 +8,19 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.wallet_service.controller.PlayerController;
-import org.wallet_service.dto.response.MessageResponseTO;
-import org.wallet_service.dto.response.PlayerResponseTO;
+import org.wallet_service.dto.MessageResponseTO;
+import org.wallet_service.dto.PlayerResponseTO;
 import org.wallet_service.entity.Player;
 import org.wallet_service.exception.AuthenticationException;
 import org.wallet_service.mapper.PlayerResponseMapper;
 import org.wallet_service.util.Beans;
 import org.wallet_service.util.ConfigParser;
 import org.wallet_service.util.CurrentPlayer;
+import org.wallet_service.util.Validator;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.wallet_service.util.Util.getJSONFromRequest;
 
@@ -41,6 +44,28 @@ public class LoginServlet extends HttpServlet {
         JsonNode jsonNode = mapper.readTree(getJSONFromRequest(req));
         String email = jsonNode.get("email").asText();
         String password = jsonNode.get("password").asText();
+
+        Validator validator = new Validator();
+
+        Map<String, String> notBlank = new HashMap<>();
+        notBlank.put("email", email);
+        notBlank.put("password", password);
+
+        Map<String, String> sizePassword = new HashMap<>();
+        sizePassword.put("password", password);
+
+        Map<String, String> checkEmail = new HashMap<>();
+        checkEmail.put("email", email);
+
+        validator.checkNotBlank(notBlank);
+        validator.checkSizePassword(sizePassword);
+        validator.checkEmail(checkEmail);
+
+        if (!validator.getResult().isEmpty()){
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            mapper.writeValue(resp.getWriter(), validator.getResult());
+            return;
+        }
 
         try{
             Player player = playerController.login(email, password);
