@@ -1,15 +1,11 @@
 package org.wallet_service.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 /**
  * Класс содержит данные об одном действии Игрока.
  */
-@Getter
-@Setter
 public class PlayerAction extends Action {
     private long playerId;
 
@@ -19,7 +15,7 @@ public class PlayerAction extends Action {
      * @param dateTime время события.
      * @param message сообщение.
      */
-    public PlayerAction(long playerId, LocalDateTime dateTime, String message) {
+    public PlayerAction(long playerId, Timestamp dateTime, String message) {
         super(dateTime, message);
         this.playerId = playerId;
     }
@@ -31,7 +27,7 @@ public class PlayerAction extends Action {
      * @param dateTime время события.
      * @param message сообщение.
      */
-    public PlayerAction(long id, long playerId, LocalDateTime dateTime, String message) {
+    public PlayerAction(long id, long playerId, Timestamp dateTime, String message) {
         super(id, dateTime, message);
         this.playerId = playerId;
     }
@@ -44,5 +40,13 @@ public class PlayerAction extends Action {
                 ", message='" + message + '\'' +
                 ", playerId=" + playerId +
                 '}';
+    }
+
+    public long getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(long playerId) {
+        this.playerId = playerId;
     }
 }

@@ -3,8 +3,6 @@ package org.wallet_service.repository;
 import org.wallet_service.entity.*;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.wallet_service.util.DBConnection.CONNECTION;
 
@@ -15,23 +13,21 @@ public class PlayerRepository {
 
     /**
      * Получение Игрока по его логину и паролю.
-     * @param login логин Игрока.
+     * @param email логин Игрока.
      * @param password пароль Игрока.
      * @return Игрока или null, если Игрок не найден.
      */
-    public Player get(String login, String password){
+    public Player get(String email, String password){
         Player player = null;
-        String moneyAccountActionsQuery = "SELECT * FROM wallet.money_account_actions WHERE money_account_id = ?";
         String playerQuery = "SELECT * FROM wallet.player " +
-                "JOIN wallet.money_account ON money_account.id = player.money_account_id WHERE login = ? AND password = ?";
+                "JOIN wallet.money_account ON money_account.id = player.money_account_id WHERE email = ? AND password = ?";
 
-        try(PreparedStatement moneyAccountActionsStatement = CONNECTION.prepareStatement(moneyAccountActionsQuery);
-            PreparedStatement playerStatement = CONNECTION.prepareStatement(playerQuery)){
+        try(PreparedStatement playerStatement = CONNECTION.prepareStatement(playerQuery)){
 
-            playerStatement.setString(1, login);
+            playerStatement.setString(1, email);
             playerStatement.setString(2, password);
 
-            player = buildPlayer(moneyAccountActionsStatement, playerStatement);
+            player = buildPlayer(playerStatement);
 
             CONNECTION.commit();
         }
@@ -54,16 +50,14 @@ public class PlayerRepository {
      */
     public Player get(long id){
         Player player = null;
-        String moneyAccountActionsQuery = "SELECT * FROM wallet.money_account_actions WHERE money_account_id = ?";
         String playerQuery = "SELECT * FROM wallet.player " +
                 "JOIN wallet.money_account ON money_account.id = player.money_account_id WHERE player.id = ?";
 
-        try(PreparedStatement moneyAccountActionsStatement = CONNECTION.prepareStatement(moneyAccountActionsQuery);
-            PreparedStatement playerStatement = CONNECTION.prepareStatement(playerQuery)){
+        try(PreparedStatement playerStatement = CONNECTION.prepareStatement(playerQuery)){
 
             playerStatement.setLong(1, id);
 
-            player = buildPlayer(moneyAccountActionsStatement, playerStatement);
+            player = buildPlayer(playerStatement);
 
             CONNECTION.commit();
         }
@@ -81,12 +75,12 @@ public class PlayerRepository {
 
     /**
      * Метод создающий Игрока из данных, полученных из БД.
-     * @param moneyAccountActionsStatement Объект PreparedStatement для создания лога транзакций.
+//     * @param moneyAccountActionsStatement Объект PreparedStatement для создания лога транзакций.
      * @param playerStatement Объект PreparedStatement для создания Игрока.
      * @return Игрока.
      * @throws SQLException Если не удалось получить список транзакций.
      */
-    private static Player buildPlayer(PreparedStatement moneyAccountActionsStatement, PreparedStatement playerStatement) throws SQLException {
+    private static Player buildPlayer(PreparedStatement playerStatement) throws SQLException {
         Player player;
         MoneyAccount moneyAccount;
         long moneyAccountId;
@@ -102,7 +96,7 @@ public class PlayerRepository {
 
                 player = new Player(playerId,
                         result.getString("name"),
-                        result.getString("login"),
+                        result.getString("email"),
                         result.getString("password"),
                         moneyAccount);
             }
@@ -111,25 +105,6 @@ public class PlayerRepository {
                 return null;
             }
         }
-        List<Action> moneyAccountActions = new ArrayList<>();
-
-        moneyAccountActionsStatement.setLong(1, moneyAccountId);
-
-        try (ResultSet result = moneyAccountActionsStatement.executeQuery()) {
-            while (result.next()) {
-                moneyAccountActions.add(new MoneyAccountAction(result.getInt("id"),
-                        moneyAccountId,
-                        Timestamp.valueOf(result.getString("date_time")).toLocalDateTime(),
-                        result.getString("message")));
-            }
-        }
-        catch (SQLException e) {
-            CONNECTION.rollback();
-            throw new SQLException("Не удалось получить список транзакций");
-        }
-
-        moneyAccount.setLog(moneyAccountActions);
-
         return player;
     }
 
@@ -139,12 +114,12 @@ public class PlayerRepository {
      * @return Игрока.
      */
     public Player save(Player player){
-        String playerQuery = "INSERT INTO wallet.player(name, login, password, money_account_id) VALUES (?, ?, ?, ?)";
+        String playerQuery = "INSERT INTO wallet.player(name, email, password, money_account_id) VALUES (?, ?, ?, ?)";
 
         try(PreparedStatement playerStatement = CONNECTION.prepareStatement(playerQuery, Statement.RETURN_GENERATED_KEYS)){
 
             playerStatement.setString(1, player.getName());
-            playerStatement.setString(2, player.getLogin());
+            playerStatement.setString(2, player.getEmail());
             playerStatement.setString(3, player.getPassword());
             playerStatement.setLong(4, player.getMoneyAccount().getId());
 
@@ -175,15 +150,15 @@ public class PlayerRepository {
 
     /**
      * Проверяет существование Игрока в хранилище по его логину.
-     * @param login логин Игрока.
+     * @param email логин Игрока.
      * @return true/false в зависимости от наличия Игрока в хранилище.
      */
-    public boolean isFound(String login){
+    public boolean isFound(String email){
         boolean isFound = false;
-        String query = "SELECT EXISTS (SELECT * FROM wallet.player WHERE login = ?)";
+        String query = "SELECT EXISTS (SELECT * FROM wallet.player WHERE email = ?)";
 
         try(PreparedStatement statement = CONNECTION.prepareStatement(query)){
-            statement.setString(1, login);
+            statement.setString(1, email);
             try (ResultSet result = statement.executeQuery()) {
                 if (result.next()) {
                     isFound = result.getBoolean("exists");

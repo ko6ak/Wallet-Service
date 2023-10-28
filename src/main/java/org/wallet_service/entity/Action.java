@@ -1,20 +1,15 @@
 package org.wallet_service.entity;
 
-import lombok.*;
-
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
  * Родительский класс для логирования действий Игрока или событий транзакций.
  */
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public abstract class Action {
     long id;
-    LocalDateTime dateTime;
+    Timestamp dateTime;
     String message;
 
     /**
@@ -22,8 +17,41 @@ public abstract class Action {
      * @param dateTime время события.
      * @param message сообщение
      */
-    public Action(LocalDateTime dateTime, String message) {
+    public Action(Timestamp dateTime, String message) {
         this.dateTime = dateTime;
+        this.message = message;
+    }
+
+    public Action(long id, Timestamp dateTime, String message) {
+        this.id = id;
+        this.dateTime = dateTime;
+        this.message = message;
+    }
+
+    public Action() {
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Timestamp getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(Timestamp dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
         this.message = message;
     }
 

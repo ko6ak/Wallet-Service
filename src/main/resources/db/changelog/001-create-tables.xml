@@ -15,7 +15,7 @@
         <createSequence sequenceName="player_seq"/>
 
         <createTable tableName="money_account">
-            <column name="id" type="BIGINT" defaultValueComputed="nextval('player_actions_seq')">
+            <column name="id" type="BIGINT" defaultValueComputed="nextval('money_account_seq')">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="balance" type="NUMERIC">
@@ -50,7 +50,7 @@
             <column name="name" type="VARCHAR">
                 <constraints nullable="false"/>
             </column>
-            <column name="login" type="VARCHAR">
+            <column name="email" type="VARCHAR">
                 <constraints nullable="false"/>
             </column>
             <column name="password" type="VARCHAR">
@@ -66,8 +66,8 @@
                                  referencedColumnNames="id"
                                  referencedTableName="money_account"/>
         <addUniqueConstraint tableName="player"
-                             columnNames="login"
-                             constraintName="unique_login_index" />
+                             columnNames="email"
+                             constraintName="unique_email_index" />
 
         <createTable tableName="player_actions">
             <column name="id" type="BIGINT" defaultValueComputed="nextval('player_actions_seq')">

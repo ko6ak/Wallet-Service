@@ -33,13 +33,13 @@ public class PlayerServiceTest extends AbstractServiceTest {
 
     @Test
     void getWithLoginAndPassword(){
-        Player player = playerService.get(PlayerTestData.PLAYER_1_WITH_ID.getLogin(), PlayerTestData.PLAYER_1_WITH_ID.getPassword());
+        Player player = playerService.get(PlayerTestData.PLAYER_1_WITH_ID.getEmail(), PlayerTestData.PLAYER_1_WITH_ID.getPassword());
         assertThat(player).isNotNull();
         assertThat(player).usingRecursiveComparison().isEqualTo(PlayerTestData.PLAYER_1_WITH_ID);
     }
 
     @Test
     void isFound(){
-        assertThat(playerService.isFound(PlayerTestData.PLAYER_1_WITH_ID.getLogin())).isTrue();
+        assertThat(playerService.isFound(PlayerTestData.PLAYER_1_WITH_ID.getEmail())).isTrue();
     }
 }

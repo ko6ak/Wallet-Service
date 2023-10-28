@@ -24,7 +24,7 @@ public class PlayerActionRepository {
         try(PreparedStatement statement = CONNECTION.prepareStatement(query)){
 
             statement.setLong(1, playerAction.getPlayerId());
-            statement.setTimestamp(2, Timestamp.valueOf(playerAction.getDateTime()));
+            statement.setTimestamp(2, playerAction.getDateTime());
             statement.setString(3, playerAction.getMessage());
 
             if (statement.executeUpdate() <= 0) {
@@ -61,7 +61,7 @@ public class PlayerActionRepository {
                 while (result.next()) {
                     actions.add(new PlayerAction(result.getInt("id"),
                             playerId,
-                            Timestamp.valueOf(result.getString("date_time")).toLocalDateTime(),
+                            Timestamp.valueOf(result.getString("date_time")),
                             result.getString("message")));
                 }
             }
