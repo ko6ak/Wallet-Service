@@ -1,15 +1,34 @@
 package org.wallet_service.repository;
 
+import jakarta.annotation.PreDestroy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Repository;
 import org.wallet_service.entity.*;
 
+import javax.sql.DataSource;
 import java.sql.*;
-
-import static org.wallet_service.util.DBConnection.CONNECTION;
 
 /**
  * Класс отвечающий за сохранение Игрока в хранилище.
  */
+@Repository
 public class PlayerRepository {
+
+    private final Connection connection;
+
+    public PlayerRepository(Connection connection) {
+        this.connection = connection;
+    }
+
+    @PreDestroy
+    private void destroy(){
+        try {
+            connection.close();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Получение Игрока по его логину и паролю.
@@ -22,18 +41,18 @@ public class PlayerRepository {
         String playerQuery = "SELECT * FROM wallet.player " +
                 "JOIN wallet.money_account ON money_account.id = player.money_account_id WHERE email = ? AND password = ?";
 
-        try(PreparedStatement playerStatement = CONNECTION.prepareStatement(playerQuery)){
+        try(PreparedStatement playerStatement = connection.prepareStatement(playerQuery)){
 
             playerStatement.setString(1, email);
             playerStatement.setString(2, password);
 
             player = buildPlayer(playerStatement);
 
-            CONNECTION.commit();
+            connection.commit();
         }
         catch (SQLException e) {
             try{
-                CONNECTION.rollback();
+                connection.rollback();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -53,17 +72,17 @@ public class PlayerRepository {
         String playerQuery = "SELECT * FROM wallet.player " +
                 "JOIN wallet.money_account ON money_account.id = player.money_account_id WHERE player.id = ?";
 
-        try(PreparedStatement playerStatement = CONNECTION.prepareStatement(playerQuery)){
+        try(PreparedStatement playerStatement = connection.prepareStatement(playerQuery)){
 
             playerStatement.setLong(1, id);
 
             player = buildPlayer(playerStatement);
 
-            CONNECTION.commit();
+            connection.commit();
         }
         catch (SQLException e) {
             try{
-                CONNECTION.rollback();
+                connection.rollback();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -80,7 +99,7 @@ public class PlayerRepository {
      * @return Игрока.
      * @throws SQLException Если не удалось получить список транзакций.
      */
-    private static Player buildPlayer(PreparedStatement playerStatement) throws SQLException {
+    private Player buildPlayer(PreparedStatement playerStatement) throws SQLException {
         Player player;
         MoneyAccount moneyAccount;
         long moneyAccountId;
@@ -101,7 +120,7 @@ public class PlayerRepository {
                         moneyAccount);
             }
             else {
-                CONNECTION.rollback();
+                connection.rollback();
                 return null;
             }
         }
@@ -116,7 +135,7 @@ public class PlayerRepository {
     public Player save(Player player){
         String playerQuery = "INSERT INTO wallet.player(name, email, password, money_account_id) VALUES (?, ?, ?, ?)";
 
-        try(PreparedStatement playerStatement = CONNECTION.prepareStatement(playerQuery, Statement.RETURN_GENERATED_KEYS)){
+        try(PreparedStatement playerStatement = connection.prepareStatement(playerQuery, Statement.RETURN_GENERATED_KEYS)){
 
             playerStatement.setString(1, player.getName());
             playerStatement.setString(2, player.getEmail());
@@ -130,15 +149,15 @@ public class PlayerRepository {
                     player.setId(playerGeneratedKey.getInt("id"));
                 }
                 else {
-                    CONNECTION.rollback();
+                    connection.rollback();
                     throw new SQLException("Не получилось сохранить Игрока");
                 }
             }
-            CONNECTION.commit();
+            connection.commit();
         }
         catch (SQLException e) {
             try{
-                CONNECTION.rollback();
+                connection.rollback();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -157,22 +176,22 @@ public class PlayerRepository {
         boolean isFound = false;
         String query = "SELECT EXISTS (SELECT * FROM wallet.player WHERE email = ?)";
 
-        try(PreparedStatement statement = CONNECTION.prepareStatement(query)){
+        try(PreparedStatement statement = connection.prepareStatement(query)){
             statement.setString(1, email);
             try (ResultSet result = statement.executeQuery()) {
                 if (result.next()) {
                     isFound = result.getBoolean("exists");
                 }
                 else {
-                    CONNECTION.rollback();
+                    connection.rollback();
                     throw new SQLException("Нет Игрока с таким логином");
                 }
             }
-            CONNECTION.commit();
+            connection.commit();
         }
         catch (SQLException e) {
             try{
-                CONNECTION.rollback();
+                connection.rollback();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();

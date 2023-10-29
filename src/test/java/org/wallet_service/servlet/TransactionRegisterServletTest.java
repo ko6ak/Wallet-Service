@@ -6,7 +6,7 @@ import org.wallet_service.AbstractServletTest;
 import org.wallet_service.PlayerTestData;
 import org.wallet_service.TransactionTO;
 import org.wallet_service.TransactionTestData;
-import org.wallet_service.controller.TransactionController;
+import org.wallet_service.in.TransactionController;
 import org.wallet_service.entity.Operation;
 import org.wallet_service.exception.AuthenticationException;
 import org.wallet_service.exception.TransactionException;

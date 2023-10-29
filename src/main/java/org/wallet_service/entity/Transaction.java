@@ -1,5 +1,7 @@
 package org.wallet_service.entity;
 
+import org.springframework.stereotype.Component;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -17,19 +19,6 @@ public class Transaction {
     private long moneyAccountId;
     private boolean isProcessed;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Transaction that = (Transaction) o;
-        return id.equals(that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
     public Transaction(UUID id, LocalDateTime dateTime, String description, Operation operation, BigDecimal amount, long moneyAccountId, boolean isProcessed) {
         this.id = id;
         this.dateTime = dateTime;
@@ -38,6 +27,9 @@ public class Transaction {
         this.amount = amount;
         this.moneyAccountId = moneyAccountId;
         this.isProcessed = isProcessed;
+    }
+
+    public Transaction() {
     }
 
     public UUID getId() {
@@ -94,6 +86,19 @@ public class Transaction {
 
     public void setProcessed(boolean processed) {
         isProcessed = processed;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transaction that = (Transaction) o;
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override

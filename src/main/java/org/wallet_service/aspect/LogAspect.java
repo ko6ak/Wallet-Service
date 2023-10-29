@@ -1,14 +1,14 @@
 package org.wallet_service.aspect;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
-import org.wallet_service.entity.MoneyAccountAction;
-import org.wallet_service.entity.Player;
-import org.wallet_service.entity.PlayerAction;
-import org.wallet_service.entity.Transaction;
-import org.wallet_service.exception.AuthenticationException;
-import org.wallet_service.exception.TransactionException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.wallet_service.dto.request.TransactionRequestDTO;
+import org.wallet_service.dto.response.MessageResponseDTO;
+import org.wallet_service.entity.*;
 import org.wallet_service.service.MoneyAccountActionService;
 import org.wallet_service.service.PlayerActionService;
 import org.wallet_service.util.CurrentPlayer;
@@ -18,78 +18,133 @@ import java.time.LocalDateTime;
 
 import static org.wallet_service.util.CurrentPlayer.*;
 
+/**
+ * Класс-аспект логирующий действия Игрока.
+ */
 @Aspect
+@Component
 public class LogAspect {
-    private static final PlayerActionService playerActionService = new PlayerActionService();
-    private static final MoneyAccountActionService moneyAccountActionService = new MoneyAccountActionService();
+    private final PlayerActionService playerActionService;
+    private final MoneyAccountActionService moneyAccountActionService;
 
-    @AfterReturning(pointcut = "execution(* org.wallet_service.controller.PlayerController.registration(..))", returning = "player")
-    public void loggingRegistration(Player player) {
-        playerActionService.add(new PlayerAction(player.getId(), Timestamp.valueOf(LocalDateTime.now()), "Успешная регистрация"));
+    public LogAspect(PlayerActionService playerActionService, MoneyAccountActionService moneyAccountActionService) {
+        this.playerActionService = playerActionService;
+        this.moneyAccountActionService = moneyAccountActionService;
     }
 
-    @AfterReturning("execution(* org.wallet_service.controller.PlayerController.login(..))")
+    /**
+     * Метод логирует успешную регистрацию Игрока.
+     */
+    @AfterReturning(pointcut = "execution(* org.wallet_service.in.PlayerController.registration(*))", returning = "response")
+    public void loggingRegistration(ResponseEntity<?> response) {
+        if (response.getStatusCode().value() == HttpServletResponse.SC_OK) {
+            Player player = (Player) response.getBody();
+            if (player != null)
+                playerActionService.add(new PlayerAction(player.getId(), Timestamp.valueOf(LocalDateTime.now()), "Успешная регистрация"));
+        }
+    }
+
+    /**
+     * Метод логирует успешный вход Игрока в приложение.
+     */
+    @AfterReturning("execution(* org.wallet_service.in.PlayerController.login(*))")
     public void loggingLogin() {
-        playerActionService.add(new PlayerAction(getCurrentPlayer().getId(), Timestamp.valueOf(LocalDateTime.now()), "Успешный вход"));
+        Player player = getCurrentPlayer();
+        if (player != null)
+            playerActionService.add(new PlayerAction(player.getId(), Timestamp.valueOf(LocalDateTime.now()), "Успешный вход"));
     }
 
-    @Around("execution(* org.wallet_service.controller.PlayerController.logout(*))")
-    public String loggingLogout(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        String result;
-        try{
-            Player currentPlayer = CurrentPlayer.getCurrentPlayer();
-            long playerId = 0;
-            if (currentPlayer != null) playerId = currentPlayer.getId();
-            result = (String) proceedingJoinPoint.proceed();
+    /**
+     * Метод логирует успешный выход Игрока из приложения.
+     */
+    @Around("execution(* org.wallet_service.in.PlayerController.logout(*))")
+    public ResponseEntity<MessageResponseDTO> loggingLogout(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        Player currentPlayer = CurrentPlayer.getCurrentPlayer();
+        long playerId = 0;
+        if (currentPlayer != null) playerId = currentPlayer.getId();
+
+        ResponseEntity<MessageResponseDTO> response = (ResponseEntity<MessageResponseDTO>) proceedingJoinPoint.proceed();
+
+        if (response.getStatusCode().value() == HttpServletResponse.SC_OK)
             playerActionService.add(new PlayerAction(playerId, Timestamp.valueOf(LocalDateTime.now()), "Успешный выход"));
-        }
-        catch (AuthenticationException e){
-            throw new AuthenticationException(e.getMessage());
-        }
-        return result;
+
+        return response;
     }
 
-    @AfterReturning("execution(* org.wallet_service.controller.PlayerController.getBalance(*))")
-    public void loggingBalance() {
-        playerActionService.add(new PlayerAction(getCurrentPlayer().getId(), Timestamp.valueOf(LocalDateTime.now()), "Вывод информации о балансе"));
+    /**
+     * Метод логирует запрос баланса Игрока.
+     */
+    @AfterReturning(pointcut = "execution(* org.wallet_service.in.PlayerController.getBalance(*))", returning = "response")
+    public void loggingBalance(ResponseEntity<MessageResponseDTO> response) {
+        if (response.getStatusCode().value() == HttpServletResponse.SC_OK)
+            playerActionService.add(new PlayerAction(getCurrentPlayer().getId(), Timestamp.valueOf(LocalDateTime.now()), "Вывод информации о балансе"));
     }
 
-    @AfterReturning("execution(* org.wallet_service.controller.PlayerController.getTransactionLog(*))")
-    public void loggingTransactionLog() {
-        playerActionService.add(new PlayerAction(getCurrentPlayer().getId(), Timestamp.valueOf(LocalDateTime.now()), "Вывод лога транзакций"));
+    /**
+     * Метод логирует запрос лога транзакций Игрока.
+     */
+    @AfterReturning(pointcut = "execution(* org.wallet_service.in.PlayerController.getTransactionLog(*))", returning = "response")
+    public void loggingTransactionLog(ResponseEntity<?> response) {
+        if (response.getStatusCode().value() == HttpServletResponse.SC_OK)
+            playerActionService.add(new PlayerAction(getCurrentPlayer().getId(), Timestamp.valueOf(LocalDateTime.now()), "Вывод лога транзакций"));
     }
 
-    @AfterReturning(pointcut = "execution(* org.wallet_service.controller.TransactionController.register(..))")
-    public void loggingTransactionLog(JoinPoint joinPoint) {
-        Object[] input = joinPoint.getArgs();
-        playerActionService.add(new PlayerAction(getCurrentPlayer().getId(), Timestamp.valueOf(LocalDateTime.now()),
-                "Создана транзакция с типом операции " + input[1] +
-                        ", суммой " + input[2] + " и комментарием '" + input[3] + "'"));
-    }
+    /**
+     * Метод логирует создание транзакции Игроком.
+     */
+    @AfterReturning(pointcut = "execution(* org.wallet_service.in.TransactionController.register(*))", returning = "response")
+    public void loggingTransactionLog(JoinPoint joinPoint, ResponseEntity<?> response) {
+        if (response.getStatusCode().value() == HttpServletResponse.SC_OK) {
+            TransactionRequestDTO transactionRequestDTO = (TransactionRequestDTO) joinPoint.getArgs()[0];
+            String operation = transactionRequestDTO.getOperation();
+            String amount = transactionRequestDTO.getAmount();
+            String description = transactionRequestDTO.getDescription();
 
-    @Around("execution(* org.wallet_service.util.Processing.debit(*))")
-    public void loggingDebitException(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        Transaction transaction = (Transaction) proceedingJoinPoint.getArgs()[0];
-        try{
-            proceedingJoinPoint.proceed();
-            moneyAccountActionService.add(new MoneyAccountAction(transaction.getMoneyAccountId(), Timestamp.valueOf(LocalDateTime.now()),
-                    "Транзакция с типом операции " + transaction.getOperation() +
-                            ", суммой " + transaction.getAmount() + " и комментарием '" + transaction.getDescription() + "' успешно выполнена"));
-        }
-        catch (TransactionException e) {
-            moneyAccountActionService.add(new MoneyAccountAction(transaction.getMoneyAccountId(), Timestamp.valueOf(LocalDateTime.now()),
-                    "Транзакция с типом операции " + transaction.getOperation() +
-                            ", суммой " + transaction.getAmount() + " и комментарием '" + transaction.getDescription() +
-                            "' не выполнена. Причина: " + e.getMessage()));
+            playerActionService.add(new PlayerAction(getCurrentPlayer().getId(), Timestamp.valueOf(LocalDateTime.now()),
+                    "Создана транзакция с типом операции " + operation +
+                            ", суммой " + amount + " и комментарием '" + description + "'"));
         }
     }
 
-    @Around("execution(* org.wallet_service.util.Processing.credit(*))")
-    public void loggingCreditException(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        Transaction transaction = (Transaction) proceedingJoinPoint.getArgs()[0];
-        proceedingJoinPoint.proceed();
-        moneyAccountActionService.add(new MoneyAccountAction(transaction.getMoneyAccountId(), Timestamp.valueOf(LocalDateTime.now()),
-                "Транзакция с типом операции " + transaction.getOperation() +
-                        ", суммой " + transaction.getAmount() + " и комментарием '" + transaction.getDescription() + "' успешно выполнена"));
+    /**
+     * Метод логирует результат обработки транзацкии.
+     */
+    @AfterReturning(pointcut = "execution(* org.wallet_service.util.Processing.debit(*))", returning = "bool")
+    public void loggingDebit(JoinPoint joinPoint, boolean bool) throws Throwable {
+        Transaction transaction = (Transaction) joinPoint.getArgs()[0];
+
+        String message = "Транзакция с типом операции " + transaction.getOperation() +
+                ", суммой " + transaction.getAmount() + " и комментарием '" + transaction.getDescription();
+
+        if (bool) moneyAccountActionService.add(
+                new MoneyAccountAction(
+                        transaction.getMoneyAccountId(),
+                        Timestamp.valueOf(LocalDateTime.now()),
+                        message + "' успешно выполнена"));
+        else moneyAccountActionService.add(
+                new MoneyAccountAction(
+                        transaction.getMoneyAccountId(),
+                        Timestamp.valueOf(LocalDateTime.now()),
+                        message + "' не выполнена: баланс меньше списываемой суммы"));
+    }
+
+    /**
+     * Метод логирует результат обработки транзацкии.
+     */
+    @AfterReturning(pointcut = "execution(* org.wallet_service.util.Processing.credit(*))", returning = "bool")
+    public void loggingCredit(JoinPoint joinPoint, boolean bool) throws Throwable {
+        Transaction transaction = (Transaction) joinPoint.getArgs()[0];
+
+        String message = "Транзакция с типом операции " + transaction.getOperation() +
+                ", суммой " + transaction.getAmount() + " и комментарием '" + transaction.getDescription();
+
+        System.out.println(bool);
+        System.out.println("bool");
+
+        if (bool) moneyAccountActionService.add(
+                new MoneyAccountAction(
+                        transaction.getMoneyAccountId(),
+                        Timestamp.valueOf(LocalDateTime.now()),
+                        message + "' успешно выполнена"));
     }
 }

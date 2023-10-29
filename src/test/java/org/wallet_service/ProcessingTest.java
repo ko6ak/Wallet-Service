@@ -1,14 +1,12 @@
 package org.wallet_service;
 
 import org.junit.jupiter.api.Test;
-import org.wallet_service.controller.PlayerController;
-import org.wallet_service.controller.TransactionController;
-import org.wallet_service.entity.Operation;
+import org.wallet_service.in.PlayerController;
+import org.wallet_service.in.TransactionController;
 import org.wallet_service.util.Beans;
 import org.wallet_service.util.Processing;
 
 import java.sql.SQLException;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.wallet_service.util.CurrentPlayer.getToken;

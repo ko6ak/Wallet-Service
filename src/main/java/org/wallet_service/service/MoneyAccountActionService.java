@@ -1,5 +1,6 @@
 package org.wallet_service.service;
 
+import org.springframework.stereotype.Service;
 import org.wallet_service.entity.Action;
 import org.wallet_service.entity.MoneyAccountAction;
 import org.wallet_service.repository.MoneyAccountActionRepository;
@@ -9,8 +10,13 @@ import java.util.List;
 /**
  * Сервисный класс отвечающий за сохранение информации о совершенной транзакции для Денежного счета Игрока в хранилище.
  */
+@Service
 public class MoneyAccountActionService {
-    private final MoneyAccountActionRepository moneyAccountActionRepository = new MoneyAccountActionRepository();
+    private final MoneyAccountActionRepository moneyAccountActionRepository;
+
+    public MoneyAccountActionService(MoneyAccountActionRepository moneyAccountActionRepository) {
+        this.moneyAccountActionRepository = moneyAccountActionRepository;
+    }
 
     /**
      * Добавление информации о совершенной транзакции для Денежного счета.

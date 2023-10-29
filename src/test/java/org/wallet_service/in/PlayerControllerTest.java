@@ -1,4 +1,4 @@
-package org.wallet_service.controller;
+package org.wallet_service.in;
 
 import org.junit.jupiter.api.Test;
 import org.wallet_service.PlayerTestData;

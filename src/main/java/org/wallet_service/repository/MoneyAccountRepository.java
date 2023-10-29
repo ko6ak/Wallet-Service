@@ -1,19 +1,32 @@
 package org.wallet_service.repository;
 
+import jakarta.annotation.PreDestroy;
+import org.springframework.stereotype.Repository;
 import org.wallet_service.entity.MoneyAccount;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
-import static org.wallet_service.util.DBConnection.CONNECTION;
 
 /**
  * Класс отвечающий за сохранение Денежного счета Игрока в хранилище.
  */
+@Repository
 public class MoneyAccountRepository {
+    private final Connection connection;
 
+    public MoneyAccountRepository(Connection connection) {
+        this.connection = connection;
+    }
+
+    @PreDestroy
+    private void destroy(){
+        try {
+            connection.close();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * Метод сохранения Денежного счета.
      * @param moneyAccount денежный счет.
@@ -22,7 +35,7 @@ public class MoneyAccountRepository {
     public MoneyAccount save(MoneyAccount moneyAccount){
         String query = "INSERT INTO wallet.money_account(balance) VALUES (?)";
 
-        try(PreparedStatement statement = CONNECTION.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
+        try(PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
 
             statement.setBigDecimal(1, moneyAccount.getBalance());
             statement.executeUpdate();
@@ -32,15 +45,15 @@ public class MoneyAccountRepository {
                     moneyAccount.setId(generatedKeys.getInt(1));
                 }
                 else {
-                    CONNECTION.rollback();
+                    connection.rollback();
                     throw new SQLException("Не получилось сохранить счет");
                 }
             }
-            CONNECTION.commit();
+            connection.commit();
         }
         catch (SQLException e) {
             try{
-                CONNECTION.rollback();
+                connection.rollback();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -54,29 +67,31 @@ public class MoneyAccountRepository {
      * Метод для обновления баланса счета.
      * @param moneyAccount счет.
      */
-    public void updateBalance(MoneyAccount moneyAccount){
+    public boolean updateBalance(MoneyAccount moneyAccount){
         String query = "UPDATE wallet.money_account SET balance = ? WHERE id = ?";
 
-        try(PreparedStatement statement = CONNECTION.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
+        try(PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
 
             statement.setBigDecimal(1, moneyAccount.getBalance());
             statement.setLong(2, moneyAccount.getId());
             statement.executeUpdate();
 
             if (statement.executeUpdate() <= 0) {
-                CONNECTION.rollback();
+                connection.rollback();
                 throw new SQLException("Не получилось обновить баланс");
             }
-            CONNECTION.commit();
+            connection.commit();
+            return true;
         }
         catch (SQLException e) {
             try{
-                CONNECTION.rollback();
+                connection.rollback();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
             }
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -89,7 +104,7 @@ public class MoneyAccountRepository {
         MoneyAccount moneyAccount = null;
         String query = "SELECT * FROM wallet.money_account WHERE id = ?";
 
-        try(PreparedStatement statement = CONNECTION.prepareStatement(query)){
+        try(PreparedStatement statement = connection.prepareStatement(query)){
 
             statement.setLong(1, id);
 
@@ -99,15 +114,15 @@ public class MoneyAccountRepository {
                     moneyAccount.setId(result.getInt("id"));
                 }
                 else {
-                    CONNECTION.rollback();
+                    connection.rollback();
                     throw new SQLException("Нет счета с таким id");
                 }
             }
-            CONNECTION.commit();
+            connection.commit();
         }
         catch (SQLException e) {
             try{
-                CONNECTION.rollback();
+                connection.rollback();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();

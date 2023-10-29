@@ -1,5 +1,7 @@
 package org.wallet_service.entity;
 
+import org.springframework.stereotype.Component;
+
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
@@ -8,6 +10,9 @@ import java.time.LocalDateTime;
  */
 public class MoneyAccountAction extends Action {
     private long moneyAccountId;
+
+    public MoneyAccountAction() {
+    }
 
     /**
      * Создает объект события транзакции.

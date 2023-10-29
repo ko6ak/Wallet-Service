@@ -1,13 +1,20 @@
 package org.wallet_service.service;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 import org.wallet_service.entity.Player;
 import org.wallet_service.repository.PlayerRepository;
 
 /**
  * Сервисный класс для Игрока.
  */
+@Service
 public class PlayerService {
-    private final PlayerRepository playerRepository = new PlayerRepository();
+    private final PlayerRepository playerRepository;
+
+    public PlayerService(PlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
+    }
 
     /**
      * Получение Игрока по его логину и паролю.

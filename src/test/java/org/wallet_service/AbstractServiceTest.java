@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.wallet_service.util.ConfigParser;
+import org.wallet_service.util.PropertiesParser;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -27,11 +27,11 @@ public abstract class AbstractServiceTest {
 
     @BeforeAll
     public static void setUp() throws SQLException {
-        ConfigParser.url = postgresContainer.getJdbcUrl();
-        ConfigParser.username = postgresContainer.getUsername();
-        ConfigParser.password = postgresContainer.getPassword();
-        ConfigParser.driver = postgresContainer.getDriverClassName();
-        CONNECTION = DriverManager.getConnection(ConfigParser.url, ConfigParser.username, ConfigParser.password);
+        PropertiesParser.url = postgresContainer.getJdbcUrl();
+        PropertiesParser.username = postgresContainer.getUsername();
+        PropertiesParser.password = postgresContainer.getPassword();
+        PropertiesParser.driver = postgresContainer.getDriverClassName();
+        CONNECTION = DriverManager.getConnection(PropertiesParser.url, PropertiesParser.username, PropertiesParser.password);
         CONNECTION.setAutoCommit(false);
     }
 }

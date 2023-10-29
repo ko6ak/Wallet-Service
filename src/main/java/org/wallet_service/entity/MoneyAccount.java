@@ -1,5 +1,7 @@
 package org.wallet_service.entity;
 
+import org.springframework.stereotype.Component;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +13,9 @@ import java.util.Objects;
 public class MoneyAccount {
     private long id;
     private BigDecimal balance;
+
+    public MoneyAccount() {
+    }
 
     /**
      * Создает объект Денежного счета.

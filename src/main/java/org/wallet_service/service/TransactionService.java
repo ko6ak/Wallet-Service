@@ -1,5 +1,6 @@
 package org.wallet_service.service;
 
+import org.springframework.stereotype.Service;
 import org.wallet_service.entity.Transaction;
 import org.wallet_service.repository.TransactionRepository;
 
@@ -9,8 +10,13 @@ import java.util.UUID;
 /**
  * Сервисный класс для транзакций.
  */
+@Service
 public class TransactionService {
-    private final TransactionRepository transactionRepository = new TransactionRepository();
+    private final TransactionRepository transactionRepository;
+
+    public TransactionService(TransactionRepository transactionRepository) {
+        this.transactionRepository = transactionRepository;
+    }
 
     /**
      * Проверяет существование Транзакции в хранилище по его id.

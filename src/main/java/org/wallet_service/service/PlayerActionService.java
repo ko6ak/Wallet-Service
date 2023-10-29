@@ -1,5 +1,6 @@
 package org.wallet_service.service;
 
+import org.springframework.stereotype.Service;
 import org.wallet_service.entity.Action;
 import org.wallet_service.entity.PlayerAction;
 import org.wallet_service.repository.PlayerActionRepository;
@@ -9,8 +10,13 @@ import java.util.List;
 /**
  * Сервисный класс для событий Игрока.
  */
+@Service
 public class PlayerActionService {
-    private final PlayerActionRepository playerActionRepository = new PlayerActionRepository();
+    private final PlayerActionRepository playerActionRepository;
+
+    public PlayerActionService(PlayerActionRepository playerActionRepository) {
+        this.playerActionRepository = playerActionRepository;
+    }
 
     /**
      * Добавление события в список активности для каждого Игрока.

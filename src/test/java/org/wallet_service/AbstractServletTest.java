@@ -6,10 +6,10 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.mockito.MockedStatic;
-import org.wallet_service.controller.PlayerController;
-import org.wallet_service.controller.TransactionController;
+import org.wallet_service.in.PlayerController;
+import org.wallet_service.in.TransactionController;
 import org.wallet_service.util.Beans;
-import org.wallet_service.util.Validator;
+import org.wallet_service.validator.Validator;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;

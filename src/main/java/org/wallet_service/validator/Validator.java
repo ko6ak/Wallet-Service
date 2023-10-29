@@ -1,4 +1,6 @@
-package org.wallet_service.util;
+package org.wallet_service.validator;
+
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -6,11 +8,16 @@ import java.util.*;
 /**
  * Класс отвечает за валидацию входных данных.
  */
+@Component
 public class Validator {
-    Map<String, List<String>> result = new HashMap<>();
+    private final Map<String, List<String>> result = new HashMap<>();
 
     public Map<String, List<String>> getResult() {
         return result;
+    }
+
+    public void clearResult(){
+        result.clear();
     }
 
     /**

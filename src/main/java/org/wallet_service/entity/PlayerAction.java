@@ -1,5 +1,7 @@
 package org.wallet_service.entity;
 
+import org.springframework.stereotype.Component;
+
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
@@ -8,6 +10,10 @@ import java.time.LocalDateTime;
  */
 public class PlayerAction extends Action {
     private long playerId;
+
+
+    public PlayerAction() {
+    }
 
     /**
      * Создает объект действия Игрока.

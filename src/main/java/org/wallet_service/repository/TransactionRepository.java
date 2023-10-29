@@ -1,18 +1,34 @@
 package org.wallet_service.repository;
 
+import jakarta.annotation.PreDestroy;
+import org.springframework.stereotype.Repository;
 import org.wallet_service.entity.Operation;
 import org.wallet_service.entity.Transaction;
 
 import java.sql.*;
 import java.util.*;
 
-import static org.wallet_service.util.DBConnection.CONNECTION;
 
 /**
  * Класс отвечающий за сохранение Транзакций в хранилище.
  */
+@Repository
 public class TransactionRepository {
+    private final Connection connection;
 
+    public TransactionRepository(Connection connection) {
+        this.connection = connection;
+    }
+
+    @PreDestroy
+    private void destroy(){
+        try {
+            connection.close();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * Проверяет существование Транзакции в хранилище по его id.
      * @param id идентификатор транзакции.
@@ -22,7 +38,7 @@ public class TransactionRepository {
         boolean isFound = false;
         String query = "SELECT EXISTS (SELECT * FROM wallet.transaction WHERE id = ?)";
 
-        try(PreparedStatement statement = CONNECTION.prepareStatement(query)){
+        try(PreparedStatement statement = connection.prepareStatement(query)){
 
             statement.setString(1, id.toString());
 
@@ -31,15 +47,15 @@ public class TransactionRepository {
                     isFound = result.getBoolean("exists");
                 }
                 else {
-                    CONNECTION.rollback();
+                    connection.rollback();
                     throw new SQLException("Нет транзакции с таким id");
                 }
             }
-            CONNECTION.commit();
+            connection.commit();
         }
         catch (SQLException e) {
             try{
-                CONNECTION.rollback();
+                connection.rollback();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -58,7 +74,7 @@ public class TransactionRepository {
         Transaction transaction = null;
         String query = "SELECT * FROM wallet.transaction WHERE id = ?";
 
-        try(PreparedStatement statement = CONNECTION.prepareStatement(query)){
+        try(PreparedStatement statement = connection.prepareStatement(query)){
 
             statement.setString(1, id.toString());
 
@@ -73,15 +89,15 @@ public class TransactionRepository {
                             result.getBoolean("is_processed"));
                 }
                 else {
-                    CONNECTION.rollback();
+                    connection.rollback();
                     throw new SQLException("Нет транзакции с таким id");
                 }
             }
-            CONNECTION.commit();
+            connection.commit();
         }
         catch (SQLException e) {
             try{
-                CONNECTION.rollback();
+                connection.rollback();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -98,7 +114,7 @@ public class TransactionRepository {
     public Transaction save(Transaction transaction){
         String query = "INSERT INTO wallet.transaction(id, date_time, description, operation, amount, money_account_id, is_processed) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try(PreparedStatement statement = CONNECTION.prepareStatement(query)) {
+        try(PreparedStatement statement = connection.prepareStatement(query)) {
 
             statement.setString(1, transaction.getId().toString());
             statement.setTimestamp(2, Timestamp.valueOf(transaction.getDateTime()));
@@ -109,15 +125,15 @@ public class TransactionRepository {
             statement.setBoolean(7, transaction.isProcessed());
 
             if (statement.executeUpdate() <= 0) {
-                CONNECTION.rollback();
+                connection.rollback();
                 throw new SQLException("Не получилось сохранить транзакцию");
             }
 
-            CONNECTION.commit();
+            connection.commit();
         }
         catch (SQLException e) {
             try{
-                CONNECTION.rollback();
+                connection.rollback();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -134,20 +150,20 @@ public class TransactionRepository {
     public void updateProcessed(Transaction transaction){
         String query = "UPDATE wallet.transaction SET is_processed = TRUE WHERE id = ?";
 
-        try(PreparedStatement statement = CONNECTION.prepareStatement(query)) {
+        try(PreparedStatement statement = connection.prepareStatement(query)) {
 
             statement.setString(1, transaction.getId().toString());
 
             if (statement.executeUpdate() <= 0) {
-                CONNECTION.rollback();
+                connection.rollback();
                 throw new SQLException("Не получилось изменить транзакцию");
             }
 
-            CONNECTION.commit();
+            connection.commit();
         }
         catch (SQLException e) {
             try{
-                CONNECTION.rollback();
+                connection.rollback();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -164,7 +180,7 @@ public class TransactionRepository {
         List<Transaction> transactions = new ArrayList<>();
         String query = "SELECT * FROM wallet.transaction WHERE is_processed = false";
 
-        try(Statement statement = CONNECTION.createStatement()){
+        try(Statement statement = connection.createStatement()){
             try (ResultSet result = statement.executeQuery(query)) {
                 while (result.next()) {
                     transactions.add(
@@ -179,14 +195,14 @@ public class TransactionRepository {
                 }
             }
             catch (SQLException e) {
-                CONNECTION.rollback();
+                connection.rollback();
                 throw new SQLException("Не удалось получить список не выполненных транзакций");
             }
-            CONNECTION.commit();
+            connection.commit();
         }
         catch (SQLException e) {
             try{
-                CONNECTION.rollback();
+                connection.rollback();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();

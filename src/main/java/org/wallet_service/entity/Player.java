@@ -1,5 +1,7 @@
 package org.wallet_service.entity;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Objects;
 
 /**
@@ -11,6 +13,9 @@ public class Player {
     private String email;
     private String password;
     private MoneyAccount moneyAccount;
+
+    public Player() {
+    }
 
     /**
      * Создает объект Игрока

@@ -1,7 +1,7 @@
 package org.wallet_service;
 
-import org.wallet_service.dto.ActionResponseTO;
-import org.wallet_service.dto.PlayerResponseTO;
+import org.wallet_service.dto.response.ActionResponseDTO;
+import org.wallet_service.dto.response.PlayerResponseDTO;
 import org.wallet_service.entity.*;
 
 import java.math.BigDecimal;
@@ -28,8 +28,8 @@ public class PlayerTestData {
     public static PlayerTO PLAYER_TO_WITH_BAD_LOGIN;
     public static PlayerTO PLAYER_TO_WITH_BAD_PASSWORD;
 
-    public static PlayerResponseTO PLAYER_RESPONSE_TO;
-    public static PlayerResponseTO PLAYER_RESPONSE_TO_WITHOUT_TOKEN;
+    public static PlayerResponseDTO PLAYER_RESPONSE_TO;
+    public static PlayerResponseDTO PLAYER_RESPONSE_TO_WITHOUT_TOKEN;
 
     public static final PlayerAction PLAYER_ACTION_1 = new PlayerAction(1, 1, Timestamp.valueOf(LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 10, 10)), "Успешная регистрация");
     public static final PlayerAction PLAYER_ACTION_2 = new PlayerAction(2, 1, Timestamp.valueOf(LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 11, 10)), "Успешный вход");
@@ -53,8 +53,8 @@ public class PlayerTestData {
     public static final List<Action> MONEY_ACCOUNT_ACTIONS = new ArrayList<>();
     public static final List<Action> MONEY_ACCOUNT_ACTIONS_FULL = new ArrayList<>();
     public static final List<Action> FULL_PLAYER_ACTIONS = new ArrayList<>();
-    public static final List<ActionResponseTO> FULL_PLAYER_ACTIONS_RESPONSE = new ArrayList<>();
-    public static final List<ActionResponseTO> MONEY_ACCOUNT_ACTIONS_RESPONSE = new ArrayList<>();
+    public static final List<ActionResponseDTO> FULL_PLAYER_ACTIONS_RESPONSE = new ArrayList<>();
+    public static final List<ActionResponseDTO> MONEY_ACCOUNT_ACTIONS_RESPONSE = new ArrayList<>();
 
     static {
         ACCOUNT_1002_WITHOUT_ID = new MoneyAccount(new BigDecimal("1200.00"));
@@ -91,13 +91,13 @@ public class PlayerTestData {
         FULL_PLAYER_ACTIONS.addAll(ACTIONS_1);
         FULL_PLAYER_ACTIONS.sort(Comparator.comparing(Action::getDateTime));
 
-        FULL_PLAYER_ACTIONS.forEach(a -> FULL_PLAYER_ACTIONS_RESPONSE.add(new ActionResponseTO(a.getDateTime(), a.getMessage())));
+        FULL_PLAYER_ACTIONS.forEach(a -> FULL_PLAYER_ACTIONS_RESPONSE.add(new ActionResponseDTO(a.getDateTime(), a.getMessage())));
 
-        PLAYER_RESPONSE_TO = new PlayerResponseTO(PLAYER_1_WITH_ID.getId(), PLAYER_1_WITH_ID.getName(), PLAYER_1_WITH_ID.getEmail(), ACCOUNT_1001);
+        PLAYER_RESPONSE_TO = new PlayerResponseDTO(PLAYER_1_WITH_ID.getId(), PLAYER_1_WITH_ID.getName(), PLAYER_1_WITH_ID.getEmail(), ACCOUNT_1001);
         PLAYER_RESPONSE_TO.setToken(AbstractServiceTest.TOKEN);
 
-        PLAYER_RESPONSE_TO_WITHOUT_TOKEN = new PlayerResponseTO(PLAYER_1_WITH_ID.getId(), PLAYER_1_WITH_ID.getName(), PLAYER_1_WITH_ID.getEmail(), ACCOUNT_1001);
+        PLAYER_RESPONSE_TO_WITHOUT_TOKEN = new PlayerResponseDTO(PLAYER_1_WITH_ID.getId(), PLAYER_1_WITH_ID.getName(), PLAYER_1_WITH_ID.getEmail(), ACCOUNT_1001);
 
-        MONEY_ACCOUNT_ACTIONS.forEach(a -> MONEY_ACCOUNT_ACTIONS_RESPONSE.add(new ActionResponseTO(a.getDateTime(), a.getMessage())));
+        MONEY_ACCOUNT_ACTIONS.forEach(a -> MONEY_ACCOUNT_ACTIONS_RESPONSE.add(new ActionResponseDTO(a.getDateTime(), a.getMessage())));
     }
 }

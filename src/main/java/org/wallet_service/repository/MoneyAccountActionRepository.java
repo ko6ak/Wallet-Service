@@ -1,22 +1,35 @@
 package org.wallet_service.repository;
 
+import jakarta.annotation.PreDestroy;
+import org.springframework.stereotype.Repository;
 import org.wallet_service.entity.Action;
 import org.wallet_service.entity.MoneyAccountAction;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.wallet_service.util.DBConnection.CONNECTION;
 
 /**
  * Класс отвечающий за сохранение информации о совершенной транзакции для Денежного счета Игрока в хранилище.
  */
+@Repository
 public class MoneyAccountActionRepository {
+    private final Connection connection;
 
+    public MoneyAccountActionRepository(Connection connection) {
+        this.connection = connection;
+    }
+
+    @PreDestroy
+    private void destroy(){
+        try {
+            connection.close();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * Добавление информации о совершенной транзакции для Денежного счета.
      * @param moneyAccountAction событие.
@@ -24,21 +37,21 @@ public class MoneyAccountActionRepository {
     public void add(MoneyAccountAction moneyAccountAction){
         String query = "INSERT INTO wallet.money_account_actions(money_account_id, date_time, message) VALUES (?, ?, ?)";
 
-        try(PreparedStatement statement = CONNECTION.prepareStatement(query)){
+        try(PreparedStatement statement = connection.prepareStatement(query)){
 
             statement.setLong(1, moneyAccountAction.getMoneyAccountId());
             statement.setTimestamp(2, moneyAccountAction.getDateTime());
             statement.setString(3, moneyAccountAction.getMessage());
 
             if (statement.executeUpdate() <= 0) {
-                CONNECTION.rollback();
+                connection.rollback();
                 throw new SQLException("Не получилось сохранить событие в лог транзакций");
             }
-            CONNECTION.commit();
+            connection.commit();
         }
         catch (SQLException e) {
             try{
-                CONNECTION.rollback();
+                connection.rollback();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -56,7 +69,7 @@ public class MoneyAccountActionRepository {
         List<Action> actions = new ArrayList<>();
         String query = "SELECT * FROM wallet.money_account_actions WHERE money_account_id = ?";
 
-        try(PreparedStatement statement = CONNECTION.prepareStatement(query)){
+        try(PreparedStatement statement = connection.prepareStatement(query)){
 
             statement.setLong(1, moneyAccountId);
             try (ResultSet result = statement.executeQuery()) {
@@ -68,14 +81,14 @@ public class MoneyAccountActionRepository {
                 }
             }
             catch (SQLException e) {
-                CONNECTION.rollback();
+                connection.rollback();
                 throw new SQLException("Не удалось получить список транзакций");
             }
-            CONNECTION.commit();
+            connection.commit();
         }
         catch (SQLException e) {
             try{
-                CONNECTION.rollback();
+                connection.rollback();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
