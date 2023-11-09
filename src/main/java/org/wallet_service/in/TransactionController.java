@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.wallet_service.aspect.Time;
 import org.wallet_service.dto.request.TransactionRequestDTO;
 import org.wallet_service.dto.response.MessageResponseDTO;
-import org.wallet_service.entity.Operation;
+import org.wallet_service.entity.OperationType;
 import org.wallet_service.entity.Player;
 import org.wallet_service.entity.Transaction;
 import org.wallet_service.exception.AuthenticationException;
@@ -87,7 +87,7 @@ public class TransactionController {
             return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(validator.getResult());
 
         UUID id = UUID.fromString(inputId);
-        Operation operation = Operation.valueOf(inputOperation);
+        OperationType operationType = OperationType.valueOf(inputOperation);
 
         Player currentPlayer = CurrentPlayer.getCurrentPlayer();
         if (currentPlayer == null || !token.equals(getToken()))
@@ -101,7 +101,7 @@ public class TransactionController {
             return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body(new MessageResponseDTO("Токен просрочен, залогинтесь заново"));
         }
         if (!transactionService.isFound(id)) {
-            transactionService.save(new Transaction(id, LocalDateTime.now(), description, operation,
+            transactionService.save(new Transaction(id, LocalDateTime.now(), description, operationType,
                     new BigDecimal(amount), currentPlayer.getMoneyAccount().getId(), false));
         }
         else return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(new MessageResponseDTO("Не уникальный id транзакции"));

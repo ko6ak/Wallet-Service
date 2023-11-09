@@ -1,7 +1,5 @@
 package org.wallet_service.entity;
 
-import org.springframework.stereotype.Component;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -14,16 +12,16 @@ public class Transaction {
     private UUID id;
     private LocalDateTime dateTime;
     private String description;
-    private Operation operation;
+    private OperationType operationType;
     private BigDecimal amount;
     private long moneyAccountId;
     private boolean isProcessed;
 
-    public Transaction(UUID id, LocalDateTime dateTime, String description, Operation operation, BigDecimal amount, long moneyAccountId, boolean isProcessed) {
+    public Transaction(UUID id, LocalDateTime dateTime, String description, OperationType operationType, BigDecimal amount, long moneyAccountId, boolean isProcessed) {
         this.id = id;
         this.dateTime = dateTime;
         this.description = description;
-        this.operation = operation;
+        this.operationType = operationType;
         this.amount = amount;
         this.moneyAccountId = moneyAccountId;
         this.isProcessed = isProcessed;
@@ -56,12 +54,12 @@ public class Transaction {
         this.description = description;
     }
 
-    public Operation getOperation() {
-        return operation;
+    public OperationType getOperation() {
+        return operationType;
     }
 
-    public void setOperation(Operation operation) {
-        this.operation = operation;
+    public void setOperation(OperationType operationType) {
+        this.operationType = operationType;
     }
 
     public BigDecimal getAmount() {
@@ -107,7 +105,7 @@ public class Transaction {
                 "id=" + id +
                 ", dateTime=" + dateTime +
                 ", description='" + description + '\'' +
-                ", operation=" + operation +
+                ", operation=" + operationType +
                 ", amount=" + amount +
                 ", moneyAccountId=" + moneyAccountId +
                 ", isProcessed=" + isProcessed +

@@ -118,13 +118,13 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
       <version>6.0.13</version>
-<!--      <version>5.3.24</version>-->
+<!--      <version>5.3.30</version>-->
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
       <version>6.0.13</version>
-<!--      <version>5.3.24</version>-->
+<!--      <version>5.3.30</version>-->
     </dependency>
     <dependency>
       <groupId>jakarta.annotation</groupId>
@@ -145,33 +145,47 @@
 <!--    <dependency>-->
 <!--      <groupId>io.springfox</groupId>-->
 <!--      <artifactId>springfox-swagger2</artifactId>-->
-<!--      <version>3.0.0</version>-->
+<!--      <version>2.7.0</version>-->
 <!--    </dependency>-->
-<!--    &lt;!&ndash; https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui &ndash;&gt;-->
+<!--&lt;!&ndash;    &lt;!&ndash; https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui &ndash;&gt;&ndash;&gt;-->
 <!--    <dependency>-->
 <!--      <groupId>io.springfox</groupId>-->
 <!--      <artifactId>springfox-swagger-ui</artifactId>-->
-<!--      <version>3.0.0</version>-->
+<!--      <version>2.7.0</version>-->
 <!--    </dependency>-->
-<!--    &lt;!&ndash; https://mvnrepository.com/artifact/org.slf4j/slf4j-api &ndash;&gt;-->
+    <!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui -->
 <!--    <dependency>-->
-<!--      <groupId>org.slf4j</groupId>-->
-<!--      <artifactId>slf4j-api</artifactId>-->
-<!--      <version>2.0.9</version>-->
+<!--      <groupId>org.springdoc</groupId>-->
+<!--      <artifactId>springdoc-openapi-ui</artifactId>-->
+<!--      <version>1.7.0</version>-->
 <!--    </dependency>-->
-<!--    &lt;!&ndash; https://mvnrepository.com/artifact/org.slf4j/slf4j-simple &ndash;&gt;-->
+
+    <!-- https://mvnrepository.com/artifact/org.webjars/swagger-ui -->
 <!--    <dependency>-->
-<!--      <groupId>org.slf4j</groupId>-->
-<!--      <artifactId>slf4j-simple</artifactId>-->
-<!--      <version>2.0.9</version>-->
-<!--&lt;!&ndash;      <scope>test</scope>&ndash;&gt;-->
+<!--      <groupId>org.webjars</groupId>-->
+<!--      <artifactId>swagger-ui</artifactId>-->
+<!--      <version>5.1.2</version>-->
 <!--    </dependency>-->
+
+    <!--&lt;!&ndash;    &lt;!&ndash; https://mvnrepository.com/artifact/org.slf4j/slf4j-api &ndash;&gt;&ndash;&gt;-->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>2.0.9</version>
+    </dependency>
+<!--&lt;!&ndash;    &lt;!&ndash; https://mvnrepository.com/artifact/org.slf4j/slf4j-simple &ndash;&gt;&ndash;&gt;-->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>2.0.9</version>
+<!--      <scope>test</scope>-->
+    </dependency>
 <!--    &lt;!&ndash; https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api &ndash;&gt;-->
 <!--    <dependency>-->
 <!--      <groupId>javax.servlet</groupId>-->
 <!--      <artifactId>javax.servlet-api</artifactId>-->
 <!--      <version>4.0.1</version>-->
-<!--&lt;!&ndash;      <scope>provided</scope>&ndash;&gt;-->
+<!--      <scope>provided</scope>-->
 <!--    </dependency>-->
 <!--    <dependency>-->
 <!--      <groupId>org.springdoc</groupId>-->
@@ -179,14 +193,110 @@
 <!--      <version>2.2.0</version>-->
 <!--    </dependency>-->
     <!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui -->
+<!--    <dependency>-->
+<!--      <groupId>org.springdoc</groupId>-->
+<!--      <artifactId>springdoc-openapi-ui</artifactId>-->
+<!--      <version>1.7.0</version>-->
+<!--    </dependency>-->
+    <!-- https://mvnrepository.com/artifact/org.webjars/bootstrap -->
+<!--    <dependency>-->
+<!--      <groupId>org.webjars</groupId>-->
+<!--      <artifactId>bootstrap</artifactId>-->
+<!--      <version>5.3.2</version>-->
+<!--    </dependency>-->
+    <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-core -->
+<!--    <dependency>-->
+<!--      <groupId>io.swagger.core.v3</groupId>-->
+<!--      <artifactId>swagger-core</artifactId>-->
+<!--      <version>2.2.18</version>-->
+<!--    </dependency>-->
+<!--    &lt;!&ndash; https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations &ndash;&gt;-->
+<!--    <dependency>-->
+<!--      <groupId>io.swagger.core.v3</groupId>-->
+<!--      <artifactId>swagger-annotations</artifactId>-->
+<!--      <version>2.2.18</version>-->
+<!--    </dependency>-->
+    <!-- https://mvnrepository.com/artifact/io.swagger/swagger-jaxrs -->
+<!--    <dependency>-->
+<!--      <groupId>io.swagger</groupId>-->
+<!--      <artifactId>swagger-jaxrs</artifactId>-->
+<!--      <version>1.6.12</version>-->
+<!--    </dependency>-->
+<!--    &lt;!&ndash; https://mvnrepository.com/artifact/com.sebastian-daschner/jaxrs-analyzer &ndash;&gt;-->
+<!--    <dependency>-->
+<!--      <groupId>com.sebastian-daschner</groupId>-->
+<!--      <artifactId>jaxrs-analyzer</artifactId>-->
+<!--      <version>0.17</version>-->
+<!--    </dependency>-->
+    <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-jaxrs2-jakarta -->
     <dependency>
-      <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-ui</artifactId>
-      <version>1.7.0</version>
+      <groupId>io.swagger.core.v3</groupId>
+<!--      <artifactId>swagger-jaxrs2-jakarta</artifactId>-->
+      <artifactId>swagger-jaxrs2</artifactId>
+      <version>2.2.15</version>
+    </dependency>
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-annotations</artifactId>
+    <version>2.0.0</version>
+  </dependency>
+    <!-- https://mvnrepository.com/artifact/jakarta.ws.rs/jakarta.ws.rs-api -->
+<!--    <dependency>-->
+<!--      <groupId>jakarta.ws.rs</groupId>-->
+<!--      <artifactId>jakarta.ws.rs-api</artifactId>-->
+<!--      <version>3.1.0</version>-->
+<!--    </dependency>-->
+<!--    &lt;!&ndash; https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-server &ndash;&gt;-->
+<!--    <dependency>-->
+<!--      <groupId>org.glassfish.jersey.core</groupId>-->
+<!--      <artifactId>jersey-server</artifactId>-->
+<!--      <version>3.1.1</version>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--      <groupId>org.glassfish.jersey.containers</groupId>-->
+<!--      <artifactId>jersey-container-servlet</artifactId>-->
+<!--      <version>3.1.1</version>-->
+<!--    </dependency>-->
+    <dependency>
+      <groupId>org.glassfish.jersey.media</groupId>
+      <artifactId>jersey-media-json-jackson</artifactId>
+      <version>3.1.1</version>
     </dependency>
 
-  </dependencies>
+<!--    <dependency>-->
+<!--      <groupId>io.swagger.core.v3</groupId>-->
+<!--      <artifactId>swagger-jaxrs2</artifactId>-->
+<!--      <version>2.2.7</version>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--      <groupId>io.swagger.core.v3</groupId>-->
+<!--      <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>-->
+<!--      <version>2.2.7</version>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--      <groupId>io.swagger.core.v3</groupId>-->
+<!--      <artifactId>swagger-jaxrs2-jakarta</artifactId>-->
+<!--      <version>2.2.18</version>-->
+<!--    </dependency>-->
 
+<!--    <dependency>-->
+<!--      <groupId>jakarta.ws.rs</groupId>-->
+<!--      <artifactId>jakarta.ws.rs-api</artifactId>-->
+<!--      <version>3.0.0</version>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--      <groupId>jakarta.servlet</groupId>-->
+<!--      <artifactId>jakarta.servlet-api</artifactId>-->
+<!--      <version>5.0.0</version>-->
+<!--    </dependency>-->
+    <!-- https://mvnrepository.com/artifact/io.springfox/springfox-oas -->
+<!--    <dependency>-->
+<!--      <groupId>io.springfox</groupId>-->
+<!--      <artifactId>springfox-oas</artifactId>-->
+<!--      <version>3.0.0</version>-->
+<!--    </dependency>-->
+
+  </dependencies>
   <build>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
@@ -297,6 +407,177 @@
           </execution>
         </executions>
       </plugin>
+
+<!--      <plugin>-->
+<!--        <groupId>com.sebastian-daschner</groupId>-->
+<!--        <artifactId>jaxrs-analyzer-maven-plugin</artifactId>-->
+<!--        <version>0.17</version>-->
+<!--        <executions>-->
+<!--          <execution>-->
+<!--            <goals>-->
+<!--              <goal>analyze-jaxrs</goal>-->
+<!--            </goals>-->
+<!--            <configuration>-->
+<!--              <backend>swagger</backend>-->
+<!--              <deployedDomain>example.com</deployedDomain>-->
+<!--            </configuration>-->
+<!--          </execution>-->
+<!--        </executions>-->
+<!--      </plugin>-->
+
+<!--      <plugin>-->
+<!--        <groupId>org.springdoc</groupId>-->
+<!--        <artifactId>springdoc-openapi-maven-plugin</artifactId>-->
+<!--        <version>0.3</version>-->
+<!--        <executions>-->
+<!--          <execution>-->
+<!--            <phase>integration-test</phase>-->
+<!--            <goals>-->
+<!--              <goal>generate</goal>-->
+<!--            </goals>-->
+<!--          </execution>-->
+<!--        </executions>-->
+<!--        <configuration>-->
+<!--          <apiDocsUrl>http://localhost:8080/v3/api-docs</apiDocsUrl>-->
+<!--          <outputFileName>openapi.yaml</outputFileName>-->
+<!--          <outputDir>${project.build.directory}</outputDir>-->
+<!--        </configuration>-->
+<!--      </plugin>-->
+
+<!--      <plugin>-->
+<!--        <groupId>com.github.kongchen</groupId>-->
+<!--        <artifactId>swagger-maven-plugin</artifactId>-->
+<!--        <version>3.1.5</version>-->
+<!--        <configuration>-->
+<!--          <apiSources>-->
+<!--            <apiSource>-->
+<!--              <springmvc>true</springmvc>-->
+<!--              <locations>-->
+<!--                <location>org.wallet_service.in.PlayerController</location>-->
+<!--                <location>org.wallet_service.in.TransactionController</location>-->
+<!--              </locations>-->
+<!--              <schemes>-->
+<!--                <scheme>http</scheme>-->
+<!--              </schemes>-->
+<!--              <host>127.0.0.1:8080</host>-->
+<!--              <basePath>/</basePath>-->
+<!--              <info>-->
+<!--                <title>My API</title>-->
+<!--                <version>1.1.1</version>-->
+<!--              </info>-->
+<!--              <swaggerDirectory>${basedir}/src/main/webapp/</swaggerDirectory>-->
+<!--              <securityDefinitions>-->
+<!--                <securityDefinition>-->
+<!--                  <name>basicAuth</name>-->
+<!--                  <type>basic</type>-->
+<!--                </securityDefinition>-->
+<!--              </securityDefinitions>-->
+<!--            </apiSource>-->
+<!--          </apiSources>-->
+<!--        </configuration>-->
+<!--        <executions>-->
+<!--          <execution>-->
+<!--            <goals>-->
+<!--              <goal>generate</goal>-->
+<!--            </goals>-->
+<!--          </execution>-->
+<!--        </executions>-->
+<!--      </plugin>-->
+
+<!--      <plugin>-->
+<!--        <groupId>io.swagger.core.v3</groupId>-->
+<!--        <artifactId>swagger-maven-plugin-jakarta</artifactId>-->
+<!--&lt;!&ndash;        <artifactId>swagger-maven-plugin</artifactId>&ndash;&gt;-->
+<!--        <version>2.2.18</version>-->
+<!--        <configuration>-->
+<!--          <outputFileName>openapi</outputFileName>-->
+<!--&lt;!&ndash;          <outputPath>${project.build.directory}/generatedtest</outputPath>&ndash;&gt;-->
+<!--          <outputPath>${project.basedir}/src/main/webapp/</outputPath>-->
+<!--&lt;!&ndash;          <outputFormat>JSONANDYAML</outputFormat>&ndash;&gt;-->
+<!--          <outputFormat>JSON</outputFormat>-->
+<!--          <resourcePackages>-->
+<!--            <package>org.wallet_service</package>-->
+<!--          </resourcePackages>-->
+<!--          <resourceClasses>-->
+<!--            <class>org.wallet_service.in.PlayerController</class>-->
+<!--            <class>org.wallet_service.in.TransactionController</class>-->
+<!--          </resourceClasses>-->
+<!--          <prettyPrint>true</prettyPrint>-->
+<!--        </configuration>-->
+<!--        <executions>-->
+<!--          <execution>-->
+<!--            <phase>compile</phase>-->
+<!--            <goals>-->
+<!--              <goal>resolve</goal>-->
+<!--            </goals>-->
+<!--          </execution>-->
+<!--        </executions>-->
+<!--      </plugin>-->
+
+<!--      <plugin>-->
+<!--        <groupId>org.springdoc</groupId>-->
+<!--        <artifactId>springdoc-openapi-maven-plugin</artifactId>-->
+<!--        <version>1.4</version>-->
+<!--        <executions>-->
+<!--          <execution>-->
+<!--            <phase>integration-test</phase>-->
+<!--            <goals>-->
+<!--              <goal>generate</goal>-->
+<!--            </goals>-->
+<!--          </execution>-->
+<!--        </executions>-->
+<!--        <configuration>-->
+<!--          &lt;!&ndash;                    <apiDocsUrl>http://localhost:8080/v3/api-docs</apiDocsUrl>&ndash;&gt;-->
+<!--          <outputFileName>openapi.json</outputFileName>-->
+<!--          <outputDir>${project.basedir}/src/main/webapp/</outputDir>-->
+<!--        </configuration>-->
+<!--      </plugin>-->
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.5.0</version>
+
+        <executions>
+          <execution>
+            <id>dependency-analyze</id>
+            <goals>
+              <goal>analyze</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>io.swagger.core.v3</groupId>
+        <artifactId>swagger-maven-plugin-jakarta</artifactId>
+        <version>2.2.8</version>
+        <configuration>
+          <outputFileName>swagger</outputFileName>
+<!--          <outputPath>${project.build.directory}/${project.artifactId}-${project.version}</outputPath>-->
+          <outputPath>${project.basedir}/src/main/webapp/</outputPath>
+          <outputFormat>JSON</outputFormat>
+          <resourcePackages>
+            <package>org.wallet_service.in</package>
+          </resourcePackages>
+<!--                    <resourceClasses>-->
+<!--                      <class>org.wallet_service.in.PlayerController</class>-->
+<!--                      <class>org.wallet_service.in.TransactionController</class>-->
+<!--                    </resourceClasses>-->
+          <prettyPrint>true</prettyPrint>
+          <configurationFilePath>src/main/resources/openapi.json</configurationFilePath>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>resolve</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
 </project>

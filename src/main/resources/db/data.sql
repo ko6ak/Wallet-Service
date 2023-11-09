@@ -41,7 +41,7 @@ CREATE TABLE transaction (
     id                  VARCHAR     NOT NULL PRIMARY KEY,
     date_time           TIMESTAMP   NOT NULL,
     description         VARCHAR     NOT NULL,
-    operation           VARCHAR     NOT NULL,
+    operationType           VARCHAR     NOT NULL,
     amount              NUMERIC     NOT NULL,
     money_account_id    BIGINT      NOT NULL,
     is_processed        BOOLEAN     NOT NULL,
@@ -63,6 +63,6 @@ INSERT INTO money_account_actions(money_account_id, date_time, message)
 VALUES (1001, '2023-10-13 09:14:10', 'Транзакция с типом операции CREDIT, суммой 1000.00 и комментарием ''transaction #1'' успешно выполнена'),
        (1001, '2023-10-13 09:14:20', 'Транзакция с типом операции DEBIT, суммой 699.99 и комментарием ''transaction #2'' успешно выполнена');
 
-INSERT INTO transaction(id, date_time, description, operation, amount, money_account_id, is_processed)
+INSERT INTO transaction(id, date_time, description, operationType, amount, money_account_id, is_processed)
 VALUES ('694bc4c1-2987-4bd3-a71b-5809ef6686c1', '2023-10-13 09:14:10', 'transaction #1', 'CREDIT', 1000.00, 1001, true),
        ('6d4c78d7-b8b0-4e3a-a488-46508fe91e20', '2023-10-13 09:14:20', 'transaction #2', 'DEBIT', 699.99, 1001, true);

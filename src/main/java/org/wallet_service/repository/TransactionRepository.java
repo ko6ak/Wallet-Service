@@ -2,7 +2,7 @@ package org.wallet_service.repository;
 
 import jakarta.annotation.PreDestroy;
 import org.springframework.stereotype.Repository;
-import org.wallet_service.entity.Operation;
+import org.wallet_service.entity.OperationType;
 import org.wallet_service.entity.Transaction;
 
 import java.sql.*;
@@ -83,7 +83,7 @@ public class TransactionRepository {
                     transaction = new Transaction(id,
                             Timestamp.valueOf(result.getString("date_time")).toLocalDateTime(),
                             result.getString("description"),
-                            Operation.valueOf(result.getString("operation")),
+                            OperationType.valueOf(result.getString("operation")),
                             result.getBigDecimal("amount"),
                             result.getLong("money_account_id"),
                             result.getBoolean("is_processed"));
@@ -188,7 +188,7 @@ public class TransactionRepository {
                                     UUID.fromString(result.getString("id")),
                                     Timestamp.valueOf(result.getString("date_time")).toLocalDateTime(),
                                     result.getString("description"),
-                                    Operation.valueOf(result.getString("operation")),
+                                    OperationType.valueOf(result.getString("operation")),
                                     result.getBigDecimal("amount"),
                                     result.getLong("money_account_id"),
                                     false));

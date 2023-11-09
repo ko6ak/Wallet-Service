@@ -1,8 +1,5 @@
 package org.wallet_service.in;
 
-//import io.swagger.annotations.Api;
-//import io.swagger.annotations.ApiImplicitParam;
-//import io.swagger.annotations.ApiImplicitParams;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -37,7 +34,6 @@ import static org.wallet_service.util.CurrentPlayer.*;
 @Time
 @RestController
 @Component
-//@Api("туц-туц-туц!")
 public class PlayerController {
     private final PlayerService playerService;
     private final MoneyAccountService moneyAccountService;
@@ -66,9 +62,6 @@ public class PlayerController {
      * @return игрока.
      * @throws AuthenticationException если Игрок с таким email уже есть в системе.
      */
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "uuid", value = "User's uuid", required = true, dataType = "string", paramType = "query")
-//    })
     @PostMapping("registration")
     public ResponseEntity<?> registration(@RequestBody PlayerRequestDTO playerRequestDTO) {
         String name = playerRequestDTO.getName();

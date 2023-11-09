@@ -99,7 +99,7 @@
             <column name="description" type="VARCHAR">
                 <constraints nullable="false"/>
             </column>
-            <column name="operation" type="VARCHAR">
+            <column name="operationType" type="VARCHAR">
                 <constraints nullable="false"/>
             </column>
             <column name="amount" type="NUMERIC">

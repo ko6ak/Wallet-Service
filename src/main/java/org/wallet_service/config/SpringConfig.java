@@ -23,7 +23,7 @@ import java.util.Objects;
 @Configuration
 @EnableWebMvc
 @ComponentScan("org.wallet_service")
-@EnableAspectJAutoProxy//(proxyTargetClass=true)
+@EnableAspectJAutoProxy
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
 public class SpringConfig {
     @Value("${spring.datasource.driver-class-name}")
@@ -84,13 +84,5 @@ public class SpringConfig {
         liquibase.setChangeLogParameters(params);
 
         return liquibase;
-    }
-
-    void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("swagger-ui.html")
-                .addResourceLocations("classpath:/META-INF/resources/");
-
-        registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 }

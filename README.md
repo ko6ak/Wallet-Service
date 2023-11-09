@@ -25,7 +25,7 @@ URL приложения: `http://localhost:8080`
 `/balance` post-запрос, например: `{ "token": "eyJhbGciOiJIUzI1NiJ9..."}`<br />
 `/transaction-log` post-запрос, например: `{ "token": "eyJhbGciOiJIUzI1NiJ9..."}`<br />
 `/full-log` post-запрос `{ "playerId": 1 }`<br />
-`/transaction-register` post-запрос `{ "id":"711c12eb-9f98-417d-af8f-57f902d30008", "operation":"CREDIT", "amount":"100.00", "description":"incoming", "token": "eyJhbGciOiJIUzI1NiJ9..." }`<br />
+`/transaction-register` post-запрос `{ "id":"711c12eb-9f98-417d-af8f-57f902d30008", "operationType":"CREDIT", "amount":"100.00", "description":"incoming", "token": "eyJhbGciOiJIUzI1NiJ9..." }`<br />
 `/process` get-запрос<br />
 
 ### Порядок запуска из консоли
@@ -34,5 +34,8 @@ URL приложения: `http://localhost:8080`
 2. Перейти в папку с программой: `cd Wallet-Service`
 3. Запустить docker-образы (файл docker.yml находится в корне проекта): `docker compose -f docker.yml up`
 4. Собрать приложение: `mvn clean install`
-5. Запустить обновление БД: `mvn liquibase:update`
-6. Отправить JSON-запрос через Postman.
+5. Отправить JSON-запрос через Postman.
+
+
+Отметка для себя:
+Для того, чтобы работали аспекты нужно сделать clean, а затем сразу запустить проект(то есть не надо выполнять install).
