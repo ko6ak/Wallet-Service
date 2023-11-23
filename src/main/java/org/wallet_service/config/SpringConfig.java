@@ -14,16 +14,19 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 
 import javax.sql.DataSource;
+import java.nio.file.Path;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 @Configuration
-@EnableWebMvc
-@ComponentScan("org.wallet_service")
-@EnableAspectJAutoProxy
+//@EnableWebMvc
+//@ComponentScan("org.wallet_service")
+//@EnableAspectJAutoProxy
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
 public class SpringConfig {
     @Value("${spring.datasource.driver-class-name}")
@@ -35,11 +38,11 @@ public class SpringConfig {
     @Value("${spring.datasource.password}")
     String password;
     @Value("${spring.liquibase.changeLogFile}")
-    String changelogFile;
+    public String changelogFile;
     @Value("${spring.liquibase.defaultSchemaName}")
-    String defaultSchemaName;
+    private String defaultSchemaName;
     @Value("${spring.liquibase.liquibaseSchemaName}")
-    String liquibaseSchemaName;
+    public String liquibaseSchemaName;
 
     @Bean
     public DataSource dataSource() {
@@ -48,8 +51,20 @@ public class SpringConfig {
         dataSource.setUrl(url);
         dataSource.setUsername(username);
         dataSource.setPassword(password);
+
+        createLiquibaseSchema(dataSource);
+
         return dataSource;
     }
+
+    public void createLiquibaseSchema(DataSource dataSource){
+        try (Connection conn = dataSource.getConnection(); Statement statement = conn.createStatement()) {
+            statement.execute("CREATE SCHEMA IF NOT EXISTS " + liquibaseSchemaName);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Bean
     public Connection connection(DataSource dataSource){
