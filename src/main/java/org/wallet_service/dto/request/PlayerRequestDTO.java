@@ -1,5 +1,8 @@
 package org.wallet_service.dto.request;
 
+/**
+ * Класс содержит входящие данные об Игроке.
+ */
 public class PlayerRequestDTO {
     private String name;
     private String email;

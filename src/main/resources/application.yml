@@ -4,6 +4,7 @@ spring:
     username: wallet_user
     password: wallet_password
     driver-class-name: org.postgresql.Driver
+    databaseName: wallet_db
   liquibase:
     changeLogFile: classpath:/db/changelog/changelog.xml
     defaultSchemaName: wallet

@@ -1,11 +1,8 @@
 package org.wallet_service.repository;
 
-import jakarta.annotation.PreDestroy;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import org.wallet_service.entity.*;
 
-import javax.sql.DataSource;
 import java.sql.*;
 
 /**
@@ -13,21 +10,13 @@ import java.sql.*;
  */
 @Repository
 public class PlayerRepository {
+    private static final String FAILED_TO_SAVE_PLAYER = "Не получилось сохранить Игрока";
+    private static final String NO_PLAYER_WITH_THIS_LOGIN = "Нет Игрока с таким логином";
 
     private final Connection connection;
 
     public PlayerRepository(Connection connection) {
         this.connection = connection;
-    }
-
-    @PreDestroy
-    private void destroy(){
-        try {
-            connection.close();
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -150,7 +139,7 @@ public class PlayerRepository {
                 }
                 else {
                     connection.rollback();
-                    throw new SQLException("Не получилось сохранить Игрока");
+                    throw new SQLException(FAILED_TO_SAVE_PLAYER);
                 }
             }
             connection.commit();
@@ -184,7 +173,7 @@ public class PlayerRepository {
                 }
                 else {
                     connection.rollback();
-                    throw new SQLException("Нет Игрока с таким логином");
+                    throw new SQLException(NO_PLAYER_WITH_THIS_LOGIN);
                 }
             }
             connection.commit();

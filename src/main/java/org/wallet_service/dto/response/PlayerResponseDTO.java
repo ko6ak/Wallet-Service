@@ -19,6 +19,9 @@ public class PlayerResponseDTO {
         this.moneyAccount = moneyAccount;
     }
 
+    public PlayerResponseDTO() {
+    }
+
     public long getId() {
         return id;
     }

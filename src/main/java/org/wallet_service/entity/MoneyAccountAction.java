@@ -1,9 +1,6 @@
 package org.wallet_service.entity;
 
-import org.springframework.stereotype.Component;
-
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 /**
  * Класс содержит информацию о действии для одной транзакции.

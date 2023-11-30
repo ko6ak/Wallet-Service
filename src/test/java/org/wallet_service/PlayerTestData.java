@@ -1,7 +1,8 @@
 package org.wallet_service;
 
+import org.wallet_service.dto.request.LoginRequestDTO;
+import org.wallet_service.dto.request.PlayerRequestDTO;
 import org.wallet_service.dto.response.ActionResponseDTO;
-import org.wallet_service.dto.response.PlayerResponseDTO;
 import org.wallet_service.entity.*;
 
 import java.math.BigDecimal;
@@ -16,20 +17,18 @@ public class PlayerTestData {
     public static final MoneyAccount ACCOUNT_1001;
     public static final MoneyAccount ACCOUNT_1002_WITH_ID;
     public static final MoneyAccount CHANGED_BALANCE_ACCOUNT_1001_WITH_ID;
-    public static final MoneyAccount ACCOUNT_FOR_PLAYER_2;
+    public static final MoneyAccount NEW_ACCOUNT_FOR_PLAYER_2;
 
     public static Player PLAYER_2;
-    public static PlayerTO PLAYER_1_TO;
+    public static Player NEW_PLAYER_2;
+    public static PlayerRequestDTO PLAYER_1_DTO;
+    public static LoginRequestDTO PLAYER_1_LOGIN_REQUEST_DTO;
     public static Player PLAYER_2_WITHOUT_ID;
     public static Player PLAYER_2_WITH_ID;
     public static Player PLAYER_1_WITH_ID;
 
-    public static PlayerTO PLAYER_TO;
-    public static PlayerTO PLAYER_TO_WITH_BAD_LOGIN;
-    public static PlayerTO PLAYER_TO_WITH_BAD_PASSWORD;
-
-    public static PlayerResponseDTO PLAYER_RESPONSE_TO;
-    public static PlayerResponseDTO PLAYER_RESPONSE_TO_WITHOUT_TOKEN;
+    public static PlayerRequestDTO PLAYER_2_DTO;
+    public static PlayerRequestDTO PLAYER_2_WITH_WRONG_EMAIL_DTO;
 
     public static final PlayerAction PLAYER_ACTION_1 = new PlayerAction(1, 1, Timestamp.valueOf(LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 10, 10)), "Успешная регистрация");
     public static final PlayerAction PLAYER_ACTION_2 = new PlayerAction(2, 1, Timestamp.valueOf(LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 11, 10)), "Успешный вход");
@@ -49,7 +48,7 @@ public class PlayerTestData {
     public static final MoneyAccountAction MONEY_ACCOUNT_ACTION_WITH_ID_3 = new MoneyAccountAction(3, 1001, Timestamp.valueOf(LocalDateTime.of(2023, Month.OCTOBER, 13, 9, 14, 30)),
             "Транзакция с типом операции DEBIT, суммой 400.00 и комментарием 'transaction #3' не выполнена. Причина: Баланс меньше списываемой суммы");
 
-    public static final List<PlayerAction> ACTIONS_1 = new ArrayList<>();
+    public static final List<Action> ACTIONS_1 = new ArrayList<>();
     public static final List<Action> MONEY_ACCOUNT_ACTIONS = new ArrayList<>();
     public static final List<Action> MONEY_ACCOUNT_ACTIONS_FULL = new ArrayList<>();
     public static final List<Action> FULL_PLAYER_ACTIONS = new ArrayList<>();
@@ -71,14 +70,17 @@ public class PlayerTestData {
 
         PLAYER_1_WITH_ID = new Player(1, "Иван", "ivan@gmail.com", "12345", ACCOUNT_1001);
 
-        PLAYER_1_TO = new PlayerTO("Иван", "ivan@gmail.com", "12345");
+        PLAYER_1_DTO = new PlayerRequestDTO("Иван", "ivan@gmail.com", "12345");
 
-        ACCOUNT_FOR_PLAYER_2 = new MoneyAccount(1002, new BigDecimal("0.00"));
-        PLAYER_2 = new Player(2,"Петр", "petr@ya.ru", "54321", ACCOUNT_FOR_PLAYER_2);
+        PLAYER_1_LOGIN_REQUEST_DTO = new LoginRequestDTO("ivan@gmail.com", "12345");
 
-        PLAYER_TO = new PlayerTO("Петр", "petr@ya.ru", "54321");
-        PLAYER_TO_WITH_BAD_LOGIN = new PlayerTO("Иван", "ivashka@gmail.com", "12345");
-        PLAYER_TO_WITH_BAD_PASSWORD = new PlayerTO("Иван", "ivan@gmail.com", "1234567");
+        NEW_ACCOUNT_FOR_PLAYER_2 = new MoneyAccount(1002, new BigDecimal("0.00"));
+        NEW_PLAYER_2 = new Player("Петр", "petr@ya.ru", "54321", NEW_ACCOUNT_FOR_PLAYER_2);
+        PLAYER_2 = new Player(2,"Петр", "petr@ya.ru", "54321", NEW_ACCOUNT_FOR_PLAYER_2);
+
+        PLAYER_2_DTO = new PlayerRequestDTO("Петр", "petr@ya.ru", "54321");
+
+        PLAYER_2_WITH_WRONG_EMAIL_DTO = new PlayerRequestDTO("Петр", "petrya.ru", "54321");
 
         Collections.addAll(ACTIONS_1, PLAYER_ACTION_1, PLAYER_ACTION_2, PLAYER_ACTION_3, CREATED_TRANSACTION_PLAYER_ACTION_1, CREATED_TRANSACTION_PLAYER_ACTION_2);
         ACTIONS_1.sort(Comparator.comparing(Action::getDateTime));
@@ -92,11 +94,6 @@ public class PlayerTestData {
         FULL_PLAYER_ACTIONS.sort(Comparator.comparing(Action::getDateTime));
 
         FULL_PLAYER_ACTIONS.forEach(a -> FULL_PLAYER_ACTIONS_RESPONSE.add(new ActionResponseDTO(a.getDateTime(), a.getMessage())));
-
-        PLAYER_RESPONSE_TO = new PlayerResponseDTO(PLAYER_1_WITH_ID.getId(), PLAYER_1_WITH_ID.getName(), PLAYER_1_WITH_ID.getEmail(), ACCOUNT_1001);
-        PLAYER_RESPONSE_TO.setToken(AbstractServiceTest.TOKEN);
-
-        PLAYER_RESPONSE_TO_WITHOUT_TOKEN = new PlayerResponseDTO(PLAYER_1_WITH_ID.getId(), PLAYER_1_WITH_ID.getName(), PLAYER_1_WITH_ID.getEmail(), ACCOUNT_1001);
 
         MONEY_ACCOUNT_ACTIONS.forEach(a -> MONEY_ACCOUNT_ACTIONS_RESPONSE.add(new ActionResponseDTO(a.getDateTime(), a.getMessage())));
     }

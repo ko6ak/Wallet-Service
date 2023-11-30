@@ -1,5 +1,8 @@
 package org.wallet_service.dto.request;
 
+/**
+ * Класс содержит входящий токен.
+ */
 public class TokenRequestDTO {
     private String token;
 

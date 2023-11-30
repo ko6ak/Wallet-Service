@@ -1,6 +1,5 @@
 package org.wallet_service.repository;
 
-import jakarta.annotation.PreDestroy;
 import org.springframework.stereotype.Repository;
 import org.wallet_service.entity.Action;
 import org.wallet_service.entity.PlayerAction;
@@ -9,27 +8,20 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * Класс отвечающий за сохранение событий активности Игрока в хранилище.
  */
 @Repository
 public class PlayerActionRepository {
+    private static final String FAILED_TO_SAVE_ACTION = "Не получилось сохранить событие в лог Игрока";
+    private static final String FAILED_TO_GET_ACTIONS = "Не удалось получить список действий Игрока";
+
     private final Connection connection;
 
     public PlayerActionRepository(Connection connection) {
         this.connection = connection;
     }
 
-    @PreDestroy
-    private void destroy(){
-        try {
-            connection.close();
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
     /**
      * Добавление события в список активности для каждого Игрока.
      * @param playerAction событие.
@@ -45,7 +37,7 @@ public class PlayerActionRepository {
 
             if (statement.executeUpdate() <= 0) {
                 connection.rollback();
-                throw new SQLException("Не получилось сохранить событие в лог Игрока");
+                throw new SQLException(FAILED_TO_SAVE_ACTION);
             }
             connection.commit();
         }
@@ -83,7 +75,7 @@ public class PlayerActionRepository {
             }
             catch (SQLException e) {
                 connection.rollback();
-                throw new SQLException("Не удалось получить список действий Игрока");
+                throw new SQLException(FAILED_TO_GET_ACTIONS);
             }
             connection.commit();
         }

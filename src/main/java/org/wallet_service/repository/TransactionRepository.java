@@ -1,6 +1,5 @@
 package org.wallet_service.repository;
 
-import jakarta.annotation.PreDestroy;
 import org.springframework.stereotype.Repository;
 import org.wallet_service.entity.OperationType;
 import org.wallet_service.entity.Transaction;
@@ -8,27 +7,22 @@ import org.wallet_service.entity.Transaction;
 import java.sql.*;
 import java.util.*;
 
-
 /**
  * Класс отвечающий за сохранение Транзакций в хранилище.
  */
 @Repository
 public class TransactionRepository {
+    private static final String NO_TRANSACTION_WITH_THIS_ID = "Нет транзакции с таким id";
+    private static final String FAILED_TO_SAVE_TRANSACTION = "Не получилось сохранить транзакцию";
+    private static final String FAILED_TO_UPDATE_TRANSACTION = "Не получилось изменить транзакцию";
+    private static final String FAILED_TO_GET_TRANSACTION = "Не удалось получить список не выполненных транзакций";
+
     private final Connection connection;
 
     public TransactionRepository(Connection connection) {
         this.connection = connection;
     }
 
-    @PreDestroy
-    private void destroy(){
-        try {
-            connection.close();
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
     /**
      * Проверяет существование Транзакции в хранилище по его id.
      * @param id идентификатор транзакции.
@@ -48,7 +42,7 @@ public class TransactionRepository {
                 }
                 else {
                     connection.rollback();
-                    throw new SQLException("Нет транзакции с таким id");
+                    throw new SQLException(NO_TRANSACTION_WITH_THIS_ID);
                 }
             }
             connection.commit();
@@ -81,16 +75,16 @@ public class TransactionRepository {
             try (ResultSet result = statement.executeQuery()) {
                 if (result.next()) {
                     transaction = new Transaction(id,
-                            Timestamp.valueOf(result.getString("date_time")).toLocalDateTime(),
+                            Timestamp.valueOf(result.getString("date_time")),
                             result.getString("description"),
-                            OperationType.valueOf(result.getString("operation")),
+                            OperationType.valueOf(result.getString("operation_type")),
                             result.getBigDecimal("amount"),
                             result.getLong("money_account_id"),
                             result.getBoolean("is_processed"));
                 }
                 else {
                     connection.rollback();
-                    throw new SQLException("Нет транзакции с таким id");
+                    throw new SQLException(NO_TRANSACTION_WITH_THIS_ID);
                 }
             }
             connection.commit();
@@ -112,12 +106,12 @@ public class TransactionRepository {
      * @param transaction транзакция для сохранения.
      */
     public Transaction save(Transaction transaction){
-        String query = "INSERT INTO wallet.transaction(id, date_time, description, operation, amount, money_account_id, is_processed) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO wallet.transaction(id, date_time, description, operation_type, amount, money_account_id, is_processed) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try(PreparedStatement statement = connection.prepareStatement(query)) {
 
             statement.setString(1, transaction.getId().toString());
-            statement.setTimestamp(2, Timestamp.valueOf(transaction.getDateTime()));
+            statement.setTimestamp(2, transaction.getDateTime());
             statement.setString(3, transaction.getDescription());
             statement.setString(4, transaction.getOperation().toString());
             statement.setBigDecimal(5, transaction.getAmount());
@@ -126,7 +120,7 @@ public class TransactionRepository {
 
             if (statement.executeUpdate() <= 0) {
                 connection.rollback();
-                throw new SQLException("Не получилось сохранить транзакцию");
+                throw new SQLException(FAILED_TO_SAVE_TRANSACTION);
             }
 
             connection.commit();
@@ -156,7 +150,7 @@ public class TransactionRepository {
 
             if (statement.executeUpdate() <= 0) {
                 connection.rollback();
-                throw new SQLException("Не получилось изменить транзакцию");
+                throw new SQLException(FAILED_TO_UPDATE_TRANSACTION);
             }
 
             connection.commit();
@@ -186,9 +180,9 @@ public class TransactionRepository {
                     transactions.add(
                             new Transaction(
                                     UUID.fromString(result.getString("id")),
-                                    Timestamp.valueOf(result.getString("date_time")).toLocalDateTime(),
+                                    Timestamp.valueOf(result.getString("date_time")),
                                     result.getString("description"),
-                                    OperationType.valueOf(result.getString("operation")),
+                                    OperationType.valueOf(result.getString("operation_type")),
                                     result.getBigDecimal("amount"),
                                     result.getLong("money_account_id"),
                                     false));
@@ -196,7 +190,7 @@ public class TransactionRepository {
             }
             catch (SQLException e) {
                 connection.rollback();
-                throw new SQLException("Не удалось получить список не выполненных транзакций");
+                throw new SQLException(FAILED_TO_GET_TRANSACTION);
             }
             connection.commit();
         }

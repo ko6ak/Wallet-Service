@@ -2,7 +2,6 @@ package org.wallet_service.in;
 
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +13,6 @@ import org.wallet_service.entity.OperationType;
 import org.wallet_service.entity.Player;
 import org.wallet_service.entity.Transaction;
 import org.wallet_service.exception.AuthenticationException;
-import org.wallet_service.exception.TransactionException;
 import org.wallet_service.service.TransactionService;
 import org.wallet_service.util.CurrentPlayer;
 import org.wallet_service.util.JWT;
@@ -22,6 +20,7 @@ import org.wallet_service.util.Processing;
 import org.wallet_service.validator.Validator;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -35,9 +34,13 @@ import static org.wallet_service.util.CurrentPlayer.*;
  */
 @Time
 @RestController
-@Component
 public class TransactionController {
     public static final String REGISTER_SUCCESS = "Зарегистрировано";
+    public static final String NOT_LOGGED_IN = "Вы не залогинены";
+    public static final String EXPIRED_TOKEN = "Токен просрочен, залогинтесь заново";
+    public static final String NOT_UNIQUE_TRANSACTION_ID = "Не уникальный id транзакции";
+    public static final String TRANSACTION_PROCESSED = "Все транзакции обработаны";
+    public static final String NO_TRANSACTIONS_TO_PROCESS = "Нет транзакций для обработки";
 
     private final TransactionService transactionService;
     private final Validator validator;
@@ -51,14 +54,9 @@ public class TransactionController {
 
     /**
      * Метод регистрирует транзакции в системе.
-//     * @param id идентификатор транзакции.
-//     * @param operation тип операции.
-//     * @param amount сумма.
-//     * @param description комментарий.
-//     * @param token токен.
-     * @return Сообщение об успешной регистрации.
-     * @throws TransactionException если не уникальный id транзакции.
-     * @throws AuthenticationException если Игрок не залогинен, токен из параметра метода не совпадает с сохраненным в системе или токен просрочен.
+     * @param transactionRequestDTO входные данные для регистрации транзакции.
+     * @return Сообщение об успешной регистрации, если не уникальный id транзакции, если Игрок не залогинен,
+     * токен из параметра метода не совпадает с сохраненным в системе или токен просрочен.
      */
     @PostMapping("/transaction-registration")
     public ResponseEntity<?> register(@RequestBody TransactionRequestDTO transactionRequestDTO){
@@ -90,21 +88,25 @@ public class TransactionController {
         OperationType operationType = OperationType.valueOf(inputOperation);
 
         Player currentPlayer = CurrentPlayer.getCurrentPlayer();
+
         if (currentPlayer == null || !token.equals(getToken()))
-            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body(new MessageResponseDTO("Сначала нужно залогинится"));
+            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body(new MessageResponseDTO(NOT_LOGGED_IN));
+
         try{
             JWT.validate(token);
         }
         catch (AuthenticationException e){
             setCurrentPlayer(null);
             setToken(null);
-            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body(new MessageResponseDTO("Токен просрочен, залогинтесь заново"));
+            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body(new MessageResponseDTO(EXPIRED_TOKEN));
         }
+
         if (!transactionService.isFound(id)) {
-            transactionService.save(new Transaction(id, LocalDateTime.now(), description, operationType,
+            transactionService.save(new Transaction(id, Timestamp.valueOf(LocalDateTime.now()), description, operationType,
                     new BigDecimal(amount), currentPlayer.getMoneyAccount().getId(), false));
         }
-        else return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(new MessageResponseDTO("Не уникальный id транзакции"));
+        else return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(new MessageResponseDTO(NOT_UNIQUE_TRANSACTION_ID));
+
         return ResponseEntity.ok(new MessageResponseDTO(REGISTER_SUCCESS));
     }
 
@@ -123,8 +125,8 @@ public class TransactionController {
                 }
                 transactionService.updateProcessed(t);
             });
-            return ResponseEntity.ok(new MessageResponseDTO("Все транзакции обработаны"));
+            return ResponseEntity.ok(new MessageResponseDTO(TRANSACTION_PROCESSED));
         }
-        else return ResponseEntity.ok(new MessageResponseDTO("Нет транзакций для обработки"));
+        else return ResponseEntity.ok(new MessageResponseDTO(NO_TRANSACTIONS_TO_PROCESS));
     }
 }

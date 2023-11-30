@@ -1,97 +1,158 @@
-//package org.wallet_service.in;
-//
-//import org.junit.jupiter.api.Test;
-//import org.wallet_service.AbstractServiceTest;
-//import org.wallet_service.PlayerTestData;
-//import org.wallet_service.TransactionTO;
-//import org.wallet_service.TransactionTestData;
-//import org.wallet_service.entity.Transaction;
-//import org.wallet_service.exception.AuthenticationException;
-//import org.wallet_service.exception.TransactionException;
-//import org.wallet_service.service.TransactionService;
-//import org.wallet_service.util.Beans;
-//import org.wallet_service.util.CurrentPlayer;
-//
-//import java.sql.SQLException;
-//import java.util.ArrayList;
-//import java.util.List;
-//
-//import static org.assertj.core.api.Assertions.assertThat;
-//import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-//import static org.wallet_service.util.DBConnection.CONNECTION;
-//
-//public class TransactionControllerTest extends AbstractServiceTest {
-//    private static final TransactionController transactionController = Beans.getTransactionController();
-//    private static final TransactionService transactionService = Beans.getTransactionService();
-//    private static final PlayerController playerController = Beans.getPlayerController();
-//
-//    @Test
-//    void register() throws SQLException {
-//        TransactionTO transactionTO = TransactionTestData.TRANSACTION_TO_3;
-//
-//        assertThatThrownBy(() -> transactionController.register(transactionTO.getId(), transactionTO.getOperation(), transactionTO.getAmount(),
-//                transactionTO.getDescription(), transactionTO.getToken()))
-//                .isInstanceOf(AuthenticationException.class)
-//                .hasMessage("Сначала нужно залогинится");
-//
-//        playerController.login(PlayerTestData.PLAYER_1_WITH_ID.getEmail(), PlayerTestData.PLAYER_1_WITH_ID.getPassword());
-//
-//        assertThatThrownBy(() -> transactionController.register(transactionTO.getId(), transactionTO.getOperation(), transactionTO.getAmount(),
-//                transactionTO.getDescription(), transactionTO.getToken()))
-//                .isInstanceOf(AuthenticationException.class)
-//                .hasMessage("Сначала нужно залогинится");
-//
-//        CurrentPlayer.setToken(AbstractServiceTest.EXPIRED_TOKEN);
-//        TransactionTO transactionTO_1 = TransactionTestData.TRANSACTION_TO_WITH_EXPIRED_TOKEN;
-//        assertThatThrownBy(() -> transactionController.register(transactionTO_1.getId(), transactionTO_1.getOperation(), transactionTO_1.getAmount(),
-//                transactionTO_1.getDescription(), transactionTO_1.getToken()))
-//                .isInstanceOf(AuthenticationException.class)
-//                .hasMessage("Токен просрочен, залогинтесь заново");
-//        assertThat(CurrentPlayer.getToken()).isNull();
-//        assertThat(CurrentPlayer.getCurrentPlayer()).isNull();
-//
-//        playerController.login(PlayerTestData.PLAYER_1_WITH_ID.getEmail(), PlayerTestData.PLAYER_1_WITH_ID.getPassword());
-//
-//        CurrentPlayer.setToken(AbstractServiceTest.TOKEN);
-//        TransactionTestData.NOT_PROCESSED_TRANSACTIONS_TOS.forEach(t -> assertThat(transactionController.register(
-//                t.getId(), t.getOperation(), t.getAmount(), t.getDescription(), t.getToken()))
-//                .isEqualTo(TransactionController.REGISTER_SUCCESS));
-//
-//        List<Transaction> transactions = new ArrayList<>();
-//        TransactionTestData.NOT_PROCESSED_TRANSACTIONS_IDS.forEach(id -> transactions.add(transactionService.get(id)));
-//        assertThat(transactions).hasSize(3).usingRecursiveFieldByFieldElementComparatorIgnoringFields("dateTime")
-//                .containsAll(TransactionTestData.NOT_PROCESSED_TRANSACTIONS);
-//
-//        assertThatThrownBy(() -> transactionController.register(transactionTO.getId(), transactionTO.getOperation(), transactionTO.getAmount(),
-//                transactionTO.getDescription(), transactionTO.getToken()))
-//                .isInstanceOf(TransactionException.class)
-//                .hasMessage("Не уникальный id транзакции");
-//
-//        playerController.logout(CurrentPlayer.getToken());
-//
-//        CONNECTION.createStatement().executeUpdate("DELETE FROM wallet.transaction WHERE id = 'bae26c79-e40b-495d-87b0-24255a9d383a'");
-//        CONNECTION.createStatement().executeUpdate("DELETE FROM wallet.transaction WHERE id = 'acb79fd6-88a4-455f-ac10-394ad7c0f336'");
-//        CONNECTION.createStatement().executeUpdate("DELETE FROM wallet.transaction WHERE id = '711c12eb-9f98-417d-af8f-57f902d3000e'");
-//    }
-//
-//    @Test
-//    void getNotProcessed() throws SQLException {
-//        playerController.login(PlayerTestData.PLAYER_1_WITH_ID.getEmail(), PlayerTestData.PLAYER_1_WITH_ID.getPassword());
-//        CurrentPlayer.setToken(AbstractServiceTest.TOKEN);
-//
-//        TransactionTestData.TRANSACTIONS_TOS.forEach(t -> assertThat(transactionController.register(
-//                t.getId(), t.getOperation(), t.getAmount(), t.getDescription(), t.getToken()))
-//                .isEqualTo(TransactionController.REGISTER_SUCCESS));
-//
-//        List<Transaction> transactions = new ArrayList<>();
-//        TransactionTestData.TRANSACTIONS_IDS.forEach(id -> transactions.add(transactionService.get(id)));
-//        assertThat(transactions).hasSize(3).usingRecursiveFieldByFieldElementComparatorIgnoringFields("dateTime")
-//                .containsAll(TransactionTestData.NOT_PROCESSED_TRANSACTIONS);
-//
-//        playerController.logout(CurrentPlayer.getToken());
-//
-//        CONNECTION.createStatement().executeUpdate("DELETE FROM wallet.transaction WHERE id = 'bae26c79-e40b-495d-87b0-24255a9d383a'");
-//        CONNECTION.createStatement().executeUpdate("DELETE FROM wallet.transaction WHERE id = 'acb79fd6-88a4-455f-ac10-394ad7c0f336'");
-//        CONNECTION.createStatement().executeUpdate("DELETE FROM wallet.transaction WHERE id = '711c12eb-9f98-417d-af8f-57f902d3000e'");
-//    }
-//}
+package org.wallet_service.in;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.wallet_service.AbstractServiceTest;
+import org.wallet_service.PlayerTestData;
+import org.wallet_service.TransactionTestData;
+import org.wallet_service.exception.AuthenticationException;
+import org.wallet_service.service.TransactionService;
+import org.wallet_service.util.CurrentPlayer;
+import org.wallet_service.util.JWT;
+import org.wallet_service.util.Processing;
+
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+public class TransactionControllerTest extends AbstractControllerTest {
+
+    @Mock
+    private TransactionService transactionService;
+    @Mock
+    private Processing processing;
+
+    @BeforeEach
+    void setUp() {
+        mvc = MockMvcBuilders.standaloneSetup(new TransactionController(
+                transactionService,
+                validator,
+                processing
+        )).build();
+
+        validationMessages.put("operation", Collections.singletonList("не должно быть пустым"));
+    }
+
+    @Test
+    void registerOK() throws Exception {
+        CURRENT_PLAYER_MOCKED_STATIC.when(CurrentPlayer::getCurrentPlayer).thenReturn(PlayerTestData.PLAYER_1_WITH_ID);
+        CURRENT_PLAYER_MOCKED_STATIC.when(CurrentPlayer::getToken).thenReturn(AbstractServiceTest.TOKEN);
+        when(transactionService.isFound(TransactionTestData.ID3)).thenReturn(false);
+
+        mvc.perform(post("/transaction-registration")
+                        .content(mapper.writeValueAsString(TransactionTestData.TRANSACTION_DTO_3))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//                .andDo(print())
+                .andExpect(jsonPath("$.message").value(TransactionController.REGISTER_SUCCESS));
+    }
+
+    @Test
+    void registerNotUniqueTransaction() throws Exception {
+        CURRENT_PLAYER_MOCKED_STATIC.when(CurrentPlayer::getCurrentPlayer).thenReturn(PlayerTestData.PLAYER_1_WITH_ID);
+        CURRENT_PLAYER_MOCKED_STATIC.when(CurrentPlayer::getToken).thenReturn(AbstractServiceTest.TOKEN);
+        when(transactionService.isFound(TransactionTestData.ID3)).thenReturn(true);
+
+        mvc.perform(post("/transaction-registration")
+                        .content(mapper.writeValueAsString(TransactionTestData.TRANSACTION_DTO_3))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//                .andDo(print())
+                .andExpect(jsonPath("$.message").value(TransactionController.NOT_UNIQUE_TRANSACTION_ID));
+    }
+
+    @Test
+    void  registerExpiredToken() throws Exception {
+        CURRENT_PLAYER_MOCKED_STATIC.when(CurrentPlayer::getCurrentPlayer).thenReturn(PlayerTestData.PLAYER_1_WITH_ID);
+        CURRENT_PLAYER_MOCKED_STATIC.when(CurrentPlayer::getToken).thenReturn(AbstractServiceTest.EXPIRED_TOKEN);
+        JWT_MOCKED_STATIC.when(() -> JWT.validate(AbstractServiceTest.EXPIRED_TOKEN)).thenThrow(AuthenticationException.class);
+
+        mvc.perform(post("/transaction-registration")
+                        .content(mapper.writeValueAsString(TransactionTestData.TRANSACTION_TO_WITH_EXPIRED_TOKEN))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//                .andDo(print())
+                .andExpect(jsonPath("$.message").value(TransactionController.EXPIRED_TOKEN));
+    }
+
+    @Test
+    void  registerNullPlayer() throws Exception {
+        CURRENT_PLAYER_MOCKED_STATIC.when(CurrentPlayer::getCurrentPlayer).thenReturn(null);
+        CURRENT_PLAYER_MOCKED_STATIC.when(CurrentPlayer::getToken).thenReturn(AbstractServiceTest.TOKEN);
+
+        mvc.perform(post("/transaction-registration")
+                        .content(mapper.writeValueAsString(TransactionTestData.TRANSACTION_DTO_3))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//                .andDo(print())
+                .andExpect(jsonPath("$.message").value(TransactionController.NOT_LOGGED_IN));
+    }
+
+    @Test
+    void  registerBadToken() throws Exception {
+        CURRENT_PLAYER_MOCKED_STATIC.when(CurrentPlayer::getCurrentPlayer).thenReturn(PlayerTestData.PLAYER_1_WITH_ID);
+        CURRENT_PLAYER_MOCKED_STATIC.when(CurrentPlayer::getToken).thenReturn(AbstractServiceTest.TOKEN);
+
+        mvc.perform(post("/transaction-registration")
+                        .content(mapper.writeValueAsString(TransactionTestData.TRANSACTION_TO_WITH_OTHER_TOKEN))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//                .andDo(print())
+                .andExpect(jsonPath("$.message").value(TransactionController.NOT_LOGGED_IN));
+    }
+
+    @Test
+    void registerBadRequest() throws Exception {
+        when(validator.getResult()).thenReturn(validationMessages);
+
+        mvc.perform(post("/transaction-registration")
+                        .content(mapper.writeValueAsString(TransactionTestData.TRANSACTION_DTO_3_EMPTY_OPERATION))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//                .andDo(print())
+                .andExpect(jsonPath("$.operation").value(validationMessages.get("operation").get(0)));
+    }
+
+    @Test
+    void processProcessed() throws Exception {
+        when(transactionService.getNotProcessed()).thenReturn(Collections.singletonList(TransactionTestData.TRANSACTION_4));
+        when(processing.debit(TransactionTestData.TRANSACTION_4)).thenReturn(true);
+
+        mvc.perform(get("/process"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//                .andDo(print())
+                .andExpect(jsonPath("$.message").value(TransactionController.TRANSACTION_PROCESSED));
+    }
+
+    @Test
+    void processNoTransactions() throws Exception {
+        when(transactionService.getNotProcessed()).thenReturn(Collections.emptyList());
+
+        mvc.perform(get("/process"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//                .andDo(print())
+                .andExpect(jsonPath("$.message").value(TransactionController.NO_TRANSACTIONS_TO_PROCESS));
+    }
+}

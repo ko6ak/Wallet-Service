@@ -1,6 +1,5 @@
 package org.wallet_service.service;
 
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.wallet_service.entity.Player;
 import org.wallet_service.repository.PlayerRepository;

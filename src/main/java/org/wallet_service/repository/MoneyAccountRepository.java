@@ -1,32 +1,25 @@
 package org.wallet_service.repository;
 
-import jakarta.annotation.PreDestroy;
 import org.springframework.stereotype.Repository;
 import org.wallet_service.entity.MoneyAccount;
 
 import java.sql.*;
-
 
 /**
  * Класс отвечающий за сохранение Денежного счета Игрока в хранилище.
  */
 @Repository
 public class MoneyAccountRepository {
+    private static final String FAILED_TO_SAVE_MONEY_ACCOUNT = "Не получилось сохранить счет";
+    private static final String FAILED_TO_UPDATE_BALANCE = "Не получилось обновить баланс";
+    private static final String NO_MONEY_ACCOUNT_WITH_THIS_ID = "Нет счета с таким id";
+
     private final Connection connection;
 
     public MoneyAccountRepository(Connection connection) {
         this.connection = connection;
     }
 
-    @PreDestroy
-    private void destroy(){
-        try {
-            connection.close();
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
     /**
      * Метод сохранения Денежного счета.
      * @param moneyAccount денежный счет.
@@ -46,7 +39,7 @@ public class MoneyAccountRepository {
                 }
                 else {
                     connection.rollback();
-                    throw new SQLException("Не получилось сохранить счет");
+                    throw new SQLException(FAILED_TO_SAVE_MONEY_ACCOUNT);
                 }
             }
             connection.commit();
@@ -78,7 +71,7 @@ public class MoneyAccountRepository {
 
             if (statement.executeUpdate() <= 0) {
                 connection.rollback();
-                throw new SQLException("Не получилось обновить баланс");
+                throw new SQLException(FAILED_TO_UPDATE_BALANCE);
             }
             connection.commit();
             return true;
@@ -115,7 +108,7 @@ public class MoneyAccountRepository {
                 }
                 else {
                     connection.rollback();
-                    throw new SQLException("Нет счета с таким id");
+                    throw new SQLException(NO_MONEY_ACCOUNT_WITH_THIS_ID);
                 }
             }
             connection.commit();

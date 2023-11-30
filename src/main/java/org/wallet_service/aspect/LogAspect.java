@@ -138,9 +138,6 @@ public class LogAspect {
         String message = "Транзакция с типом операции " + transaction.getOperation() +
                 ", суммой " + transaction.getAmount() + " и комментарием '" + transaction.getDescription();
 
-        System.out.println(bool);
-        System.out.println("bool");
-
         if (bool) moneyAccountActionService.add(
                 new MoneyAccountAction(
                         transaction.getMoneyAccountId(),

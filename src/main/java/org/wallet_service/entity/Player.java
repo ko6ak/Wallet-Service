@@ -1,7 +1,5 @@
 package org.wallet_service.entity;
 
-import org.springframework.stereotype.Component;
-
 import java.util.Objects;
 
 /**

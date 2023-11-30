@@ -1,7 +1,7 @@
 package org.wallet_service.entity;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -10,14 +10,14 @@ import java.util.UUID;
  */
 public class Transaction {
     private UUID id;
-    private LocalDateTime dateTime;
+    private Timestamp dateTime;
     private String description;
     private OperationType operationType;
     private BigDecimal amount;
     private long moneyAccountId;
     private boolean isProcessed;
 
-    public Transaction(UUID id, LocalDateTime dateTime, String description, OperationType operationType, BigDecimal amount, long moneyAccountId, boolean isProcessed) {
+    public Transaction(UUID id, Timestamp dateTime, String description, OperationType operationType, BigDecimal amount, long moneyAccountId, boolean isProcessed) {
         this.id = id;
         this.dateTime = dateTime;
         this.description = description;
@@ -38,11 +38,11 @@ public class Transaction {
         this.id = id;
     }
 
-    public LocalDateTime getDateTime() {
+    public Timestamp getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
+    public void setDateTime(Timestamp dateTime) {
         this.dateTime = dateTime;
     }
 

@@ -1,50 +1,42 @@
 package org.wallet_service.config;
 
 import liquibase.integration.spring.SpringLiquibase;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.env.Environment;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.util.Assert;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 
 import javax.sql.DataSource;
-import java.nio.file.Path;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
+/**
+ * Конфигурация Spring
+ */
 @Configuration
-//@EnableWebMvc
-//@ComponentScan("org.wallet_service")
-//@EnableAspectJAutoProxy
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
 public class SpringConfig {
     @Value("${spring.datasource.driver-class-name}")
-    String driver;
+    protected String driver;
     @Value("${spring.datasource.url}")
-    String url;
+    private String url;
     @Value("${spring.datasource.username}")
-    String username;
+    protected String username;
     @Value("${spring.datasource.password}")
-    String password;
+    protected String password;
+    @Value("${spring.datasource.databaseName}")
+    protected String databaseName;
     @Value("${spring.liquibase.changeLogFile}")
-    public String changelogFile;
+    private String changelogFile;
     @Value("${spring.liquibase.defaultSchemaName}")
     private String defaultSchemaName;
     @Value("${spring.liquibase.liquibaseSchemaName}")
-    public String liquibaseSchemaName;
+    private String liquibaseSchemaName;
 
     @Bean
+    @Profile("default")
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(driver);
@@ -64,7 +56,6 @@ public class SpringConfig {
             e.printStackTrace();
         }
     }
-
 
     @Bean
     public Connection connection(DataSource dataSource){

@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Properties;
 
+/**
+ * Получение параметров из yaml-файла
+ */
 public class YamlPropertySourceFactory implements PropertySourceFactory {
 
     @Override

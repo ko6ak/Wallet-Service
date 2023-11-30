@@ -67,7 +67,7 @@
             <column name="id" value="694bc4c1-2987-4bd3-a71b-5809ef6686c1"/>
             <column name="date_time" value="2023-10-13 09:14:10"/>
             <column name="description" value="transaction #1"/>
-            <column name="operationType" value="CREDIT"/>
+            <column name="operation_type" value="CREDIT"/>
             <column name="amount" valueNumeric="1000.00"/>
             <column name="money_account_id" valueNumeric="1001"/>
             <column name="is_processed" value="TRUE"/>
@@ -76,7 +76,7 @@
             <column name="id" value="6d4c78d7-b8b0-4e3a-a488-46508fe91e20"/>
             <column name="date_time" value="2023-10-13 09:14:20"/>
             <column name="description" value="transaction #2"/>
-            <column name="operationType" value="DEBIT"/>
+            <column name="operation_type" value="DEBIT"/>
             <column name="amount" valueNumeric="699.99"/>
             <column name="money_account_id" valueNumeric="1001"/>
             <column name="is_processed" value="TRUE"/>

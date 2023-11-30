@@ -20,6 +20,11 @@ public final class JWT {
     private JWT() {
     }
 
+    /**
+     * Создает новый токен
+     * @param player Игрок, для которого создается новый токен
+     * @return токен
+     */
     public static String create(Player player) {
         return Jwts.builder()
                 .setSubject(player.getEmail())
@@ -29,6 +34,10 @@ public final class JWT {
                 .compact();
     }
 
+    /**
+     * Проверка токена
+     * @param token токен
+     */
     public static void validate(String token) {
         try {
             Jwts.parserBuilder()

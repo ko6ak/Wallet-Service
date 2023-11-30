@@ -1,5 +1,8 @@
 package org.wallet_service.dto.request;
 
+/**
+ * Класс содержит входящие данные о транзакции.
+ */
 public class TransactionRequestDTO {
     private String id;
     private String operation;

@@ -1,5 +1,8 @@
 package org.wallet_service.dto.request;
 
+/**
+ * Класс содержит входящие логин и пароль Игрока.
+ */
 public class LoginRequestDTO {
     private String email;
     private String password;
